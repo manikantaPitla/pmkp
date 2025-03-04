@@ -21,8 +21,12 @@ const ProtectedRoute = ({ children }) => {
       try {
         if (user) {
           const userData = await getUserProfileData(user?.uid);
-          console.log(user);
-          setUser({ ...userData, email: user.email, id : user.uid });
+          setUser({
+            ...userData,
+            email: user.email,
+            id: user.uid,
+            metaData: JSON.stringify(user.metadata),
+          });
         } else {
           removeUser();
           navigate("/");

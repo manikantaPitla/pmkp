@@ -16,3 +16,8 @@ export const StyledButton = styled.button`
     background-color: rgba(255, 255, 255, 0.6);
   }
 `;
+
+export const CustomButton = styled(StyledButton)`
+  height: inherit;
+  padding: 5px 15px;
+`;

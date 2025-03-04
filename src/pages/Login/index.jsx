@@ -6,6 +6,7 @@ import { Form } from "./styled-component";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/firebaseFunctions";
 import toast from "react-hot-toast";
+import { CustomButton } from "../../components/ui/Button/styled-component";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -69,7 +70,7 @@ function Login() {
   return (
     <MainLayout>
       <Link to="/">
-        <Button>Back</Button>
+        <CustomButton type="button">Back</CustomButton>
       </Link>
       <Form onSubmit={handleSubmit}>
         <Input

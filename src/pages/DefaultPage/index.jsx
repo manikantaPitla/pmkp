@@ -42,7 +42,7 @@ function DefaultPage() {
           error: (err) => err.message,
         });
 
-        setFormData({ id: "", message: "" });
+        setFormData((prev) => ({ ...prev, message: "" }));
       }
     } catch (error) {
       console.error(error);

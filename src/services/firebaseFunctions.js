@@ -5,18 +5,11 @@ import {
   getDoc,
   getDocs,
   query,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
   where,
   writeBatch,
 } from "firebase/firestore";
 import { auth, db } from "../firebase/dbConfig";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 export const loginUser = async (email, password) => {
   const userData = await signInWithEmailAndPassword(auth, email, password);
@@ -81,6 +74,15 @@ export const sendDirectMessage = async (uniqueId, message) => {
   await batch.commit();
 };
 
+export const getUserChats = async (userId) => {
+  const userChatDocRef = doc(db, "messages", userId);
+  const userChatDoc = await getDoc(userChatDocRef);
+  if (userChatDoc.exists()) {
+    return userChatDoc.data();
+  }
+};
+
+// to be removed
 export const getUserByUniqueId = async (uniqueId) => {
   const usersRef = collection(db, "users");
   const q = query(usersRef, where("uniqueId", "==", uniqueId));
