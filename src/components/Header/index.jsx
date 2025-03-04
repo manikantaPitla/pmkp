@@ -1,11 +1,14 @@
 import React from "react";
 import { HeaderWrapper } from "./styled-component";
+import { Link } from "react-router-dom";
 import Button from "../ui/Button";
 
 function Header() {
   return (
     <HeaderWrapper>
-      <Button>Login</Button>
+      <Link to="/login">
+        <Button>Login</Button>
+      </Link>
     </HeaderWrapper>
   );
 }

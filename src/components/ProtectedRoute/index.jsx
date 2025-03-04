@@ -1,0 +1,66 @@
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import useLoading from "../../hooks/useLoading";
+import { squircle } from "ldrs";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase/dbConfig";
+import { getUserProfileData } from "../../services/firebaseFunctions";
+import useAuthActions from "../../hooks/useAuthActions";
+
+squircle.register();
+
+const ProtectedRoute = ({ children }) => {
+  const { loading, startLoading, stopLoading } = useLoading(true);
+
+  const navigate = useNavigate();
+  const { setUser, removeUser } = useAuthActions();
+
+  useEffect(() => {
+    startLoading();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      try {
+        if (user) {
+          const userData = await getUserProfileData(user?.uid);
+          console.log(user);
+          setUser({ ...userData, email: user.email, id : user.uid });
+        } else {
+          removeUser();
+          navigate("/");
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        stopLoading();
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <l-squircle
+          size="35"
+          stroke="3"
+          stroke-length="0.15"
+          bg-opacity="0.1"
+          speed="0.9"
+          color="white"
+        ></l-squircle>
+      </div>
+    );
+  }
+
+  return children;
+};
+
+export default ProtectedRoute;
