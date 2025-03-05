@@ -141,7 +141,6 @@ export const getUserChats = async (userId, setMessages) => {
 };
 
 export const clearChat = async (userId) => {
-  console.log(userId);
   const userChatDocRef = doc(db, "messages", userId);
 
   await updateDoc(userChatDocRef, {

@@ -5,12 +5,15 @@ import Popup from "reactjs-popup";
 
 export const ModalSmallCustomStyles = styled(Popup)`
   &-content {
-    width: 300px;
-    height: 150px;
-    box-shadow: var(--shadow);
+    width: 250px;
+    height: 100px;
+    box-shadow: 0px 1px 1px -1px rgba(255, 255, 255, 0.1),
+      0px 1px 1px 0px rgba(255, 255, 255, 0.1),
+      0px 1px 2px 0px rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    background-color: var(--bg-shaded);
+    background-color: #ffffff;
     border: none;
+    color: #000000;
   }
 `;
 
@@ -25,7 +28,7 @@ export const ModalBody = styled.div`
 `;
 
 export const ModalTitle = styled.p`
-  font-size: 16px;
+  font-size: 14px;
 `;
 
 export const ModalButtonWrapper = styled.div`
@@ -33,95 +36,22 @@ export const ModalButtonWrapper = styled.div`
   gap: 10px;
 
   button {
+    background-color: #000000;
     font-weight: 500;
     font-size: 13px;
-    padding: 8px 15px;
+    padding: 10px 15px;
     width: 100px;
-  }
-`;
+    color: #ffffff;
+    border: 1px solid #000000;
 
-// ************** Small Modal Styles ******************
-
-export const StyledModalLarge = styled(Popup)`
-  &-content {
-    margin: 0 0 !important;
-    width: inherit;
-    box-shadow: var(--shadow);
-    padding: 0;
-    border: none;
-
-    @media screen and (max-width: 500px) {
-      width: 100%;
+    &:hover {
+        background-color: #000000;
+        color: #ffffff;
     }
-  }
-`;
 
-// ************** Modal Menu ******************
-
-export const SmallModalMenu = styled(Popup)`
-  /* animation */
-
-  &-content {
-    width: fit-content !important;
-    border-radius: var(--primary-border-radius) !important;
-    background-color: var(--primary-background-color);
-    border: var(--primary-border);
-    box-shadow: var(--shadow);
-  }
-
-  &-overlay {
-    backdrop-filter: none !important;
-  }
-`;
-
-// ************** Modal View Media ******************
-
-export const ModalViewMediaWrapper = styled(Popup)`
-  &-content {
-    border: none;
-    padding: 0;
-    width: inherit;
-    background-color: transparent;
-    z-index: 100;
-
-    .modal-content {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: center;
-      gap: 10px;
-      padding: 40px;
-      height: 100vh;
-
-      img {
-        object-fit: contain;
-        width: 100%;
-        height: 100%;
-        width: 500px;
-        height: 600px;
-        border-radius: var(--primary-border-radius);
-
-        @media screen and (max-width: 768px) {
-          width: 100%;
-          height: fit-content;
-        }
-      }
-
-      video {
-        width: 100%;
-        height: 100%;
-        border-radius: var(--primary-border-radius);
-      }
-
-      .button-wrapper {
-        display: flex;
-        gap: 10px;
-
-        button {
-          flex: 1;
-          height: 45px !important;
-        }
-      }
+    &:nth-child(1) {
+      background-color: transparent;
+      color: #000000;
     }
   }
 `;
