@@ -1,28 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { getUserChats } from "../../services/firebaseFunctions";
 import {
-  InputWrapper,
   LoaderWrapper,
   MessageContainer,
   MessageItem,
 } from "./styled-component";
 import useLoading from "../../hooks/useLoading";
 import { SquareLoader } from "../../utils/loader";
-import Input from "../ui/Input";
-import Button from "../ui/Button";
-import { SendHorizontal } from "lucide-react";
+import ChatInput from "../ChatInput";
+import { useSelector } from "react-redux";
+import useMessage from "../../hooks/useMessage";
 
 function ChatBody({ userId }) {
-  const [messageList, setMessageList] = useState([]);
-  //   console.log(messageList);
+  const messageList = useSelector((state) => state.messages.messageList);
+  const messageContainerRef = useRef(null);
   const { loading, startLoading, stopLoading } = useLoading(true);
+  const { setMessages } = useMessage();
 
   useEffect(() => {
     const getChats = async () => {
       try {
         startLoading();
-        const chatMessages = await getUserChats(userId);
-        setMessageList(chatMessages.messageList);
+        const unsubscribe = await getUserChats(userId, setMessages);
+
+        return () => {
+          if (unsubscribe) unsubscribe();
+        };
       } catch (error) {
         console.error(error.message);
       } finally {
@@ -30,11 +33,20 @@ function ChatBody({ userId }) {
       }
     };
     getChats();
-  }, []);
+  }, [setMessages]);
+
+  useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTo({
+        top: messageContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messageList]);
 
   return (
     <>
-      <MessageContainer>
+      <MessageContainer ref={messageContainerRef}>
         {loading ? (
           <LoaderWrapper>
             <SquareLoader />
@@ -52,12 +64,7 @@ function ChatBody({ userId }) {
           "chat data"
         )}
       </MessageContainer>
-      <InputWrapper>
-        <Input type="text" placeholder="Type message..." />
-        <Button>
-          <SendHorizontal />
-        </Button>
-      </InputWrapper>
+      <ChatInput />
     </>
   );
 }

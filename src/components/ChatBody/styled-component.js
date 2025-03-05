@@ -5,7 +5,7 @@ export const MessageContainer = styled.ul`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  padding: 50px 0;
+  padding: 20px 0;
   gap: 5px;
 `;
 export const MessageItem = styled.li`
@@ -19,7 +19,7 @@ export const MessageItem = styled.li`
     padding: 5px 13px;
     border-radius: 25px;
     color: #fff;
-    border: 1px solid var(--bg-shaded);
+    border: 1px solid var(--border-shaded);
     width: fit-content;
     line-break: anywhere;
 
@@ -31,15 +31,4 @@ export const LoaderWrapper = styled.div`
   padding: 40px 0;
   display: flex;
   justify-content: center;
-`;
-
-// ----------------------------------------------------------------
-
-export const InputWrapper = styled.div`
-  display: flex;
-  gap: 5px;
-
-  input {
-    flex: 1;
-  }
 `;

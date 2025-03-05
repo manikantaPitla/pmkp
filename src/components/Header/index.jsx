@@ -21,7 +21,6 @@ function Header({ user }) {
       console.log(error);
     }
   };
-  console.log(user);
 
   return (
     <HeaderWrapper>
