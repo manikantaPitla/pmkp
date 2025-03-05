@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useLoading from "../../hooks/useLoading";
-import { squircle } from "ldrs";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase/dbConfig";
 import { getUserProfileData } from "../../services/firebaseFunctions";
 import useAuthActions from "../../hooks/useAuthActions";
 
-squircle.register();
+import { SquareLoader } from "../../utils/loader";
 
 const ProtectedRoute = ({ children }) => {
   const { loading, startLoading, stopLoading } = useLoading(true);
@@ -52,14 +51,7 @@ const ProtectedRoute = ({ children }) => {
           alignItems: "center",
         }}
       >
-        <l-squircle
-          size="35"
-          stroke="3"
-          stroke-length="0.15"
-          bg-opacity="0.1"
-          speed="0.9"
-          color="white"
-        ></l-squircle>
+        <SquareLoader />
       </div>
     );
   }

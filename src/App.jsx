@@ -22,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
       </Routes>
       <Toaster
+        position="bottom-center"
         toastOptions={{
           style: {
             borderRadius: "10px",

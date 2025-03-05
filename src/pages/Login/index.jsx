@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import MainLayout from "../../components/MainLayout";
-import { Form } from "./styled-component";
+import { Form, HeaderFlex } from "./styled-component";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/firebaseFunctions";
 import toast from "react-hot-toast";
@@ -69,9 +69,11 @@ function Login() {
 
   return (
     <MainLayout>
-      <Link to="/">
-        <CustomButton type="button">Back</CustomButton>
-      </Link>
+      <HeaderFlex>
+        <Link to="/">
+          <CustomButton type="button">Back</CustomButton>
+        </Link>
+      </HeaderFlex>
       <Form onSubmit={handleSubmit}>
         <Input
           type="email"

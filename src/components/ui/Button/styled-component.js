@@ -4,7 +4,7 @@ export const StyledButton = styled.button`
   height: 45px;
 
   border-radius: 10px;
-  border-color: var(--border-shaded);
+  border: 1px solid var(--border-shaded);
   background-color: #fff;
   color: #000;
   padding: 0px 20px;

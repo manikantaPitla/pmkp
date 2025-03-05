@@ -5,6 +5,7 @@ import { CustomButton } from "../ui/Button/styled-component";
 import { logOut } from "../../services/firebaseFunctions";
 import useAuthActions from "../../hooks/useAuthActions";
 import toast from "react-hot-toast";
+import { LogOut } from "lucide-react";
 
 function Header({ user }) {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ function Header({ user }) {
     <HeaderWrapper>
       {user ? (
         <CustomButton type="button" onClick={logoutUser}>
-          Logout
+          <LogOut size={18} />
         </CustomButton>
       ) : (
         <Link to="/login">

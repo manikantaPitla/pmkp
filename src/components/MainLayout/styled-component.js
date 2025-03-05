@@ -10,4 +10,6 @@ export const MainWrapper = styled.main`
 export const SharedContainer = styled.div`
   width: 400px;
   padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
 `;

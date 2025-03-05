@@ -1,23 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { getUserChats } from "../../services/firebaseFunctions";
-import { MessageContainer, MessageItem } from "./styled-component";
+import {
+  InputWrapper,
+  LoaderWrapper,
+  MessageContainer,
+  MessageItem,
+} from "./styled-component";
+import useLoading from "../../hooks/useLoading";
+import { SquareLoader } from "../../utils/loader";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
+import { SendHorizontal } from "lucide-react";
 
 function ChatBody({ userId }) {
   const [messageList, setMessageList] = useState([]);
   //   console.log(messageList);
+  const { loading, startLoading, stopLoading } = useLoading(true);
 
   useEffect(() => {
     const getChats = async () => {
-      const chatMessages = await getUserChats(userId);
-      setMessageList(chatMessages.messageList);
+      try {
+        startLoading();
+        const chatMessages = await getUserChats(userId);
+        setMessageList(chatMessages.messageList);
+      } catch (error) {
+        console.error(error.message);
+      } finally {
+        stopLoading();
+      }
     };
     getChats();
   }, []);
 
   return (
-    <MessageContainer>
-      {messageList.length > 0
-        ? messageList.map((messageItem) => {
+    <>
+      <MessageContainer>
+        {loading ? (
+          <LoaderWrapper>
+            <SquareLoader />
+          </LoaderWrapper>
+        ) : messageList.length > 0 ? (
+          messageList.map((messageItem) => {
             const { message, senderId, messageId } = messageItem;
             return (
               <MessageItem key={messageId} $sender={userId === senderId}>
@@ -25,8 +48,17 @@ function ChatBody({ userId }) {
               </MessageItem>
             );
           })
-        : "chat data"}
-    </MessageContainer>
+        ) : (
+          "chat data"
+        )}
+      </MessageContainer>
+      <InputWrapper>
+        <Input type="text" placeholder="Type message..." />
+        <Button>
+          <SendHorizontal />
+        </Button>
+      </InputWrapper>
+    </>
   );
 }
 

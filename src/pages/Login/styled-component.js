@@ -6,3 +6,8 @@ export const Form = styled.form`
   flex-direction: column;
   gap: 10px;
 `;
+
+export const HeaderFlex = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
