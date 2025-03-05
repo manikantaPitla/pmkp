@@ -6,12 +6,13 @@ import {
   getDocs,
   onSnapshot,
   query,
+  serverTimestamp,
+  updateDoc,
   where,
   writeBatch,
 } from "firebase/firestore";
 import { auth, db } from "../firebase/dbConfig";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { updateChatMessage } from "../app/features/messageReducer";
 
 export const loginUser = async (email, password) => {
   const userData = await signInWithEmailAndPassword(auth, email, password);
@@ -34,6 +35,13 @@ export const getUserProfileData = async (userId) => {
   } else {
     throw new Error("Couldn't find user");
   }
+};
+
+export const updateLastLogin = async (userId) => {
+  const docRef = doc(db, "users", userId);
+  await updateDoc(docRef, {
+    lastLogin: serverTimestamp(),
+  });
 };
 
 const sendMessageUtitlity = async (

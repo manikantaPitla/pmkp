@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import useLoading from "../../hooks/useLoading";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase/dbConfig";
-import { getUserProfileData } from "../../services/firebaseFunctions";
+import {
+  getUserProfileData,
+  updateLastLogin,
+} from "../../services/firebaseFunctions";
 import useAuthActions from "../../hooks/useAuthActions";
-
 import { SquareLoader } from "../../utils/loader";
 
 const ProtectedRoute = ({ children }) => {
@@ -19,12 +21,12 @@ const ProtectedRoute = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
+          await updateLastLogin(user?.uid);
           const userData = await getUserProfileData(user?.uid);
           setUser({
             ...userData,
             email: user.email,
             id: user.uid,
-            metaData: JSON.stringify(user.metadata),
           });
         } else {
           removeUser();
