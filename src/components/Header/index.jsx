@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import {
   HeaderWrapper,
+  MenuWrapper,
   ProfileDataWrapper,
   UserNameWrapper,
   UserProfileIcon,
 } from "./styled-component";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomButton } from "../ui/Button/styled-component";
-import { getUserProfileData, logOut } from "../../services/firebaseFunctions";
+import {
+  clearChat,
+  getUserProfileData,
+  logOut,
+} from "../../services/firebaseFunctions";
 import useAuthActions from "../../hooks/useAuthActions";
 import toast from "react-hot-toast";
-import { CircleUserRound, LogOut } from "lucide-react";
+import { CircleUserRound, LogOut, Trash2 } from "lucide-react";
+import { ModalSmall } from "../../utils/Modal";
 
 function Header({ user }) {
   const [chatUserData, setChatUserData] = useState("");
@@ -25,28 +31,35 @@ function Header({ user }) {
       navigate("/");
     } catch (error) {
       toast.error(error.message);
-      console.log(error);
+    }
+  };
+
+  const clearUserChat = async () => {
+    try {
+      await clearChat(user?.id);
+      toast.success("Chat deleted successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
     }
   };
 
   useEffect(() => {
     const getUser = async () => {
       const chatUserId =
-        user.id === "E2TQeZUj6KPn8soR5w8dxU0kIaG2"
+        user?.id === "E2TQeZUj6KPn8soR5w8dxU0kIaG2"
           ? "ciYFmIKAXZhlFXvmgxLvbVOtvmv2"
           : "E2TQeZUj6KPn8soR5w8dxU0kIaG2";
 
       const chatUser = await getUserProfileData(chatUserId);
       setChatUserData(chatUser);
-      console.log(chatUser);
     };
     getUser();
-  }, [user.id]);
+  }, [user?.id]);
 
   function convertTimestamp(timestamp) {
-    const date = new Date(timestamp.seconds * 1000); // Convert seconds to milliseconds
+    const date = new Date(timestamp.seconds * 1000);
 
-    // Formatting options
     const options = {
       year: "numeric",
       month: "short",
@@ -56,7 +69,6 @@ function Header({ user }) {
       hour12: true,
     };
 
-    // Format date in "Mar 05 2025 2:34 PM" style
     const formattedDate = date
       .toLocaleString("en-US", options)
       .replace(",", "");
@@ -82,9 +94,24 @@ function Header({ user }) {
         )}
       </UserNameWrapper>
       {user ? (
-        <CustomButton type="button" onClick={logoutUser}>
-          <LogOut size={18} />
-        </CustomButton>
+        <MenuWrapper>
+          <ModalSmall
+            trigger={
+              <CustomButton type="button">
+                <Trash2 size={18} />
+              </CustomButton>
+            }
+            content={{
+              title: "Clear chat?",
+              buttonText: "Yes",
+            }}
+            action={clearUserChat}
+          />
+
+          <CustomButton type="button" onClick={logoutUser}>
+            <LogOut size={18} />
+          </CustomButton>
+        </MenuWrapper>
       ) : (
         <Link to="/login">
           <CustomButton type="button">Login</CustomButton>

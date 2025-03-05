@@ -19,5 +19,5 @@ export const StyledButton = styled.button`
 
 export const CustomButton = styled(StyledButton)`
   height: inherit;
-  padding: 5px 15px;
+  padding: 5px 12px;
 `;

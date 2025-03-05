@@ -62,7 +62,7 @@ function DefaultPage() {
         />
         <Input
           type="text"
-          placeholder="Type Message..."
+          placeholder="Message..."
           name="message"
           onChange={handleInputChange}
           value={formData.message}

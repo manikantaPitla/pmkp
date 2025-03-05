@@ -36,6 +36,11 @@ export const ProfileDataWrapper = styled.div`
 
   p {
     font-size: 11px;
-    color: var(--border-shaded);
+    color: rgba(255, 255, 255, 0.5);
   }
+`;
+
+export const MenuWrapper = styled.div`
+  display: flex;
+  gap: 5px;
 `;

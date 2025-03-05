@@ -140,6 +140,15 @@ export const getUserChats = async (userId, setMessages) => {
   });
 };
 
+export const clearChat = async (userId) => {
+  console.log(userId);
+  const userChatDocRef = doc(db, "messages", userId);
+
+  await updateDoc(userChatDocRef, {
+    messageList: [],
+  });
+};
+
 // to be removed
 export const getUserByUniqueId = async (uniqueId) => {
   const usersRef = collection(db, "users");
