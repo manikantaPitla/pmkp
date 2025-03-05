@@ -128,14 +128,8 @@ export const getUserChats = async (userId, setMessages) => {
     if (messagesData.exists()) {
       setMessages(messagesData.data().messageList);
     }
-
     return unsubscribe;
   });
-
-  const userChatDoc = await getDoc(userChatDocRef);
-  if (userChatDoc.exists()) {
-    return userChatDoc.data();
-  }
 };
 
 // to be removed

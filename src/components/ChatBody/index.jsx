@@ -18,6 +18,15 @@ function ChatBody({ userId }) {
   const { setMessages } = useMessage();
 
   useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTo({
+        top: messageContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messageList]);
+
+  useEffect(() => {
     const getChats = async () => {
       try {
         startLoading();
@@ -34,15 +43,6 @@ function ChatBody({ userId }) {
     };
     getChats();
   }, [setMessages]);
-
-  useEffect(() => {
-    if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTo({
-        top: messageContainerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [messageList]);
 
   return (
     <>
