@@ -7,11 +7,17 @@ export const MessageContainer = styled.ul`
   flex-direction: column;
   padding: 20px 0;
   gap: 5px;
+
+  .no-messages {
+    text-align: center;
+    font-size: 13px;
+    color: var(--border-shaded);
+  }
 `;
 export const MessageItem = styled.li`
   display: flex;
   justify-content: ${(props) => (props.$sender ? "flex-end" : "flex-start")};
-  font-size: 14px;
+  font-size: 13px;
   color: #000;
 
   p {

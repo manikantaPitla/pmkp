@@ -61,7 +61,7 @@ function ChatBody({ userId }) {
             );
           })
         ) : (
-          "chat data"
+          <p className="no-messages">No Messages</p>
         )}
       </MessageContainer>
       <ChatInput />
