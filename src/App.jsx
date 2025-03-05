@@ -5,12 +5,20 @@ import DefaultPage from "./pages/DefaultPage";
 import Login from "./pages/Login";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuthRedirect from "./components/AuthRedirect";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<DefaultPage />} />
+        <Route
+          path="/"
+          element={
+            <AuthRedirect>
+              <DefaultPage />
+            </AuthRedirect>
+          }
+        />
         <Route
           path="/profile/:userId"
           element={
@@ -19,7 +27,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={
+            <AuthRedirect>
+              <Login />
+            </AuthRedirect>
+          }
+        />
       </Routes>
       <Toaster
         position="bottom-center"

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../components/MainLayout";
 import Header from "../../components/Header";
 import Input from "../../components/ui/Input";
@@ -6,9 +6,24 @@ import Button from "../../components/ui/Button";
 import { Form } from "./styled-component";
 import toast from "react-hot-toast";
 import { sendDirectMessage } from "../../services/firebaseFunctions";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase/dbConfig";
 
 function DefaultPage() {
   const [formData, setFormData] = useState({ uniqueId: "", message: "" });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate(`/profile/${user.uid}`);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleInputChange = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
