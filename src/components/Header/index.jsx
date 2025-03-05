@@ -1,11 +1,11 @@
 import React from "react";
-import { HeaderWrapper } from "./styled-component";
+import { HeaderWrapper, UserNameWrapper } from "./styled-component";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomButton } from "../ui/Button/styled-component";
 import { logOut } from "../../services/firebaseFunctions";
 import useAuthActions from "../../hooks/useAuthActions";
 import toast from "react-hot-toast";
-import { LogOut } from "lucide-react";
+import { CircleUserRound, LogOut } from "lucide-react";
 
 function Header({ user }) {
   const navigate = useNavigate();
@@ -21,9 +21,15 @@ function Header({ user }) {
       console.log(error);
     }
   };
+  console.log(user);
 
   return (
     <HeaderWrapper>
+      <UserNameWrapper>
+        <div>
+          <CircleUserRound size={34} strokeWidth={1} />
+        </div>
+      </UserNameWrapper>
       {user ? (
         <CustomButton type="button" onClick={logoutUser}>
           <LogOut size={18} />
