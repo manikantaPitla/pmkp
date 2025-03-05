@@ -8,15 +8,15 @@ import toast from "react-hot-toast";
 import { sendDirectMessage } from "../../services/firebaseFunctions";
 
 function DefaultPage() {
-  const [formData, setFormData] = useState({ id: "", message: "" });
+  const [formData, setFormData] = useState({ uniqueId: "", message: "" });
 
   const handleInputChange = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const validateForm = () => {
-    const { id, message } = formData;
+    const { uniqueId, message } = formData;
 
-    if (!id || (id !== "0928" && id !== "0830")) {
+    if (!uniqueId || (uniqueId !== "0928" && uniqueId !== "0830")) {
       toast.error("Please enter a valid unique ID");
       return false;
     }
@@ -34,9 +34,9 @@ function DefaultPage() {
 
     try {
       if (validateForm()) {
-        const { id, message } = formData;
+        const { uniqueId, message } = formData;
 
-        await toast.promise(sendDirectMessage(id, message), {
+        await toast.promise(sendDirectMessage(uniqueId, message), {
           loading: "Sending...",
           success: "Message sent successfully",
           error: (err) => err.message,
@@ -58,7 +58,7 @@ function DefaultPage() {
           placeholder="Sender Unique ID"
           name="id"
           onChange={handleInputChange}
-          value={formData.id}
+          value={formData.uniqueId}
         />
         <Input
           type="text"
