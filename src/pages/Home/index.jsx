@@ -9,7 +9,7 @@ function Home() {
   return (
     <MainLayout>
       <Header user={user} />
-      <ChatBody userId={user.id} />
+      <ChatBody userId={user?.id} />
     </MainLayout>
   );
 }

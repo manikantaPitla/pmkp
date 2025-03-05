@@ -13,3 +13,17 @@ export const SquareLoader = () => (
     ></l-squircle>
   </div>
 );
+
+export const FullPageLoader = () => (
+  <div
+    style={{
+      height: "100vh",
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    <SquareLoader />
+  </div>
+);

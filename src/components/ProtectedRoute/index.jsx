@@ -8,7 +8,7 @@ import {
   updateLastLogin,
 } from "../../services/firebaseFunctions";
 import useAuthActions from "../../hooks/useAuthActions";
-import { SquareLoader } from "../../utils/loader";
+import { FullPageLoader } from "../../utils/loader";
 
 const ProtectedRoute = ({ children }) => {
   const { loading, startLoading, stopLoading } = useLoading(true);
@@ -42,21 +42,7 @@ const ProtectedRoute = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          height: "100vh",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <SquareLoader />
-      </div>
-    );
-  }
+  if (loading) return <FullPageLoader />;
 
   return children;
 };

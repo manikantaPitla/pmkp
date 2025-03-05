@@ -1,24 +1,29 @@
 import { onAuthStateChanged } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase/dbConfig";
+import useLoading from "../../hooks/useLoading";
+import { FullPageLoader } from "../../utils/loader";
 
 function AuthRedirect({ children }) {
   const navigate = useNavigate();
-  const [isChecking, setIsChecking] = useState(true);
+  const { loading, startLoading, stopLoading } = useLoading(true);
 
   useEffect(() => {
+    startLoading();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        stopLoading();
         navigate(`/profile/${user.uid}`);
       }
-      setIsChecking(false);
+
+      stopLoading();
     });
 
     return () => unsubscribe();
   }, [navigate]);
 
-  if (isChecking) return null;
+  if (loading) return <FullPageLoader />;
 
   return children;
 }

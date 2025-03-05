@@ -60,7 +60,7 @@ function DefaultPage() {
         setFormData((prev) => ({ ...prev, message: "" }));
       }
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
     }
   };
 
