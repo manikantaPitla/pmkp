@@ -17,6 +17,8 @@ function AuthRedirect({ children }) {
         try {
           if (user) {
             navigate(`/profile/${user.uid}`);
+          } else {
+            stopLoading();
           }
         } catch (error) {
           stopLoading();
