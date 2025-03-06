@@ -129,15 +129,23 @@ export const sendAuthUserMessage = async (
   );
 };
 
-export const getUserChats = async (userId, setMessages) => {
+export const getUserChats = async (
+  userId,
+  setMessages,
+  startLoading,
+  stopLoading
+) => {
+  startLoading();
   const userChatDocRef = doc(db, "messages", userId);
 
   const unsubscribe = onSnapshot(userChatDocRef, (messagesData) => {
     if (messagesData.exists()) {
       setMessages(messagesData.data().messageList);
     }
-    return unsubscribe;
+
+    stopLoading();
   });
+  return unsubscribe;
 };
 
 export const clearChat = async (userId) => {
@@ -146,17 +154,4 @@ export const clearChat = async (userId) => {
   await updateDoc(userChatDocRef, {
     messageList: [],
   });
-};
-
-// to be removed
-export const getUserByUniqueId = async (uniqueId) => {
-  const usersRef = collection(db, "users");
-  const q = query(usersRef, where("uniqueId", "==", uniqueId));
-
-  const querySnapshot = await getDocs(q);
-  if (!querySnapshot.empty) {
-    return querySnapshot.docs[0].data(); // Return the first matching user
-  } else {
-    return null; // No user found
-  }
 };

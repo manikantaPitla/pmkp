@@ -29,16 +29,18 @@ function ChatBody({ userId }) {
   useEffect(() => {
     const getChats = async () => {
       try {
-        startLoading();
-        const unsubscribe = await getUserChats(userId, setMessages);
+        const unsubscribe = await getUserChats(
+          userId,
+          setMessages,
+          startLoading,
+          stopLoading
+        );
 
         return () => {
           if (unsubscribe) unsubscribe();
         };
       } catch (error) {
         console.error(error.message);
-      } finally {
-        stopLoading();
       }
     };
     getChats();
