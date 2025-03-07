@@ -12,11 +12,18 @@ export const InputWrapper = styled.form`
   padding: 0px 3px 0px 20px;
   font-size: 14px;
 
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
   input {
     flex: 1;
     background-color: transparent;
     outline: none;
     border: none;
+    height: inherit;
   }
 
   button {
