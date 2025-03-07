@@ -58,8 +58,6 @@ function Header({ user }) {
     getUser();
   }, [user?.id]);
 
-
-
   return (
     <HeaderWrapper>
       <UserNameWrapper>
@@ -92,9 +90,18 @@ function Header({ user }) {
             action={clearUserChat}
           />
 
-          <CustomButton type="button" onClick={logoutUser}>
-            <LogOut size={18} />
-          </CustomButton>
+          <ModalSmall
+            trigger={
+              <CustomButton type="button">
+                <LogOut size={18} />
+              </CustomButton>
+            }
+            content={{
+              title: "Logout?",
+              buttonText: "Yes",
+            }}
+            action={logoutUser}
+          />
         </MenuWrapper>
       ) : (
         <Link to="/login">

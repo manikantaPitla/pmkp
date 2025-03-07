@@ -57,6 +57,7 @@ function ChatInput({ replyTo, setReplyTo }) {
         </ReplyPreview>
       )}
       <input
+        autoComplete="off"
         type="text"
         placeholder="Message..."
         value={message}
