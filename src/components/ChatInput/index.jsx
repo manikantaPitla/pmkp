@@ -36,16 +36,18 @@ function ChatInput() {
 
   return (
     <InputWrapper onSubmit={handleSendMessage}>
-      <Input
+      <input
         type="text"
-        placeholder="Type message..."
+        placeholder="Message..."
         value={message}
         name="message"
         onChange={(e) => setMessage(e.target.value)}
       />
-      <Button type="submit" disabled={loading}>
-        <SendHorizontal strokeWidth={1.5} size={22} />
-      </Button>
+      {message.length > 0 && (
+        <button type="submit" disabled={loading}>
+          <SendHorizontal strokeWidth={1.5} size={22} />
+        </button>
+      )}
     </InputWrapper>
   );
 }
