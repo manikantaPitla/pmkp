@@ -4,12 +4,14 @@ import {
   LoaderWrapper,
   MessageContainer,
   MessageItem,
+  MessageTime,
 } from "./styled-component";
 import useLoading from "../../hooks/useLoading";
 import { SquareLoader } from "../../utils/loader";
 import ChatInput from "../ChatInput";
 import { useSelector } from "react-redux";
 import useMessage from "../../hooks/useMessage";
+import { getTimeFormat } from "../../utils/timeFormat";
 
 function ChatBody({ userId }) {
   const messageList = useSelector((state) => state.messages.messageList);
@@ -55,10 +57,13 @@ function ChatBody({ userId }) {
           </LoaderWrapper>
         ) : messageList.length > 0 ? (
           messageList.map((messageItem) => {
-            const { message, senderId, messageId } = messageItem;
+            const { message, senderId, messageId, timestamp } = messageItem;
             return (
               <MessageItem key={messageId} $sender={userId === senderId}>
-                <p>{message}</p>
+                <div>
+                  <p>{message}</p>
+                  <MessageTime>{getTimeFormat(timestamp)}</MessageTime>
+                </div>
               </MessageItem>
             );
           })

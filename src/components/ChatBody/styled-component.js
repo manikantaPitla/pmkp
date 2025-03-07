@@ -6,7 +6,7 @@ export const MessageContainer = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 20px 0;
-  gap: 5px;
+  gap: 10px;
 
   .no-messages {
     text-align: center;
@@ -16,21 +16,37 @@ export const MessageContainer = styled.ul`
 `;
 export const MessageItem = styled.li`
   display: flex;
-  justify-content: ${(props) => (props.$sender ? "flex-end" : "flex-start")};
-  font-size: 13px;
+  align-items: ${(props) => (props.$sender ? "flex-end" : "flex-start")};
+  flex-direction: column;
+  font-size: 12px;
   color: #000;
+  line-height: 15px;
+
+  div {
+    max-width: 85%;
+    border-radius: 3px;
+    padding: 5px 13px;
+    border-left: ${(props) =>
+      props.$sender ? "none" : "3px solid var(--border-shaded)"};
+    border-right: ${(props) => (props.$sender ? "3px solid white" : "none")};
+    display: flex;
+    flex-direction: column;
+    align-items: ${(props) => (props.$sender ? "flex-end" : "flex-start")};
+    /* border: 1px solid var(--border-shaded); */
+    /* background-color: ${(props) =>
+      props.$sender ? "var(--bg-shaded)" : ""}; */
+  }
 
   p {
-    max-width: 85%;
-    padding: 5px 13px;
-    border-radius: 25px;
     color: #fff;
-    border: 1px solid var(--border-shaded);
     width: fit-content;
     line-break: anywhere;
-
-    background-color: ${(props) => (props.$sender ? "var(--bg-shaded)" : "")};
   }
+`;
+
+export const MessageTime = styled.span`
+  font-size: 10px;
+  color: var(--bg-shaded) !important;
 `;
 
 export const LoaderWrapper = styled.div`
