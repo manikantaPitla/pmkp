@@ -1,18 +1,15 @@
 import {
   arrayUnion,
-  collection,
   doc,
   getDoc,
-  getDocs,
   onSnapshot,
-  query,
   serverTimestamp,
   updateDoc,
-  where,
   writeBatch,
 } from "firebase/firestore";
 import { auth, db } from "../firebase/dbConfig";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { mId, pId } from "../utils/userIdentity";
 
 export const loginUser = async (email, password) => {
   const userData = await signInWithEmailAndPassword(auth, email, password);
@@ -50,7 +47,8 @@ const sendMessageUtitlity = async (
   receiverId,
   message,
   addNewMessage,
-  updateMessage
+  updateMessage,
+  replyTo
 ) => {
   const messageObj = {
     messageId: `${senderId}_${Date.now()}`,
@@ -59,6 +57,13 @@ const sendMessageUtitlity = async (
     message,
     timestamp: Date.now(),
     media: null,
+    ...(replyTo && {
+      replyTo: {
+        messageId: replyTo.messageId,
+        message: replyTo.message,
+        senderId: replyTo.senderId,
+      },
+    }),
   };
 
   if (isAuthMessage) {
@@ -99,11 +104,8 @@ const sendMessageUtitlity = async (
 };
 
 export const sendDirectMessage = async (uniqueId, message) => {
-  const p_id = "E2TQeZUj6KPn8soR5w8dxU0kIaG2";
-  const m_id = "ciYFmIKAXZhlFXvmgxLvbVOtvmv2";
-
-  const senderId = uniqueId === "0928" ? p_id : m_id;
-  const receiverId = uniqueId === "0928" ? m_id : p_id;
+  const senderId = uniqueId === "0928" ? pId : mId;
+  const receiverId = uniqueId === "0928" ? mId : pId;
 
   await sendMessageUtitlity(senderId, receiverId, message);
 };
@@ -112,12 +114,10 @@ export const sendAuthUserMessage = async (
   senderId,
   message,
   addNewMessage,
-  updateMessage
+  updateMessage,
+  replyTo
 ) => {
-  const receiverId =
-    senderId === "E2TQeZUj6KPn8soR5w8dxU0kIaG2"
-      ? "ciYFmIKAXZhlFXvmgxLvbVOtvmv2"
-      : "E2TQeZUj6KPn8soR5w8dxU0kIaG2";
+  const receiverId = senderId === pId ? mId : pId;
 
   await sendMessageUtitlity(
     true,
@@ -125,7 +125,8 @@ export const sendAuthUserMessage = async (
     receiverId,
     message,
     addNewMessage,
-    updateMessage
+    updateMessage,
+    replyTo
   );
 };
 

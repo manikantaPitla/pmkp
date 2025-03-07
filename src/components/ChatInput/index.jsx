@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { InputWrapper } from "./styled-component";
-import Input from "../ui/Input";
-import Button from "../ui/Button";
-import { SendHorizontal } from "lucide-react";
+import { InputWrapper, ReplyPreview } from "./styled-component";
+import { SendHorizontal, X } from "lucide-react";
 import { sendAuthUserMessage } from "../../services/firebaseFunctions";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import useMessage from "../../hooks/useMessage";
 import useLoading from "../../hooks/useLoading";
+import { minimizeText } from "../../utils/textUtil";
+import { pId } from "../../utils/userIdentity";
 
-function ChatInput() {
+function ChatInput({ replyTo, setReplyTo }) {
   const [message, setMessage] = useState("");
   const user = useSelector((state) => state.auth.user);
   const { addNewMessage, updateMessage } = useMessage();
@@ -24,9 +24,11 @@ function ChatInput() {
         user?.id,
         message,
         addNewMessage,
-        updateMessage
+        updateMessage,
+        replyTo
       );
       setMessage("");
+      setReplyTo(null);
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -36,6 +38,24 @@ function ChatInput() {
 
   return (
     <InputWrapper onSubmit={handleSendMessage}>
+      {replyTo && (
+        <ReplyPreview>
+          <div>
+            <p className="user-reply-text">
+              Replying to{" "}
+              {user?.id === replyTo.senderId
+                ? "yourself"
+                : replyTo.senderId === pId
+                ? "Pranu"
+                : "Mani"}
+            </p>
+            <p>{minimizeText(replyTo.message)}</p>
+          </div>
+          <button onClick={() => setReplyTo(null)}>
+            <X size={16} />
+          </button>
+        </ReplyPreview>
+      )}
       <input
         type="text"
         placeholder="Message..."

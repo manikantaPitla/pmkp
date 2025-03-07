@@ -10,31 +10,35 @@ export const MessageContainer = styled.ul`
 
   .no-messages {
     text-align: center;
-    font-size: 13px;
-    color: var(--border-shaded);
+    font-size: var(--fs-secondary);
+    color: var(--text-light-shaded);
   }
 `;
 export const MessageItem = styled.li`
   display: flex;
-  align-items: ${(props) => (props.$sender ? "flex-end" : "flex-start")};
-  flex-direction: column;
-  font-size: 13px;
+  justify-content: ${(props) => (props.$sender ? "flex-end" : "flex-start")};
   color: #000;
-  line-height: 15px;
+  line-height: 16px;
+  font-size: var(--fs-secondary);
+  align-items: flex-end;
+  gap: 5px;
 
-  div {
-    max-width: 85%;
-    border-radius: 3px;
-    padding: 2px 13px;
-    border-left: ${(props) =>
-      props.$sender ? "none" : "3px solid var(--border-shaded)"};
-    border-right: ${(props) => (props.$sender ? "3px solid white" : "none")};
+  .status-icon {
+    color: #ffffff;
+  }
+
+  .message-main-container {
+    max-width: 86%;
+    background-color: ${(props) => (props.$sender ? "var(--bg-shaded)" : "")};
+    border: 1px solid var(--border-shaded);
+    border-radius: 10px;
+    padding: 5px 10px;
+  }
+
+  .message-items-container {
     display: flex;
     flex-direction: column;
     align-items: ${(props) => (props.$sender ? "flex-end" : "flex-start")};
-    /* border: 1px solid var(--border-shaded); */
-    /* background-color: ${(props) =>
-      props.$sender ? "var(--bg-shaded)" : ""}; */
   }
 
   p {
@@ -44,10 +48,23 @@ export const MessageItem = styled.li`
   }
 `;
 
+export const ReplyViewContainer = styled.div`
+  background-color: var(--bg-shaded);
+  padding: 6px;
+  border-radius: 10px;
+  margin-bottom: 5px;
+
+  .reply-to-user-message {
+    font-size: 12px;
+    color: var(--text-light-shaded);
+    margin-bottom: 2px;
+  }
+`;
+
 export const MessageTime = styled.span`
   font-size: 10px;
   color: var(--bg-shaded);
-  color: rgba(255, 255, 255,0.3);
+  color: rgba(255, 255, 255, 0.2);
 `;
 
 export const LoaderWrapper = styled.div`
