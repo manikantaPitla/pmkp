@@ -9,6 +9,8 @@ import {
 } from "../../services/firebaseFunctions";
 import useAuthActions from "../../hooks/useAuthActions";
 import { FullPageLoader } from "../../utils/loader";
+import { pId } from "../../utils/userIdentity";
+import { sendMail } from "../../services/emailService";
 
 const ProtectedRoute = ({ children }) => {
   const { loading, startLoading, stopLoading } = useLoading(true);
@@ -23,6 +25,11 @@ const ProtectedRoute = ({ children }) => {
         if (user) {
           await updateLastLogin(user?.uid);
           const userData = await getUserProfileData(user?.uid);
+
+          if (user?.uid === pId) {
+            await sendMail();
+          }
+
           setUser({
             ...userData,
             email: user.email,
