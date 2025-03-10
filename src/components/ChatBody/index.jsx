@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getUserChats, getOlderMessages } from "../../services/firebaseFunctions";
+import {
+  getUserChats,
+  getOlderMessages,
+} from "../../services/firebaseFunctions";
 import {
   LoaderWrapper,
   MessageContainer,
@@ -24,7 +27,6 @@ function ChatBody({ userId }) {
   const { loading, startLoading, stopLoading } = useLoading(true);
   const { setMessages, addOlderMessages } = useMessage();
 
-  // Track the first message ID for pagination
   const [oldestMessageId, setOldestMessageId] = useState(null);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [loadingOlderMessages, setLoadingOlderMessages] = useState(false);
@@ -35,7 +37,6 @@ function ChatBody({ userId }) {
     }
   }, [messageList]);
 
-  // 📌 Load only the latest few messages initially
   useEffect(() => {
     const getChats = async () => {
       try {
@@ -55,27 +56,30 @@ function ChatBody({ userId }) {
     getChats();
   }, [setMessages]);
 
-  // 📌 Automatically scroll to bottom only on the first load
   useEffect(() => {
     if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+      messageContainerRef.current.scrollTop =
+        messageContainerRef.current.scrollHeight;
     }
   }, [messageList]);
 
-  // 📌 Handle infinite scrolling to load older messages
   const handleScroll = async () => {
-    if (!messageContainerRef.current || loadingOlderMessages || !hasMoreMessages) return;
+    if (
+      !messageContainerRef.current ||
+      loadingOlderMessages ||
+      !hasMoreMessages
+    )
+      return;
 
     const { scrollTop } = messageContainerRef.current;
 
-    // Check if user scrolled to the top
     if (scrollTop === 0 && oldestMessageId) {
       setLoadingOlderMessages(true);
       try {
         const olderMessages = await getOlderMessages(userId, oldestMessageId);
         if (olderMessages.length > 0) {
           addOlderMessages(olderMessages);
-          setOldestMessageId(olderMessages[0].messageId); // Update first message ID
+          setOldestMessageId(olderMessages[0].messageId);
         } else {
           setHasMoreMessages(false);
         }
@@ -96,15 +100,19 @@ function ChatBody({ userId }) {
           </LoaderWrapper>
         ) : messageList.length > 0 ? (
           messageList.map((messageItem) => {
-            const { message, senderId, messageId, timestamp, replyTo, status } = messageItem;
+            const { message, senderId, messageId, timestamp, replyTo, status } =
+              messageItem;
             return (
               <MessageItem key={messageId} $sender={userId === senderId}>
                 <div className="message-main-container">
                   {replyTo && (
                     <ReplyViewContainer
                       onClick={() => {
-                        const replyElement = document.getElementById(replyTo.messageId);
-                        if (replyElement) replyElement.scrollIntoView({ behavior: "smooth" });
+                        const replyElement = document.getElementById(
+                          replyTo.messageId
+                        );
+                        if (replyElement)
+                          replyElement.scrollIntoView({ behavior: "smooth" });
                       }}
                     >
                       <p className="reply-to-user-message">
@@ -135,7 +143,6 @@ function ChatBody({ userId }) {
           <p className="no-messages">No Messages</p>
         )}
 
-        {/* 📌 Show loading indicator when fetching old messages */}
         {loadingOlderMessages && (
           <LoaderWrapper>
             <SquareLoader />

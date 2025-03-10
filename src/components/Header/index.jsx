@@ -6,7 +6,7 @@ import {
   UserNameWrapper,
   UserProfileIcon,
 } from "./styled-component";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CustomButton } from "../ui/Button/styled-component";
 import {
   clearChat,
@@ -18,9 +18,14 @@ import toast from "react-hot-toast";
 import { CircleUserRound, LogOut, Trash2 } from "lucide-react";
 import { ModalSmall } from "../../utils/Modal";
 import { getLastLoginTimeFormat } from "../../utils/timeFormat";
+import useLoading from "../../hooks/useLoading";
+import { mId, pId } from "../../utils/userIdentity";
+import { ProfileSkeleton } from "../../utils/Skeleton";
 
 function Header({ user }) {
   const [chatUserData, setChatUserData] = useState("");
+
+  const { loading, startLoading, stopLoading } = useLoading(true);
 
   const navigate = useNavigate();
   const { removeUser } = useAuthActions();
@@ -32,6 +37,7 @@ function Header({ user }) {
       navigate("/");
     } catch (error) {
       toast.error(error.message);
+    } finally {
     }
   };
 
@@ -47,13 +53,16 @@ function Header({ user }) {
 
   useEffect(() => {
     const getUser = async () => {
-      const chatUserId =
-        user?.id === "E2TQeZUj6KPn8soR5w8dxU0kIaG2"
-          ? "ciYFmIKAXZhlFXvmgxLvbVOtvmv2"
-          : "E2TQeZUj6KPn8soR5w8dxU0kIaG2";
+      try {
+        startLoading();
+        const chatUserId = user?.id === pId ? mId : pId;
 
-      const chatUser = await getUserProfileData(chatUserId);
-      setChatUserData(chatUser);
+        const chatUser = await getUserProfileData(chatUserId);
+        setChatUserData(chatUser);
+      } catch (error) {
+      } finally {
+        stopLoading();
+      }
     };
     getUser();
   }, [user?.id]);
@@ -66,12 +75,18 @@ function Header({ user }) {
             <UserProfileIcon>
               <CircleUserRound size={34} strokeWidth={1} />
             </UserProfileIcon>
-            {chatUserData && (
-              <ProfileDataWrapper>
-                <h1>{chatUserData.name}</h1>
-                <p>{getLastLoginTimeFormat(chatUserData.lastLogin)}</p>
-              </ProfileDataWrapper>
-            )}
+            <ProfileDataWrapper>
+              {loading ? (
+                <ProfileSkeleton />
+              ) : (
+                chatUserData && (
+                  <>
+                    <h1>{chatUserData.name}</h1>
+                    <p>{getLastLoginTimeFormat(chatUserData.lastLogin)}</p>
+                  </>
+                )
+              )}
+            </ProfileDataWrapper>
           </>
         )}
       </UserNameWrapper>

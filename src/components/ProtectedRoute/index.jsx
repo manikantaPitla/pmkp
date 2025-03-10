@@ -23,7 +23,6 @@ const ProtectedRoute = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
-          console.log(navigator);
           await updateLastLogin(user?.uid);
           const userData = await getUserProfileData(user?.uid);
 
