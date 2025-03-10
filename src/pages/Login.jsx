@@ -51,6 +51,8 @@ function Login() {
                 return "Check your network connection";
               case "auth/invalid-credential":
                 return "Invalid email or password";
+              case "auth/too-many-requests":
+                return "Too many requests wait for some time";
               default:
                 return "Something went wrong!";
             }
