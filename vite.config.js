@@ -11,7 +11,7 @@ export default defineConfig({
       manifest: {
         name: "PM KP",
         short_name: "PM KP",
-        theme_color: "#ffffff",
+        theme_color: "#000000",
         icons: [
           {
             src: "pwa-64x64.png",
