@@ -5,7 +5,6 @@ export const HeaderWrapper = styled.nav`
   justify-content: space-between;
   align-items: center;
   gap: 5px;
-  /* background-color: green; */
 `;
 
 export const UserNameWrapper = styled.div`

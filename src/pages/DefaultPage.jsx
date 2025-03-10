@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../components/MainLayout";
-import Header from "../../components/Header";
-import Input from "../../components/ui/Input";
-import Button from "../../components/ui/Button";
-import { Form } from "./styled-component";
+import MainLayout from "../components/MainLayout";
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
 import toast from "react-hot-toast";
-import { sendDirectMessage } from "../../services/firebaseFunctions";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { sendDirectMessage } from "../services/firebaseFunctions";
+import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase/dbConfig";
+import { auth } from "../firebase/dbConfig";
+import { Divider, FormContainer } from "../styles/customStyles";
 
 function DefaultPage() {
   const [formData, setFormData] = useState({ uniqueId: "", message: "" });
@@ -66,8 +64,7 @@ function DefaultPage() {
 
   return (
     <MainLayout>
-      <Header />
-      <Form onSubmit={handleSubmit}>
+      <FormContainer onSubmit={handleSubmit}>
         <Input
           type="text"
           placeholder="Sender Unique ID"
@@ -84,7 +81,16 @@ function DefaultPage() {
         />
 
         <Button type="submit">Send</Button>
-      </Form>
+      </FormContainer>
+      <Divider>
+        <hr />
+        OR
+        <hr />
+      </Divider>
+
+      <Link to="/login">
+        <Button type="button">Login</Button>
+      </Link>
     </MainLayout>
   );
 }

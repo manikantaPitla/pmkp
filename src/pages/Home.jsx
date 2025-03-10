@@ -1,16 +1,16 @@
 import React from "react";
-import MainLayout from "../../components/MainLayout";
-import Header from "../../components/Header";
-import ChatBody from "../../components/ChatBody";
+import { CustomMainLayout } from "../components/MainLayout";
+import Header from "../components/Header";
+import ChatBody from "../components/ChatBody";
 import { useSelector } from "react-redux";
 
 function Home() {
   const user = useSelector((state) => state.auth.user);
   return (
-    <MainLayout>
+    <CustomMainLayout>
       <Header user={user} />
       <ChatBody userId={user?.id} />
-    </MainLayout>
+    </CustomMainLayout>
   );
 }
 

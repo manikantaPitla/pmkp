@@ -1,5 +1,9 @@
 import React from "react";
-import { MainWrapper, SharedContainer } from "./styled-component";
+import {
+  CustomMainWrapperStyles,
+  MainWrapper,
+  SharedContainer,
+} from "./styled-component";
 
 function MainLayout({ children }) {
   return (
@@ -8,5 +12,11 @@ function MainLayout({ children }) {
     </MainWrapper>
   );
 }
+
+export const CustomMainLayout = ({ children }) => (
+  <CustomMainWrapperStyles>
+    <SharedContainer>{children}</SharedContainer>
+  </CustomMainWrapperStyles>
+);
 
 export default MainLayout;

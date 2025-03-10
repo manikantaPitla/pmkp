@@ -37,12 +37,12 @@ function App() {
         />
       </Routes>
       <Toaster
-        position="bottom-center"
+        position="top-center"
         toastOptions={{
           style: {
             borderRadius: "10px",
             padding: "6px 10px",
-            fontSize: "14px",
+            fontSize: "13px",
           },
         }}
       />

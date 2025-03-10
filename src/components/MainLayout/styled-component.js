@@ -5,6 +5,11 @@ export const MainWrapper = styled.main`
   width: 100vw;
   display: flex;
   justify-content: center;
+  align-items: center;
+`;
+
+export const CustomMainWrapperStyles = styled(MainWrapper)`
+  align-items: normal;
 `;
 
 export const SharedContainer = styled.div`
@@ -12,5 +17,5 @@ export const SharedContainer = styled.div`
   padding: 20px 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
 `;

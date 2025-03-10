@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
-import MainLayout from "../../components/MainLayout";
-import { Form, HeaderFlex } from "./styled-component";
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
+import MainLayout from "../components/MainLayout";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../../services/firebaseFunctions";
+import { loginUser } from "../services/firebaseFunctions";
 import toast from "react-hot-toast";
-import { CustomButton } from "../../components/ui/Button/styled-component";
+import { Divider, FormContainer } from "../styles/customStyles";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -20,12 +19,12 @@ function Login() {
     const { email, password } = formData;
 
     if (!email) {
-      toast.error("Please enter Email");
+      toast.error("Please enter email");
       return false;
     }
 
     if (!password) {
-      toast.error("Please enter Password");
+      toast.error("Please enter password");
       return false;
     }
 
@@ -51,7 +50,7 @@ function Login() {
               case "auth/network-request-failed":
                 return "Check your network connection";
               case "auth/invalid-credential":
-                return "Invalid Email or Password";
+                return "Invalid email or password";
               default:
                 return "Something went wrong!";
             }
@@ -69,18 +68,14 @@ function Login() {
 
   return (
     <MainLayout>
-      <HeaderFlex>
-        <Link to="/">
-          <CustomButton type="button">Back</CustomButton>
-        </Link>
-      </HeaderFlex>
-      <Form onSubmit={handleSubmit}>
+      <FormContainer onSubmit={handleSubmit}>
         <Input
           type="email"
           placeholder="Email"
           name="email"
           onChange={handleInputChange}
           value={formData.email}
+          autoComplete="true"
         />
         <Input
           type="password"
@@ -91,7 +86,15 @@ function Login() {
         />
 
         <Button type="submit">Login</Button>
-      </Form>
+      </FormContainer>
+      <Divider>
+        <hr />
+        ❤️
+        <hr />
+      </Divider>
+      <Link to="/">
+        <Button type="button">Go Back</Button>
+      </Link>
     </MainLayout>
   );
 }

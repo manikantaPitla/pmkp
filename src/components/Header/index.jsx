@@ -75,39 +75,33 @@ function Header({ user }) {
           </>
         )}
       </UserNameWrapper>
-      {user ? (
-        <MenuWrapper>
-          <ModalSmall
-            trigger={
-              <CustomButton type="button">
-                <Trash2 size={18} />
-              </CustomButton>
-            }
-            content={{
-              title: "Clear chat?",
-              buttonText: "Yes",
-            }}
-            action={clearUserChat}
-          />
+      <MenuWrapper>
+        <ModalSmall
+          trigger={
+            <CustomButton type="button">
+              <Trash2 size={18} />
+            </CustomButton>
+          }
+          content={{
+            title: "Clear chat?",
+            buttonText: "Yes",
+          }}
+          action={clearUserChat}
+        />
 
-          <ModalSmall
-            trigger={
-              <CustomButton type="button">
-                <LogOut size={18} />
-              </CustomButton>
-            }
-            content={{
-              title: "Logout?",
-              buttonText: "Yes",
-            }}
-            action={logoutUser}
-          />
-        </MenuWrapper>
-      ) : (
-        <Link to="/login">
-          <CustomButton type="button">Login</CustomButton>
-        </Link>
-      )}
+        <ModalSmall
+          trigger={
+            <CustomButton type="button">
+              <LogOut size={18} />
+            </CustomButton>
+          }
+          content={{
+            title: "Logout?",
+            buttonText: "Yes",
+          }}
+          action={logoutUser}
+        />
+      </MenuWrapper>
     </HeaderWrapper>
   );
 }

@@ -5,11 +5,8 @@ import Popup from "reactjs-popup";
 
 export const ModalSmallCustomStyles = styled(Popup)`
   &-content {
-    width: 250px;
-    height: 100px;
-    box-shadow: 0px 1px 1px -1px rgba(255, 255, 255, 0.1),
-      0px 1px 1px 0px rgba(255, 255, 255, 0.1),
-      0px 1px 2px 0px rgba(255, 255, 255, 0.1);
+    width: 300px;
+    height: 130px;
     border-radius: 15px;
     background-color: #ffffff;
     border: none;
@@ -24,7 +21,7 @@ export const ModalBody = styled.div`
   justify-content: center;
   align-items: center;
   gap: 20px;
-  padding: 15px;
+  padding: 10px;
 `;
 
 export const ModalTitle = styled.p`
@@ -45,8 +42,8 @@ export const ModalButtonWrapper = styled.div`
     border: 1px solid #000000;
 
     &:hover {
-        background-color: #000000;
-        color: #ffffff;
+      background-color: #000000;
+      color: #ffffff;
     }
 
     &:nth-child(1) {
