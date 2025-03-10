@@ -1,6 +1,7 @@
 import React from "react";
 import {
   CustomMainWrapperStyles,
+  CustomSharedContainer,
   MainWrapper,
   SharedContainer,
 } from "./styled-component";
@@ -15,7 +16,7 @@ function MainLayout({ children }) {
 
 export const CustomMainLayout = ({ children }) => (
   <CustomMainWrapperStyles>
-    <SharedContainer>{children}</SharedContainer>
+    <CustomSharedContainer>{children}</CustomSharedContainer>
   </CustomMainWrapperStyles>
 );
 

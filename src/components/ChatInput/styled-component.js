@@ -5,7 +5,7 @@ export const InputWrapper = styled.form`
   align-items: center;
   gap: 5px;
   position: relative;
-
+  margin: 10px 10px 20px;
   height: 48px;
   border-radius: 25px;
   border: 1px solid var(--border-shaded);

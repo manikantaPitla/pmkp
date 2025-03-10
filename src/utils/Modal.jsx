@@ -6,29 +6,31 @@ import {
   ModalSmallCustomStyles,
   ModalTitle,
 } from "./styled-component";
-import { CustomButton } from "../components/ui/Button/styled-component";
+import Button from "../components/ui/Button";
+import { StyledButton } from "../components/ui/Button/styled-component";
 
 export function ModalSmall(props) {
   const { children, content, action } = props;
   const { title, buttonText } = content;
 
   return (
-    <ModalSmallCustomStyles modal {...props} closeOnDocumentClick={false}>
+    <ModalSmallCustomStyles modal {...props} closeOnDocumentClick>
       {(close) => (
         <ModalBody>
           <ModalTitle>{title}</ModalTitle>
           <ModalButtonWrapper>
-            <CustomButton $outline onClick={close}>
+            <StyledButton type="button" $outline onClick={close}>
               Cancel
-            </CustomButton>
-            <CustomButton
+            </StyledButton>
+            <StyledButton
+              type="button"
               onClick={() => {
                 action();
                 close();
               }}
             >
               {buttonText}
-            </CustomButton>
+            </StyledButton>
           </ModalButtonWrapper>
           {children}
         </ModalBody>

@@ -19,3 +19,8 @@ export const SharedContainer = styled.div`
   flex-direction: column;
   gap: 20px;
 `;
+
+export const CustomSharedContainer = styled(SharedContainer)`
+  padding: 0px;
+  gap: 5px;
+`;
