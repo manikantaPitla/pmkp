@@ -1,48 +1,39 @@
 import {
   arrayUnion,
+  collection,
   doc,
   getDoc,
-  onSnapshot,
-  serverTimestamp,
-  updateDoc,
   writeBatch,
+  updateDoc,
+  setDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { auth, db } from "../firebase/dbConfig";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { mId, pId } from "../utils/userIdentity";
 
+const messagesCollection = collection(db, "messages");
+
 export const loginUser = async (email, password) => {
-  const userData = await signInWithEmailAndPassword(auth, email, password);
-  return userData;
+  return await signInWithEmailAndPassword(auth, email, password);
 };
 
 export const logOut = async () => {
-  try {
-    await signOut(auth);
-  } catch (error) {
-    console.error("Sign-out error:", error);
-  }
+  await signOut(auth);
 };
 
 export const getUserProfileData = async (userId) => {
-  const docRef = doc(db, "users", userId);
-  const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) {
-    return docSnap.data();
-  } else {
-    throw new Error("Couldn't find user");
-  }
+  const docSnap = await getDoc(doc(db, "users", userId));
+  if (docSnap.exists()) return docSnap.data();
+  throw new Error("Couldn't find user");
 };
 
 export const updateLastLogin = async (userId) => {
-  const docRef = doc(db, "users", userId);
-  await updateDoc(docRef, {
-    lastLogin: serverTimestamp(),
-  });
+  await updateDoc(doc(db, "users", userId), { lastLogin: serverTimestamp() });
 };
 
-const sendMessageUtitlity = async (
-  isAuthMessage = false,
+const sendMessageUtility = async (
+  isAuthMessage,
   senderId,
   receiverId,
   message,
@@ -57,57 +48,40 @@ const sendMessageUtitlity = async (
     message,
     timestamp: Date.now(),
     media: null,
-    ...(replyTo && {
-      replyTo: {
-        messageId: replyTo.messageId,
-        message: replyTo.message,
-        senderId: replyTo.senderId,
-      },
-    }),
+    ...(replyTo && { replyTo: { ...replyTo } }),
   };
 
-  if (isAuthMessage) {
-    const localMessageObj = {
-      ...messageObj,
-      status: "sending",
-    };
-
-    addNewMessage(localMessageObj);
-  }
-
-  const senderMessagesDocRef = doc(db, "messages", senderId);
-  const receiverMessagesDocRef = doc(db, "messages", receiverId);
+  if (isAuthMessage) addNewMessage({ ...messageObj, status: "sending" });
 
   const batch = writeBatch(db);
-
-  batch.update(
-    senderMessagesDocRef,
-    {
-      messageList: arrayUnion(messageObj),
-    },
+  batch.set(
+    doc(db, "messages", senderId),
+    { messageList: arrayUnion(messageObj) },
     { merge: true }
   );
-
-  batch.update(
-    receiverMessagesDocRef,
-    {
-      messageList: arrayUnion(messageObj),
-    },
+  batch.set(
+    doc(db, "messages", receiverId),
+    { messageList: arrayUnion(messageObj) },
     { merge: true }
   );
 
   await batch.commit();
-
-  if (isAuthMessage) {
+  if (isAuthMessage)
     updateMessage({ messageId: messageObj.messageId, status: "sent" });
-  }
 };
 
 export const sendDirectMessage = async (uniqueId, message) => {
   const senderId = uniqueId === "0928" ? pId : mId;
   const receiverId = uniqueId === "0928" ? mId : pId;
-
-  await sendMessageUtitlity(senderId, receiverId, message);
+  await sendMessageUtility(
+    false,
+    senderId,
+    receiverId,
+    message,
+    () => {},
+    () => {},
+    null
+  );
 };
 
 export const sendAuthUserMessage = async (
@@ -118,8 +92,7 @@ export const sendAuthUserMessage = async (
   replyTo
 ) => {
   const receiverId = senderId === pId ? mId : pId;
-
-  await sendMessageUtitlity(
+  await sendMessageUtility(
     true,
     senderId,
     receiverId,
@@ -137,22 +110,34 @@ export const getUserChats = async (
   stopLoading
 ) => {
   startLoading();
-  const userChatDocRef = doc(db, "messages", userId);
-
-  const unsubscribe = onSnapshot(userChatDocRef, (messagesData) => {
-    if (messagesData.exists()) {
-      setMessages(messagesData.data().messageList);
-    }
-
+  try {
+    const userChatDocSnap = await getDoc(doc(db, "messages", userId));
+    setMessages(
+      userChatDocSnap.exists() ? userChatDocSnap.data().messageList || [] : []
+    );
+  } catch (error) {
+    console.error("Error fetching user chats:", error);
+  } finally {
     stopLoading();
-  });
-  return unsubscribe;
+  }
+};
+
+export const getOlderMessages = async (userId, lastTimestamp) => {
+  try {
+    const userChatDocSnap = await getDoc(doc(db, "messages", userId));
+    if (!userChatDocSnap.exists()) return [];
+
+    return userChatDocSnap
+      .data()
+      .messageList.filter((msg) => msg.timestamp < lastTimestamp)
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, 20);
+  } catch (error) {
+    console.error("Error fetching older messages:", error);
+    return [];
+  }
 };
 
 export const clearChat = async (userId) => {
-  const userChatDocRef = doc(db, "messages", userId);
-
-  await updateDoc(userChatDocRef, {
-    messageList: [],
-  });
+  await updateDoc(doc(db, "messages", userId), { messageList: [] });
 };
