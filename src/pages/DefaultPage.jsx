@@ -68,7 +68,7 @@ function DefaultPage() {
         <Input
           type="text"
           placeholder="Sender Unique ID"
-          name="id"
+          name="uniqueId"
           onChange={handleInputChange}
           value={formData.uniqueId}
         />
