@@ -21,16 +21,18 @@ function ChatInput({ replyTo, setReplyTo }) {
     if (!message) return;
     startLoading();
     try {
+      const tempMessage = message;
+      setMessage("");
+      inputRef.current?.focus();
+
       await sendAuthUserMessage(
         user?.id,
-        message,
+        tempMessage,
         addNewMessage,
         updateMessage,
         replyTo
       );
-      setMessage("");
       setReplyTo(null);
-      inputRef.current?.focus();
     } catch (error) {
       toast.error(error.message);
     } finally {
