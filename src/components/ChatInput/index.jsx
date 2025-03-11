@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { InputWrapper, ReplyPreview } from "./styled-component";
 import { SendHorizontal, X } from "lucide-react";
 import { sendAuthUserMessage } from "../../services/firebaseFunctions";
