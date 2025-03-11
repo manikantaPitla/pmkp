@@ -12,6 +12,7 @@ export default defineConfig({
         name: "PM KP",
         short_name: "PM KP",
         theme_color: "#000000",
+        background_color: "#000000",
         icons: [
           {
             src: "pwa-64x64.png",

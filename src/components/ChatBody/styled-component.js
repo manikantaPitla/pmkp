@@ -32,7 +32,7 @@ export const MessageItem = styled.li`
     background-color: ${(props) => (props.$sender ? "var(--bg-shaded)" : "")};
     border: 1px solid var(--border-shaded);
     border-radius: 10px;
-    padding: 5px 10px;
+    padding: 6px;
   }
 
   .message-items-container {
@@ -50,7 +50,7 @@ export const MessageItem = styled.li`
 
 export const ReplyViewContainer = styled.div`
   background-color: var(--bg-shaded);
-  padding: 6px;
+  padding: 8px 10px;
   border-radius: 10px;
   margin-bottom: 5px;
 

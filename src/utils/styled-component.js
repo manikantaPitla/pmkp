@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import Popup from "reactjs-popup";
 
-// ************** Small Modal Styles ******************
-
 export const ModalSmallCustomStyles = styled(Popup)`
+  &-overlay {
+    backdrop-filter: blur(3px);
+  }
+
   &-content {
     width: 280px;
     height: 120px;
@@ -36,7 +38,6 @@ export const ModalButtonWrapper = styled.div`
     background-color: #000000;
     font-weight: 500;
     font-size: 13px;
-    /* padding: 10px 15px; */
     width: 100px;
     color: #ffffff;
     border: 1px solid #000000;
