@@ -14,6 +14,7 @@ function ChatInput({ replyTo, setReplyTo }) {
   const user = useSelector((state) => state.auth.user);
   const { addNewMessage, updateMessage } = useMessage();
   const { loading, startLoading, stopLoading } = useLoading(false);
+  const inputRef = useRef(null);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -29,6 +30,7 @@ function ChatInput({ replyTo, setReplyTo }) {
       );
       setMessage("");
       setReplyTo(null);
+      inputRef.current?.focus();
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -57,6 +59,7 @@ function ChatInput({ replyTo, setReplyTo }) {
         </ReplyPreview>
       )}
       <input
+        ref={inputRef}
         autoComplete="off"
         type="text"
         placeholder="Message..."

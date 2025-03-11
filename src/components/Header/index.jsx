@@ -32,8 +32,8 @@ function Header({ user }) {
   const logoutUser = async () => {
     try {
       await logOut();
-      toast.success("Logged out successfully");
       removeUser();
+      toast.success("Logged out successfully");
       navigate("/");
     } catch (error) {
       toast.error(error.message);
