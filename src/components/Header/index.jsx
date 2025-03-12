@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   HeaderWrapper,
   MenuWrapper,
@@ -23,13 +23,13 @@ import { mId, pId } from "../../utils/userIdentity";
 import { ProfileSkeleton } from "../../utils/Skeleton";
 
 function Header({ user }) {
-  const [chatUserData, setChatUserData] = useState("");
-
+  const [chatUserData, setChatUserData] = useState(null);
   const { loading, startLoading, stopLoading } = useLoading(true);
 
   const navigate = useNavigate();
   const { removeUser } = useAuthActions();
-  const logoutUser = async () => {
+
+  const logoutUser = useCallback(async () => {
     try {
       await logOut();
       removeUser();
@@ -37,11 +37,10 @@ function Header({ user }) {
       navigate("/");
     } catch (error) {
       toast.error(error.message);
-    } finally {
     }
-  };
+  }, [navigate, removeUser]);
 
-  const clearUserChat = async () => {
+  const clearUserChat = useCallback(async () => {
     try {
       await clearChat(user?.id);
       toast.success("Chat deleted successfully");
@@ -49,22 +48,31 @@ function Header({ user }) {
       console.error(error);
       toast.error(error.message);
     }
-  };
+  }, [user?.id]);
 
   useEffect(() => {
+    let isMounted = true;
     const getUser = async () => {
       try {
         startLoading();
         const chatUserId = user?.id === pId ? mId : pId;
-
         const chatUser = await getUserProfileData(chatUserId);
-        setChatUserData(chatUser);
+
+        if (isMounted) {
+          setChatUserData(chatUser);
+        }
       } catch (error) {
+        console.error("Error fetching user:", error);
       } finally {
         stopLoading();
       }
     };
+
     getUser();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user?.id]);
 
   return (
@@ -78,13 +86,13 @@ function Header({ user }) {
             <ProfileDataWrapper>
               {loading ? (
                 <ProfileSkeleton />
+              ) : chatUserData ? (
+                <>
+                  <h1>{chatUserData?.username}</h1>
+                  <p>{getLastLoginTimeFormat(chatUserData?.lastLogin)}</p>
+                </>
               ) : (
-                chatUserData && (
-                  <>
-                    <h1>{chatUserData.name}</h1>
-                    <p>{getLastLoginTimeFormat(chatUserData.lastLogin)}</p>
-                  </>
-                )
+                <p>No user data available</p>
               )}
             </ProfileDataWrapper>
           </>
@@ -121,4 +129,4 @@ function Header({ user }) {
   );
 }
 
-export default Header;
+export default React.memo(Header);

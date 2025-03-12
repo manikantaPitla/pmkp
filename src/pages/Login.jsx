@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import MainLayout from "../components/MainLayout";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
-import MainLayout from "../components/MainLayout";
-import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/firebaseFunctions";
-import toast from "react-hot-toast";
 import { Divider, FormContainer } from "../styles/customStyles";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
-
   const navigate = useNavigate();
 
-  const handleInputChange = (e) =>
+  const handleInputChange = useCallback((e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
 
   const validateForm = () => {
     const { email, password } = formData;
@@ -36,37 +36,38 @@ function Login() {
     return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    try {
-      if (validateForm()) {
+      if (!validateForm()) return;
+
+      try {
         const { email, password } = formData;
+
         const userDoc = await toast.promise(loginUser(email, password), {
-          loading: "verifying user...",
+          loading: "Verifying user...",
           success: "Login Successful",
           error: (err) => {
-            switch (err.code) {
-              case "auth/network-request-failed":
-                return "Check your network connection";
-              case "auth/invalid-credential":
-                return "Invalid email or password";
-              case "auth/too-many-requests":
-                return "Too many requests wait for some time";
-              default:
-                return "Something went wrong!";
-            }
+            const errorMessages = {
+              "auth/network-request-failed": "Check your network connection",
+              "auth/invalid-credential": "Invalid email or password",
+              "auth/too-many-requests": "Too many requests, wait for some time",
+            };
+            return errorMessages[err.code] || "Something went wrong!";
           },
         });
+
         if (userDoc?.user?.uid) {
           setFormData({ email: "", password: "" });
           navigate(`/profile/${userDoc.user.uid}`);
         }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    },
+    [formData, navigate]
+  );
 
   return (
     <MainLayout>
@@ -86,14 +87,15 @@ function Login() {
           onChange={handleInputChange}
           value={formData.password}
         />
-
         <Button type="submit">Login</Button>
       </FormContainer>
+
       <Divider>
         <hr />
         ❤️
         <hr />
       </Divider>
+
       <Link to="/">
         <Button type="button">Go Back</Button>
       </Link>
@@ -101,4 +103,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default React.memo(Login);

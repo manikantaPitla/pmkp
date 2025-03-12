@@ -32,10 +32,13 @@ function ChatBody({ userId }) {
   const [loadingOlderMessages, setLoadingOlderMessages] = useState(false);
 
   useEffect(() => {
-    if (messageList.length > 0) {
+    if (
+      messageList.length > 0 &&
+      oldestMessageId !== messageList[0]?.messageId
+    ) {
       setOldestMessageId(messageList[0]?.messageId);
     }
-  }, [messageList]);
+  }, [messageList, oldestMessageId]);
 
   useEffect(() => {
     const getChats = async () => {
@@ -54,7 +57,7 @@ function ChatBody({ userId }) {
       }
     };
     getChats();
-  }, [setMessages]);
+  }, [userId, setMessages]);
 
   useEffect(() => {
     if (messageContainerRef.current) {
@@ -73,7 +76,7 @@ function ChatBody({ userId }) {
 
     const { scrollTop } = messageContainerRef.current;
 
-    if (scrollTop === 0 && oldestMessageId) {
+    if (scrollTop <= 10 && oldestMessageId) {
       setLoadingOlderMessages(true);
       try {
         const olderMessages = await getOlderMessages(userId, oldestMessageId);
@@ -91,6 +94,49 @@ function ChatBody({ userId }) {
     }
   };
 
+  const renderMessages = () => {
+    return messageList.map((messageItem) => {
+      const { message, senderId, messageId, timestamp, replyTo, status } =
+        messageItem;
+      return (
+        <MessageItem key={messageId} $sender={userId === senderId}>
+          <div className="message-main-container">
+            {replyTo && (
+              <ReplyViewContainer
+                onClick={() => {
+                  const replyElement = document.getElementById(
+                    replyTo.messageId
+                  );
+                  if (replyElement)
+                    replyElement.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                <p className="reply-to-user-message">
+                  {userId === senderId
+                    ? "You"
+                    : replyTo.senderId === pId
+                    ? "Pranu"
+                    : "Mani"}
+                </p>
+                <p>{minimizeText(replyTo.message)}</p>
+              </ReplyViewContainer>
+            )}
+            <div
+              className="message-items-container"
+              onClick={() => setReplyTo({ messageId, message, senderId })}
+            >
+              <p id={messageId}>{message}</p>
+              <MessageTime>{getTimeFormat(timestamp)}</MessageTime>
+            </div>
+          </div>
+          {status && userId === senderId && status === "sending" && (
+            <SendIcon className="status-icon" size={12} />
+          )}
+        </MessageItem>
+      );
+    });
+  };
+
   return (
     <>
       <MessageContainer ref={messageContainerRef} onScroll={handleScroll}>
@@ -99,46 +145,7 @@ function ChatBody({ userId }) {
             <SquareLoader />
           </LoaderWrapper>
         ) : messageList.length > 0 ? (
-          messageList.map((messageItem) => {
-            const { message, senderId, messageId, timestamp, replyTo, status } =
-              messageItem;
-            return (
-              <MessageItem key={messageId} $sender={userId === senderId}>
-                <div className="message-main-container">
-                  {replyTo && (
-                    <ReplyViewContainer
-                      onClick={() => {
-                        const replyElement = document.getElementById(
-                          replyTo.messageId
-                        );
-                        if (replyElement)
-                          replyElement.scrollIntoView({ behavior: "smooth" });
-                      }}
-                    >
-                      <p className="reply-to-user-message">
-                        {userId === senderId
-                          ? "You"
-                          : replyTo.senderId === pId
-                          ? "Pranu"
-                          : "Mani"}
-                      </p>
-                      <p>{minimizeText(replyTo.message)}</p>
-                    </ReplyViewContainer>
-                  )}
-                  <div
-                    className="message-items-container"
-                    onClick={() => setReplyTo({ messageId, message, senderId })}
-                  >
-                    <p id={messageId}>{message}</p>
-                    <MessageTime>{getTimeFormat(timestamp)}</MessageTime>
-                  </div>
-                </div>
-                {status && userId === senderId && status === "sending" && (
-                  <SendIcon className="status-icon" size={12} />
-                )}
-              </MessageItem>
-            );
-          })
+          renderMessages()
         ) : (
           <p className="no-messages">No Messages</p>
         )}

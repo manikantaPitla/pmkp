@@ -5,14 +5,11 @@ import {
   getDoc,
   writeBatch,
   updateDoc,
-  setDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db } from "../firebase/dbConfig";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { mId, pId } from "../utils/userIdentity";
-
-const messagesCollection = collection(db, "messages");
 
 export const loginUser = async (email, password) => {
   return await signInWithEmailAndPassword(auth, email, password);
