@@ -122,13 +122,13 @@ function Header({ user }) {
       </UserNameWrapper>
       <MenuWrapper>
         <CustomButton type="button" onClick={notifyUser} disabled={mailLoading}>
-          <Bell size={18} />
+          <Bell size={20} />
         </CustomButton>
 
         <ModalSmall
           trigger={
             <CustomButton type="button">
-              <Trash2 size={18} />
+              <Trash2 size={20} />
             </CustomButton>
           }
           content={{
@@ -137,8 +137,9 @@ function Header({ user }) {
           }}
           action={clearUserChat}
         />
+
         <CustomButton type="button" onClick={logoutUser}>
-          <LogOut size={18} />
+          <LogOut size={20} />
         </CustomButton>
       </MenuWrapper>
     </HeaderWrapper>

@@ -31,7 +31,7 @@ export const ProfileDataWrapper = styled.div`
 
 export const MenuWrapper = styled.div`
   display: flex;
-  /* gap: 5px; */
+  gap: 5px;
 
   button {
     &:nth-child(1) {
