@@ -67,6 +67,8 @@ function ChatBody({ userId }) {
   }, [messageList]);
 
   const handleScroll = async () => {
+    if (!messageList  || !messageList .length) return;
+
     if (
       !messageContainerRef.current ||
       loadingOlderMessages ||
@@ -80,9 +82,9 @@ function ChatBody({ userId }) {
       setLoadingOlderMessages(true);
       try {
         const olderMessages = await getOlderMessages(userId, oldestMessageId);
-        if (olderMessages.length > 0) {
+        if (olderMessages?.length > 0) {
           addOlderMessages(olderMessages);
-          setOldestMessageId(olderMessages[0].messageId);
+          setOldestMessageId(olderMessages[0]?.messageId);
         } else {
           setHasMoreMessages(false);
         }

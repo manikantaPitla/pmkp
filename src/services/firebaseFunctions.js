@@ -6,6 +6,11 @@ import {
   writeBatch,
   updateDoc,
   serverTimestamp,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 import { auth, db } from "../firebase/dbConfig";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
@@ -106,6 +111,8 @@ export const getUserChats = async (
   startLoading,
   stopLoading
 ) => {
+  if (!userId) return;
+
   startLoading();
   try {
     const userChatDocSnap = await getDoc(doc(db, "messages", userId));
@@ -122,15 +129,19 @@ export const getUserChats = async (
 };
 
 export const getOlderMessages = async (userId, lastTimestamp) => {
-  try {
-    const userChatDocSnap = await getDoc(doc(db, "messages", userId));
-    if (!userChatDocSnap.exists()) return [];
+  if (!userId) return [];
 
-    return userChatDocSnap
-      .data()
-      .messageList.filter((msg) => msg.timestamp < lastTimestamp)
-      .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, 20);
+  try {
+    const messagesRef = collection(db, "messages", userId, "chats");
+    const q = query(
+      messagesRef,
+      where("timestamp", "<", lastTimestamp),
+      orderBy("timestamp", "desc"),
+      limit(20)
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => doc.data());
   } catch (error) {
     console.error("Error fetching older messages:", error);
     return [];

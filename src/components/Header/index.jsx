@@ -21,6 +21,7 @@ import useLoading from "../../hooks/useLoading";
 import { mId, pId } from "../../utils/userIdentity";
 import { ProfileSkeleton } from "../../utils/Skeleton";
 import { sendMail } from "../../services/emailService";
+import useMessage from "../../hooks/useMessage";
 
 function Header({ user }) {
   const [chatUserData, setChatUserData] = useState(null);
@@ -28,8 +29,9 @@ function Header({ user }) {
 
   const navigate = useNavigate();
   const { removeUser } = useAuthActions();
+  const { clearMessages } = useMessage();
 
-  const notifyUser = async () => {
+  const notifyUser = useCallback(async () => {
     try {
       await toast.promise(sendMail(chatUserData?.email), {
         loading: "Sending mail notification...",
@@ -40,11 +42,12 @@ function Header({ user }) {
       toast.error(error.text);
       console.log(error);
     }
-  };
+  }, []);
 
   const logoutUser = useCallback(async () => {
     try {
       removeUser();
+      clearMessages();
       await logOut();
       toast.success("Logged out successfully");
       navigate("/");
@@ -66,6 +69,7 @@ function Header({ user }) {
   useEffect(() => {
     let isMounted = true;
     const getUser = async () => {
+      if (!user?.id) return;
       try {
         startLoading();
         const chatUserId = user?.id === pId ? mId : pId;
