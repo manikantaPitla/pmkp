@@ -5,10 +5,13 @@ import MainLayout from "../components/MainLayout";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { loginUser } from "../services/firebaseFunctions";
+import useLoading from "../hooks/useLoading";
 import { Divider, FormContainer } from "../styles/customStyles";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const { loading, startLoading, stopLoading } = useLoading();
   const navigate = useNavigate();
 
   const handleInputChange = useCallback((e) => {
@@ -43,6 +46,7 @@ function Login() {
       if (!validateForm()) return;
 
       try {
+        startLoading();
         const { email, password } = formData;
 
         const userDoc = await toast.promise(loginUser(email, password), {
@@ -64,6 +68,8 @@ function Login() {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        stopLoading();
       }
     },
     [formData, navigate]
@@ -87,7 +93,9 @@ function Login() {
           onChange={handleInputChange}
           value={formData.password}
         />
-        <Button type="submit">Login</Button>
+        <Button type="submit" disabled={loading}>
+          Login
+        </Button>
       </FormContainer>
 
       <Divider>

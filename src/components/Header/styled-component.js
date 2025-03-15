@@ -31,18 +31,19 @@ export const ProfileDataWrapper = styled.div`
 
 export const MenuWrapper = styled.div`
   display: flex;
-  gap: 5px;
+  /* gap: 5px; */
 
   button {
     &:nth-child(1) {
-      background-color: red;
+      background-color: #d90429;
       color: #ffffff;
+      color: #d90429;
     }
   }
 
-  /* button {
+  button {
     background-color: transparent !important;
     color: white;
     border: none;
-  } */
+  }
 `;

@@ -26,6 +26,11 @@ import useMessage from "../../hooks/useMessage";
 function Header({ user }) {
   const [chatUserData, setChatUserData] = useState(null);
   const { loading, startLoading, stopLoading } = useLoading(true);
+  const {
+    loading: mailLoading,
+    startLoading: startMailLoading,
+    stopLoading: stopMailLoading,
+  } = useLoading();
 
   const navigate = useNavigate();
   const { removeUser } = useAuthActions();
@@ -33,6 +38,7 @@ function Header({ user }) {
 
   const notifyUser = useCallback(async () => {
     try {
+      startMailLoading();
       await toast.promise(sendMail(chatUserData?.email), {
         loading: "Sending mail notification...",
         success: "Mail notification sent successfully",
@@ -41,6 +47,8 @@ function Header({ user }) {
     } catch (error) {
       toast.error(error.text);
       console.log(error);
+    } finally {
+      stopMailLoading();
     }
   }, []);
 
@@ -113,7 +121,7 @@ function Header({ user }) {
         )}
       </UserNameWrapper>
       <MenuWrapper>
-        <CustomButton type="button" onClick={notifyUser}>
+        <CustomButton type="button" onClick={notifyUser} disabled={mailLoading}>
           <Bell size={18} />
         </CustomButton>
 
@@ -129,7 +137,6 @@ function Header({ user }) {
           }}
           action={clearUserChat}
         />
-
         <CustomButton type="button" onClick={logoutUser}>
           <LogOut size={18} />
         </CustomButton>

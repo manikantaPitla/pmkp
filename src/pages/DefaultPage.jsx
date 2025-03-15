@@ -8,11 +8,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/dbConfig";
 import { Divider, FormContainer } from "../styles/customStyles";
+import useLoading from "../hooks/useLoading";
 
 function DefaultPage() {
   const [formData, setFormData] = useState({ uniqueId: "", message: "" });
   const navigate = useNavigate();
   const messageInputRef = useRef(null);
+  const { loading, startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -44,6 +46,7 @@ function DefaultPage() {
     if (!validateForm()) return;
 
     try {
+      startLoading();
       await toast.promise(
         sendDirectMessage(formData.uniqueId, formData.message),
         {
@@ -57,6 +60,8 @@ function DefaultPage() {
       messageInputRef.current?.focus();
     } catch (error) {
       console.error(error.message);
+    } finally {
+      stopLoading();
     }
   };
 
@@ -86,7 +91,9 @@ function DefaultPage() {
         <hr />
       </Divider>
       <Link to="/login">
-        <Button type="button">Login</Button>
+        <Button type="button" disabled={loading}>
+          Login
+        </Button>
       </Link>
     </MainLayout>
   );
