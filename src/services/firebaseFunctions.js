@@ -112,6 +112,8 @@ export const getUserChats = async (
     setMessages(
       userChatDocSnap.exists() ? userChatDocSnap.data().messageList || [] : []
     );
+
+    // setMessages([]);
   } catch (error) {
     console.error("Error fetching user chats:", error);
   } finally {

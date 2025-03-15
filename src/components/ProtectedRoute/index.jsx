@@ -31,7 +31,9 @@ const ProtectedRoute = ({ children }) => {
           const userData = await getUserProfileData(user?.uid);
 
           if (user?.uid === pId) {
-            await sendMail();
+            try {
+              await sendMail();
+            } catch {}
           }
 
           setUser({

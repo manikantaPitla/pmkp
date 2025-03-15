@@ -4,7 +4,6 @@ import {
   MenuWrapper,
   ProfileDataWrapper,
   UserNameWrapper,
-  UserProfileIcon,
 } from "./styled-component";
 import { useNavigate } from "react-router-dom";
 import { CustomButton } from "../ui/Button/styled-component";
@@ -15,12 +14,13 @@ import {
 } from "../../services/firebaseFunctions";
 import useAuthActions from "../../hooks/useAuthActions";
 import toast from "react-hot-toast";
-import { CircleUserRound, LogOut, Trash2 } from "lucide-react";
+import { LogOut, Trash2, Bell } from "lucide-react";
 import { ModalSmall } from "../../utils/Modal";
 import { getLastLoginTimeFormat } from "../../utils/timeFormat";
 import useLoading from "../../hooks/useLoading";
 import { mId, pId } from "../../utils/userIdentity";
 import { ProfileSkeleton } from "../../utils/Skeleton";
+import { sendMail } from "../../services/emailService";
 
 function Header({ user }) {
   const [chatUserData, setChatUserData] = useState(null);
@@ -29,10 +29,23 @@ function Header({ user }) {
   const navigate = useNavigate();
   const { removeUser } = useAuthActions();
 
+  const notifyUser = async () => {
+    try {
+      await toast.promise(sendMail(chatUserData?.email), {
+        loading: "Sending mail notification...",
+        success: "Mail notification sent successfully",
+        error: (err) => err.message,
+      });
+    } catch (error) {
+      toast.error(error.text);
+      console.log(error);
+    }
+  };
+
   const logoutUser = useCallback(async () => {
     try {
-      await logOut();
       removeUser();
+      await logOut();
       toast.success("Logged out successfully");
       navigate("/");
     } catch (error) {
@@ -80,15 +93,12 @@ function Header({ user }) {
       <UserNameWrapper>
         {user && (
           <>
-            <UserProfileIcon>
-              <CircleUserRound size={34} strokeWidth={1} />
-            </UserProfileIcon>
             <ProfileDataWrapper>
               {loading ? (
                 <ProfileSkeleton />
               ) : chatUserData ? (
                 <>
-                  <h1>{chatUserData?.username}</h1>
+                  <h1>Anonymous</h1>
                   <p>{getLastLoginTimeFormat(chatUserData?.lastLogin)}</p>
                 </>
               ) : (
@@ -99,6 +109,10 @@ function Header({ user }) {
         )}
       </UserNameWrapper>
       <MenuWrapper>
+        <CustomButton type="button" onClick={notifyUser}>
+          <Bell size={18} />
+        </CustomButton>
+
         <ModalSmall
           trigger={
             <CustomButton type="button">
@@ -112,18 +126,9 @@ function Header({ user }) {
           action={clearUserChat}
         />
 
-        <ModalSmall
-          trigger={
-            <CustomButton type="button">
-              <LogOut size={18} />
-            </CustomButton>
-          }
-          content={{
-            title: "Logout?",
-            buttonText: "Yes",
-          }}
-          action={logoutUser}
-        />
+        <CustomButton type="button" onClick={logoutUser}>
+          <LogOut size={18} />
+        </CustomButton>
       </MenuWrapper>
     </HeaderWrapper>
   );

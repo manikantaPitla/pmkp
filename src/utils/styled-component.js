@@ -16,6 +16,14 @@ export const ModalSmallCustomStyles = styled(Popup)`
   }
 `;
 
+export const ModalNotifyCustomStyles = styled(ModalSmallCustomStyles)`
+  &-content {
+    width: 350px;
+    height: 180px;
+    border-radius: 16px;
+  }
+`;
+
 export const ModalBody = styled.div`
   height: 100%;
   display: flex;

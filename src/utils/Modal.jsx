@@ -3,6 +3,7 @@ import "reactjs-popup/dist/index.css";
 import {
   ModalBody,
   ModalButtonWrapper,
+  ModalNotifyCustomStyles,
   ModalSmallCustomStyles,
   ModalTitle,
 } from "./styled-component";
@@ -19,7 +20,7 @@ export function ModalSmall(props) {
         <ModalBody>
           <ModalTitle>{title}</ModalTitle>
           <ModalButtonWrapper>
-            <StyledButton type="button" $outline onClick={close}>
+            <StyledButton type="button" onClick={close}>
               Cancel
             </StyledButton>
             <StyledButton
@@ -38,3 +39,5 @@ export function ModalSmall(props) {
     </ModalSmallCustomStyles>
   );
 }
+
+

@@ -18,10 +18,13 @@ function ChatInput({ replyTo, setReplyTo }) {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!message) return;
+
+    const trimmedMessage = message.trim();
+
+    if (!trimmedMessage) return;
     startLoading();
     try {
-      const tempMessage = message;
+      const tempMessage = trimmedMessage;
       setMessage("");
       inputRef.current?.focus();
 
@@ -69,7 +72,7 @@ function ChatInput({ replyTo, setReplyTo }) {
         name="message"
         onChange={(e) => setMessage(e.target.value)}
       />
-      {message.length > 0 && (
+      {message.length > 0 && message.trim().length > 0 && (
         <button type="submit" disabled={loading}>
           <SendHorizontal strokeWidth={1.5} size={22} />
         </button>
