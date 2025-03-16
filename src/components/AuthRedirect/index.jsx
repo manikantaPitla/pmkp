@@ -14,23 +14,16 @@ function AuthRedirect({ children }) {
     const unsubscribe = onAuthStateChanged(
       auth,
       (user) => {
-        try {
-          if (user) {
-            navigate(`/profile/${user.uid}`);
-          } else {
-            stopLoading();
-          }
-        } catch (error) {
+        if (user) {
+          navigate(`/profile/${user.uid}`);
+        } else {
           stopLoading();
-          console.error("Auth state error:", error);
-          setError("Failed to authenticate. Please try again.");
-        } finally {
         }
       },
       (err) => {
-        stopLoading();
         console.error("Auth state error:", err);
-        setError("Failed to authenticate. Please try again.");
+        setError("Authentication error. Please refresh and try again.");
+        stopLoading();
       }
     );
 
@@ -38,17 +31,10 @@ function AuthRedirect({ children }) {
   }, [navigate, stopLoading]);
 
   if (loading) return <FullPageLoader />;
+
   if (error)
     return (
-      <div
-        style={{
-          width: "100vw",
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <div className="error-container">
         <p className="error-message">{error}</p>
       </div>
     );

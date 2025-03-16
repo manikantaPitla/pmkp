@@ -1,12 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import MainLayout from "../components/MainLayout";
-import Input from "../components/ui/Input";
-import Button from "../components/ui/Button";
-import { loginUser } from "../services/firebaseFunctions";
-import useLoading from "../hooks/useLoading";
-import { Divider, FormContainer } from "../styles/customStyles";
+import { Button, Input } from "../components/ui";
+import { loginUser } from "../services";
+import { useLoading } from "../hooks";
+import { FormContainer } from "../styles";
+import { MainLayout, toast, getFirebaseErrorMessage, Divider } from "../utils";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -32,7 +30,7 @@ function Login() {
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Please enter a valid email format");
+      toast.error("Please enter valid email");
       return false;
     }
 
@@ -52,22 +50,14 @@ function Login() {
         const userDoc = await toast.promise(loginUser(email, password), {
           loading: "Verifying user...",
           success: "Login Successful",
-          error: (err) => {
-            const errorMessages = {
-              "auth/network-request-failed": "Check your network connection",
-              "auth/invalid-credential": "Invalid email or password",
-              "auth/too-many-requests": "Too many requests, wait for some time",
-            };
-            return errorMessages[err.code] || "Something went wrong!";
-          },
+          error: (err) => getFirebaseErrorMessage(err),
         });
-
         if (userDoc?.user?.uid) {
           setFormData({ email: "", password: "" });
           navigate(`/profile/${userDoc.user.uid}`);
         }
       } catch (error) {
-        console.error(error);
+        console.log(getFirebaseErrorMessage(error));
       } finally {
         stopLoading();
       }
@@ -97,13 +87,7 @@ function Login() {
           Login
         </Button>
       </FormContainer>
-
-      <Divider>
-        <hr />
-        ❤️
-        <hr />
-      </Divider>
-
+      <Divider text="❤️" />
       <Link to="/">
         <Button type="button">Go Back</Button>
       </Link>

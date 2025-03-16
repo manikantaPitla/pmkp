@@ -52,7 +52,7 @@ export const ReplyPreview = styled.div`
   margin-bottom: 8px;
   width: 100%;
   position: absolute;
-  top: -70px;
+  bottom: 45px;
   left: 0px;
 
   div {

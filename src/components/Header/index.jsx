@@ -7,23 +7,27 @@ import {
 } from "./styled-component";
 import { useNavigate } from "react-router-dom";
 import { CustomButton } from "../ui/Button/styled-component";
+import { useLoading, useMessage, useAuthActions } from "../../hooks";
+import { LogOut, Trash2, Bell } from "lucide-react";
 import {
   clearChat,
   getUserProfileData,
   logOut,
-} from "../../services/firebaseFunctions";
-import useAuthActions from "../../hooks/useAuthActions";
-import toast from "react-hot-toast";
-import { LogOut, Trash2, Bell } from "lucide-react";
-import { ModalSmall } from "../../utils/Modal";
-import { getLastLoginTimeFormat } from "../../utils/timeFormat";
-import useLoading from "../../hooks/useLoading";
-import { mId, pId } from "../../utils/userIdentity";
-import { ProfileSkeleton } from "../../utils/Skeleton";
-import { sendMail } from "../../services/emailService";
-import useMessage from "../../hooks/useMessage";
+  sendMail,
+} from "../../services";
+import {
+  ProfileSkeleton,
+  ModalSmall,
+  getLastLoginTimeFormat,
+  toast,
+  mId,
+  pId,
+} from "../../utils";
+import { useSelector } from "react-redux";
 
-function Header({ user }) {
+function Header() {
+  const currentUser = useSelector((state) => state.auth.user);
+
   const [chatUserData, setChatUserData] = useState(null);
   const { loading, startLoading, stopLoading } = useLoading(true);
   const {
@@ -45,8 +49,8 @@ function Header({ user }) {
         error: (err) => err.message,
       });
     } catch (error) {
-      toast.error(error.text);
-      console.log(error);
+      toast.error(error.text || "Unable to send mail notification");
+      console.log(error.text);
     } finally {
       stopMailLoading();
     }
@@ -54,40 +58,43 @@ function Header({ user }) {
 
   const logoutUser = useCallback(async () => {
     try {
-      removeUser();
-      clearMessages();
       await logOut();
+      clearMessages();
+      removeUser();
       toast.success("Logged out successfully");
       navigate("/");
     } catch (error) {
       toast.error(error.message);
+      console.log(error.message);
     }
-  }, [navigate, removeUser]);
+  }, [clearMessages, removeUser, navigate]);
 
   const clearUserChat = useCallback(async () => {
+    if (!currentUser) return;
     try {
-      await clearChat(user?.id);
+      await clearChat(currentUser.id);
       toast.success("Chat deleted successfully");
     } catch (error) {
-      console.error(error);
       toast.error(error.message);
+      console.log(error.message);
     }
-  }, [user?.id]);
+  }, [currentUser]);
 
   useEffect(() => {
     let isMounted = true;
     const getUser = async () => {
-      if (!user?.id) return;
+      if (!currentUser) return;
+
       try {
         startLoading();
-        const chatUserId = user?.id === pId ? mId : pId;
+        const chatUserId = currentUser.id === pId ? mId : pId;
         const chatUser = await getUserProfileData(chatUserId);
 
         if (isMounted) {
           setChatUserData(chatUser);
         }
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error("Error getting user profile", error);
       } finally {
         stopLoading();
       }
@@ -98,12 +105,12 @@ function Header({ user }) {
     return () => {
       isMounted = false;
     };
-  }, [user?.id]);
+  }, [currentUser]);
 
   return (
     <HeaderWrapper>
       <UserNameWrapper>
-        {user && (
+        {currentUser && (
           <>
             <ProfileDataWrapper>
               {loading ? (
@@ -114,20 +121,25 @@ function Header({ user }) {
                   <p>{getLastLoginTimeFormat(chatUserData?.lastLogin)}</p>
                 </>
               ) : (
-                <p>No user data available</p>
+                <p>No user data</p>
               )}
             </ProfileDataWrapper>
           </>
         )}
       </UserNameWrapper>
       <MenuWrapper>
-        <CustomButton type="button" onClick={notifyUser} disabled={mailLoading}>
+        <CustomButton
+          type="button"
+          onClick={notifyUser}
+          disabled={mailLoading}
+          title="Mail notification"
+        >
           <Bell size={20} />
         </CustomButton>
 
         <ModalSmall
           trigger={
-            <CustomButton type="button">
+            <CustomButton type="button" title="clear chat">
               <Trash2 size={20} />
             </CustomButton>
           }
@@ -138,7 +150,7 @@ function Header({ user }) {
           action={clearUserChat}
         />
 
-        <CustomButton type="button" onClick={logoutUser}>
+        <CustomButton type="button" onClick={logoutUser} title="Logout">
           <LogOut size={20} />
         </CustomButton>
       </MenuWrapper>

@@ -4,15 +4,14 @@ import {
   CustomSharedContainer,
   MainWrapper,
   SharedContainer,
+  DividerStyles,
 } from "./styled-component";
 
-function MainLayout({ children }) {
-  return (
-    <MainWrapper>
-      <SharedContainer>{children}</SharedContainer>
-    </MainWrapper>
-  );
-}
+export const MainLayout = ({ children }) => (
+  <MainWrapper>
+    <SharedContainer>{children}</SharedContainer>
+  </MainWrapper>
+);
 
 export const CustomMainLayout = ({ children }) => (
   <CustomMainWrapperStyles>
@@ -20,4 +19,10 @@ export const CustomMainLayout = ({ children }) => (
   </CustomMainWrapperStyles>
 );
 
-export default MainLayout;
+export const Divider = ({ text }) => (
+  <DividerStyles>
+    <hr />
+    {text}
+    <hr />
+  </DividerStyles>
+);

@@ -1,5 +1,5 @@
 import React from "react";
-import { CustomMainLayout } from "../MainLayout";
+import { CustomMainLayout } from "../../utils";
 import { ErrorContainer } from "./styled-component";
 
 function ErrorPage({ errMsg }) {

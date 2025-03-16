@@ -1,5 +1,22 @@
 import styled from "styled-components";
 
+export const DividerStyles = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-light-shaded);
+  font-size: 12px;
+
+  hr {
+    background-color: var(--bg-shaded);
+    height: 2px;
+    border: none;
+    flex: 1;
+  }
+`;
+
+// ----------------------------------------------------------------
+
 export const MainWrapper = styled.main`
   height: 100vh;
   width: 100vw;

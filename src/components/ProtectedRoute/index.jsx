@@ -1,16 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import useLoading from "../../hooks/useLoading";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase/dbConfig";
-import {
-  getUserProfileData,
-  updateLastLogin,
-} from "../../services/firebaseFunctions";
-import useAuthActions from "../../hooks/useAuthActions";
-import { FullPageLoader } from "../../utils/loader";
-import { pId } from "../../utils/userIdentity";
-import { sendMail } from "../../services/emailService";
+import { useLoading, useAuthActions } from "../../hooks";
+import { onAuthStateChanged, auth } from "../../services/firebase";
+import { getUserProfileData, updateLastLogin, sendMail } from "../../services";
+import { FullPageLoader, pId } from "../../utils";
 import ErrorPage from "../ErrorPage";
 
 const ProtectedRoute = ({ children }) => {

@@ -11,10 +11,12 @@ import {
   where,
   orderBy,
   limit,
-} from "firebase/firestore";
-import { auth, db } from "../firebase/dbConfig";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { mId, pId } from "../utils/userIdentity";
+  auth,
+  db,
+  signInWithEmailAndPassword,
+  signOut,
+} from "./firebase";
+import { mId, pId } from "../utils";
 
 export const loginUser = async (email, password) => {
   return await signInWithEmailAndPassword(auth, email, password);
@@ -25,13 +27,20 @@ export const logOut = async () => {
 };
 
 export const getUserProfileData = async (userId) => {
+  if (!userId) return;
+
   const docSnap = await getDoc(doc(db, "users", userId));
   if (docSnap.exists()) return docSnap.data();
-  throw new Error("Couldn't find user");
+  throw new Error("Error finding user");
 };
 
 export const updateLastLogin = async (userId) => {
-  await updateDoc(doc(db, "users", userId), { lastLogin: serverTimestamp() });
+  if (!userId) return;
+  try {
+    await updateDoc(doc(db, "users", userId), { lastLogin: serverTimestamp() });
+  } catch (error) {
+    throw new Error("Error updating last login");
+  }
 };
 
 const sendMessageUtility = async (

@@ -1,8 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import DefaultPage from "./pages/DefaultPage";
-import Login from "./pages/Login";
+import { DefaultPage, Login, Home } from "./pages";
+
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthRedirect from "./components/AuthRedirect";
@@ -12,14 +11,6 @@ function App() {
     <>
       <Routes>
         <Route
-          path="/"
-          element={
-            <AuthRedirect>
-              <DefaultPage />
-            </AuthRedirect>
-          }
-        />
-        <Route
           path="/profile/:userId"
           element={
             <ProtectedRoute>
@@ -27,6 +18,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/"
+          element={
+            <AuthRedirect>
+              <DefaultPage />
+            </AuthRedirect>
+          }
+        />
+
         <Route
           path="/login"
           element={

@@ -1,8 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  getUserChats,
-  getOlderMessages,
-} from "../../services/firebaseFunctions";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+import { getUserChats, getOlderMessages } from "../../services";
 import {
   LoaderWrapper,
   MessageContainer,
@@ -10,26 +13,25 @@ import {
   MessageTime,
   ReplyViewContainer,
 } from "./styled-component";
-import useLoading from "../../hooks/useLoading";
-import { SquareLoader } from "../../utils/loader";
-import ChatInput from "../ChatInput";
+import { useLoading, useMessage } from "../../hooks";
+import { SquareLoader, getTimeFormat, minimizeText, pId } from "../../utils";
+import { ChatInput } from "../";
 import { useSelector } from "react-redux";
-import useMessage from "../../hooks/useMessage";
-import { getTimeFormat } from "../../utils/timeFormat";
-import { minimizeText } from "../../utils/textUtil";
-import { pId } from "../../utils/userIdentity";
 import { Send as SendIcon } from "lucide-react";
 
-function ChatBody({ userId }) {
+function ChatBody() {
   const messageList = useSelector((state) => state.messages.messageList);
-  const [replyTo, setReplyTo] = useState(null);
-  const messageContainerRef = useRef(null);
-  const { loading, startLoading, stopLoading } = useLoading(true);
-  const { setMessages, addOlderMessages } = useMessage();
+  const currentUser = useSelector((state) => state.auth.user);
+  const userId = currentUser?.id;
 
+  const [replyTo, setReplyTo] = useState(null);
   const [oldestMessageId, setOldestMessageId] = useState(null);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [loadingOlderMessages, setLoadingOlderMessages] = useState(false);
+
+  const messageContainerRef = useRef(null);
+  const { loading, startLoading, stopLoading } = useLoading(true);
+  const { setMessages, addOlderMessages } = useMessage();
 
   useEffect(() => {
     if (
@@ -41,22 +43,24 @@ function ChatBody({ userId }) {
   }, [messageList, oldestMessageId]);
 
   useEffect(() => {
+    let unsubscribe;
     const getChats = async () => {
       try {
-        const unsubscribe = await getUserChats(
+        unsubscribe = await getUserChats(
           userId,
           setMessages,
           startLoading,
           stopLoading
         );
-        return () => {
-          if (unsubscribe) unsubscribe();
-        };
       } catch (error) {
         console.error(error.message);
       }
     };
     getChats();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [userId, setMessages]);
 
   useEffect(() => {
@@ -66,9 +70,8 @@ function ChatBody({ userId }) {
     }
   }, [messageList]);
 
-  const handleScroll = async () => {
-    if (!messageList  || !messageList .length) return;
-
+  const handleScroll = useCallback(async () => {
+    if (!messageList || !messageList.length) return;
     if (
       !messageContainerRef.current ||
       loadingOlderMessages ||
@@ -77,7 +80,6 @@ function ChatBody({ userId }) {
       return;
 
     const { scrollTop } = messageContainerRef.current;
-
     if (scrollTop <= 10 && oldestMessageId) {
       setLoadingOlderMessages(true);
       try {
@@ -94,9 +96,16 @@ function ChatBody({ userId }) {
         setLoadingOlderMessages(false);
       }
     }
-  };
+  }, [
+    messageList,
+    oldestMessageId,
+    loadingOlderMessages,
+    hasMoreMessages,
+    userId,
+    addOlderMessages,
+  ]);
 
-  const renderMessages = () => {
+  const renderMessages = useMemo(() => {
     return messageList.map((messageItem) => {
       const { message, senderId, messageId, timestamp, replyTo, status } =
         messageItem;
@@ -137,7 +146,7 @@ function ChatBody({ userId }) {
         </MessageItem>
       );
     });
-  };
+  }, [messageList, userId]);
 
   return (
     <>
@@ -147,7 +156,7 @@ function ChatBody({ userId }) {
             <SquareLoader />
           </LoaderWrapper>
         ) : messageList.length > 0 ? (
-          renderMessages()
+          renderMessages
         ) : (
           <p className="no-messages">No Messages</p>
         )}
@@ -163,4 +172,4 @@ function ChatBody({ userId }) {
   );
 }
 
-export default ChatBody;
+export default React.memo(ChatBody);

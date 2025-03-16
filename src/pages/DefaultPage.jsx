@@ -1,27 +1,23 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import MainLayout from "../components/MainLayout";
-import Input from "../components/ui/Input";
-import Button from "../components/ui/Button";
-import toast from "react-hot-toast";
-import { sendDirectMessage } from "../services/firebaseFunctions";
-import { Link, useNavigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase/dbConfig";
-import { Divider, FormContainer } from "../styles/customStyles";
-import useLoading from "../hooks/useLoading";
+import React, { useState, useRef, useCallback } from "react";
+import { Button, Input } from "../components/ui";
+import { useLoading } from "../hooks";
+import {
+  Divider,
+  getFirebaseErrorMessage,
+  m_uid,
+  MainLayout,
+  p_uid,
+  toast,
+} from "../utils";
+import { sendDirectMessage } from "../services";
+import { Link } from "react-router-dom";
+import { FormContainer } from "../styles";
 
 function DefaultPage() {
   const [formData, setFormData] = useState({ uniqueId: "", message: "" });
-  const navigate = useNavigate();
+
   const messageInputRef = useRef(null);
   const { loading, startLoading, stopLoading } = useLoading();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) navigate(`/profile/${user.uid}`);
-    });
-    return unsubscribe;
-  }, [navigate]);
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -30,12 +26,14 @@ function DefaultPage() {
 
   const validateForm = useCallback(() => {
     const { uniqueId, message } = formData;
-    if (!uniqueId || !["0928", "0830"].includes(uniqueId)) {
-      toast.error("Please enter a valid unique ID");
+
+    if (!uniqueId || ![p_uid, m_uid].includes(uniqueId)) {
+      toast.error("Please enter valid unique ID");
       return false;
     }
-    if (!message) {
-      toast.error("Please enter a message");
+
+    if (!message.trim()) {
+      toast.error("Please enter message");
       return false;
     }
     return true;
@@ -47,19 +45,19 @@ function DefaultPage() {
 
     try {
       startLoading();
+
       await toast.promise(
-        sendDirectMessage(formData.uniqueId, formData.message),
+        sendDirectMessage(formData.uniqueId, formData.message.trim()),
         {
           loading: "Sending...",
           success: "Message sent successfully",
-          error: (err) => err.message,
+          error: (error) => getFirebaseErrorMessage(error),
         }
       );
-
       setFormData((prev) => ({ ...prev, message: "" }));
       messageInputRef.current?.focus();
     } catch (error) {
-      console.error(error.message);
+      console.log(getFirebaseErrorMessage(error));
     } finally {
       stopLoading();
     }
@@ -85,11 +83,7 @@ function DefaultPage() {
         />
         <Button type="submit">Send</Button>
       </FormContainer>
-      <Divider>
-        <hr />
-        OR
-        <hr />
-      </Divider>
+      <Divider text="OR" />
       <Link to="/login">
         <Button type="button" disabled={loading}>
           Login
@@ -99,4 +93,4 @@ function DefaultPage() {
   );
 }
 
-export default React.memo(DefaultPage);
+export default DefaultPage;
