@@ -5,7 +5,7 @@ export const HeaderWrapper = styled.header`
   justify-content: space-between;
   align-items: center;
   gap: 5px;
-  padding: 15px 10px;
+  padding: 15px 15px;
 `;
 
 export const UserNameWrapper = styled.div`
