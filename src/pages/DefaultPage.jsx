@@ -26,7 +26,6 @@ function DefaultPage() {
 
   const validateForm = useCallback(() => {
     const { uniqueId, message } = formData;
-
     if (!uniqueId || ![p_uid, m_uid].includes(uniqueId)) {
       toast.error("Please enter valid unique ID");
       return false;
