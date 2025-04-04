@@ -1,5 +1,5 @@
-export const pId = "E2TQeZUj6KPn8soR5w8dxU0kIaG2";
-export const mId = "ciYFmIKAXZhlFXvmgxLvbVOtvmv2";
+export const pId = import.meta.env.VITE_PID;
+export const mId = import.meta.env.VITE_MID;
 
-export const m_uid = "0830";
-export const p_uid = "0928";
+export const m_uid = import.meta.env.VITE_MUID;
+export const p_uid = import.meta.env.VITE_MUID;

@@ -12,6 +12,7 @@ import { LogOut, Trash2, Bell } from "lucide-react";
 import {
   clearChat,
   getUserProfileData,
+  getUserProfileSnapShotData,
   logOut,
   sendMail,
 } from "../../services";
@@ -43,7 +44,7 @@ function Header() {
   const notifyUser = useCallback(async () => {
     try {
       startMailLoading();
-      await toast.promise(sendMail(chatUserData?.email), {
+      await toast.promise(sendMail(chatUserData.username, chatUserData.email), {
         loading: "Sending mail notification...",
         success: "Mail notification sent successfully",
         error: (err) => err.message,
@@ -54,56 +55,57 @@ function Header() {
     } finally {
       stopMailLoading();
     }
-  }, []);
+  }, [chatUserData]);
 
   const logoutUser = useCallback(async () => {
     try {
-      await logOut();
-      clearMessages();
-      removeUser();
-      toast.success("Logged out successfully");
+      await toast.promise(
+        (async () => {
+          await logOut();
+          clearMessages();
+          removeUser();
+        })(),
+        {
+          loading: "Logging out...",
+          success: "Logged out successfully",
+          error: (err) => err.message || "Logout failed",
+        }
+      );
+
       navigate("/");
     } catch (error) {
-      toast.error(error.message);
-      console.log(error.message);
+      console.error(error.message);
     }
   }, [clearMessages, removeUser, navigate]);
 
   const clearUserChat = useCallback(async () => {
     if (!currentUser) return;
+
     try {
-      await clearChat(currentUser.id);
-      toast.success("Chat deleted successfully");
+      await toast.promise(clearChat(currentUser.id), {
+        loading: "Deleting messages...",
+        success: "Chat deleted successfully",
+        error: (err) => err.message,
+      });
     } catch (error) {
-      toast.error(error.message);
       console.log(error.message);
     }
   }, [currentUser]);
 
   useEffect(() => {
-    let isMounted = true;
-    const getUser = async () => {
-      if (!currentUser) return;
+    if (!currentUser) return;
 
-      try {
-        startLoading();
-        const chatUserId = currentUser.id === pId ? mId : pId;
-        const chatUser = await getUserProfileData(chatUserId);
+    startLoading();
 
-        if (isMounted) {
-          setChatUserData(chatUser);
-        }
-      } catch (error) {
-        console.error("Error getting user profile", error);
-      } finally {
-        stopLoading();
-      }
-    };
+    const chatUserId = currentUser.id === pId ? mId : pId;
 
-    getUser();
+    const unsubscribe = getUserProfileSnapShotData(chatUserId, (chatUser) => {
+      setChatUserData(chatUser);
+      stopLoading();
+    });
 
     return () => {
-      isMounted = false;
+      if (unsubscribe) unsubscribe();
     };
   }, [currentUser]);
 
@@ -121,7 +123,7 @@ function Header() {
                   <p>{getLastLoginTimeFormat(chatUserData?.lastLogin)}</p>
                 </>
               ) : (
-                <p>No user data</p>
+                <p>Profile details not available</p>
               )}
             </ProfileDataWrapper>
           </>

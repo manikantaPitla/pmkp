@@ -19,7 +19,12 @@ const useMessage = () => {
   const clearMessages = () => dispatch(removeChatMessages());
   const updateMessage = (message) => dispatch(updateChatMessage(message));
 
-  return { setMessages, addNewMessage, clearMessages, updateMessage };
+  return {
+    setMessages,
+    addNewMessage,
+    clearMessages,
+    updateMessage,
+  };
 };
 
 export default useMessage;

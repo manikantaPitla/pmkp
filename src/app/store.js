@@ -10,8 +10,8 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ["auth/addUser"],
-        ignoredPaths: ["auth.user.lastLogin"],
+        ignoredActions: ["auth/addUser", "messages/setChatMessages"],
+        ignoredPaths: ["auth.user.lastLogin", "messages.messageList"],
       },
     }),
 });

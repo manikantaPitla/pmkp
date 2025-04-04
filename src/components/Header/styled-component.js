@@ -5,7 +5,7 @@ export const HeaderWrapper = styled.header`
   justify-content: space-between;
   align-items: center;
   gap: 5px;
-  padding: 20px 10px 15px;
+  padding: 15px 10px;
 `;
 
 export const UserNameWrapper = styled.div`
@@ -19,13 +19,13 @@ export const ProfileDataWrapper = styled.div`
   flex-direction: column;
 
   h1 {
-    font-size: 14px;
+    font-size: var(--fs-xl);
     font-weight: 500;
   }
 
   p {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: var(--fs-m);
+    color: var(--text-light-shaded);
   }
 `;
 

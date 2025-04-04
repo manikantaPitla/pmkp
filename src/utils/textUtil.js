@@ -1,3 +1,5 @@
-export const minimizeText = (message) => {
-  return message.length > 45 ? message.substring(0, 45) + "..." : message;
+export const minimizeText = (message, length = 45) => {
+  return message?.length > length
+    ? message?.substring(0, length) + "..."
+    : message;
 };

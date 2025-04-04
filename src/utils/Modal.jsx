@@ -2,12 +2,11 @@ import React from "react";
 import "reactjs-popup/dist/index.css";
 import {
   ModalBody,
+  ModalButton,
   ModalButtonWrapper,
-  ModalNotifyCustomStyles,
   ModalSmallCustomStyles,
   ModalTitle,
 } from "./styled-component";
-import Button from "../components/ui/Button";
 import { StyledButton } from "../components/ui/Button/styled-component";
 
 export function ModalSmall(props) {
@@ -20,10 +19,10 @@ export function ModalSmall(props) {
         <ModalBody>
           <ModalTitle>{title}</ModalTitle>
           <ModalButtonWrapper>
-            <StyledButton type="button" onClick={close}>
+            <ModalButton type="button" onClick={close}>
               Cancel
-            </StyledButton>
-            <StyledButton
+            </ModalButton>
+            <ModalButton
               type="button"
               onClick={() => {
                 action();
@@ -31,7 +30,7 @@ export function ModalSmall(props) {
               }}
             >
               {buttonText}
-            </StyledButton>
+            </ModalButton>
           </ModalButtonWrapper>
           {children}
         </ModalBody>
@@ -39,5 +38,3 @@ export function ModalSmall(props) {
     </ModalSmallCustomStyles>
   );
 }
-
-

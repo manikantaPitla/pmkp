@@ -21,7 +21,11 @@ const messageReducer = createSlice({
         (msg) => msg.messageId === action.payload.messageId
       );
       if (index !== -1) {
-        state.messageList[index].status = action.payload.status;
+        if (action.payload.status)
+          state.messageList[index].status = action.payload.status;
+
+        if (action.payload.progress)
+          state.messageList[index].media.progress = action.payload.progress;
       }
     },
   },

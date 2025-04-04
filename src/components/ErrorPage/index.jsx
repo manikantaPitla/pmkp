@@ -1,15 +1,20 @@
 import React from "react";
-import { CustomMainLayout } from "../../utils";
-import { ErrorContainer } from "./styled-component";
+import { CustomMainLayout, Divider } from "../../utils";
+import { ErrorCard, ErrorContainer } from "./styled-component";
 
 function ErrorPage({ errMsg }) {
   return (
     <CustomMainLayout>
       <ErrorContainer>
-        <p>
-          {errMsg} <br />
-          reload the page and try again...
-        </p>
+        <ErrorCard>
+          <p>
+            {errMsg} <br />
+          </p>
+          <Divider text={"❤️"} />
+          <p>Try again later</p>
+          <Divider text={"OR"} />
+          <p>Reload the page</p>
+        </ErrorCard>
       </ErrorContainer>
     </CustomMainLayout>
   );

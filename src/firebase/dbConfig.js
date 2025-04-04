@@ -4,12 +4,12 @@ import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: "pmk0928-a1dc7.firebaseapp.com",
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_PROJECT_ID,
-  storageBucket: "pmk0928-a1dc7.firebasestorage.app",
-  messagingSenderId: "1036932299570",
-  appId: "1:1036932299570:web:8e49758451688f9638352b",
-  measurementId: "G-9XPZML2NZQ",
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGE_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 export const app = initializeApp(firebaseConfig);

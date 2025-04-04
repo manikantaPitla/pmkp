@@ -3,7 +3,6 @@ import {
   collection,
   doc,
   getDoc,
-  writeBatch,
   updateDoc,
   serverTimestamp,
   getDocs,
@@ -15,8 +14,13 @@ import {
   db,
   signInWithEmailAndPassword,
   signOut,
+  setDoc,
+  onSnapshot,
+  runTransaction,
 } from "./firebase";
-import { mId, pId } from "../utils";
+import { mId, p_uid, pId } from "../utils";
+import { uploadToCloudinary } from "./cloudinaryServices";
+import { createMediaObject } from ".";
 
 export const loginUser = async (email, password) => {
   return await signInWithEmailAndPassword(auth, email, password);
@@ -34,6 +38,29 @@ export const getUserProfileData = async (userId) => {
   throw new Error("Error finding user");
 };
 
+export const getUserProfileSnapShotData = (userId, callback) => {
+  if (!userId || typeof callback !== "function") return;
+
+  const userRef = doc(db, "users", userId);
+
+  const unsubscribe = onSnapshot(
+    userRef,
+    (docSnap) => {
+      if (docSnap.exists()) {
+        callback(docSnap.data());
+      } else {
+        console.warn("User not found");
+        callback(null);
+      }
+    },
+    (error) => {
+      console.error("Error listening to user data:", error);
+    }
+  );
+
+  return unsubscribe;
+};
+
 export const updateLastLogin = async (userId) => {
   if (!userId) return;
   try {
@@ -44,46 +71,78 @@ export const updateLastLogin = async (userId) => {
 };
 
 const sendMessageUtility = async (
-  isAuthMessage,
+  isAuthUser,
   senderId,
   receiverId,
   message,
   addNewMessage,
   updateMessage,
-  replyTo
+  replyTo,
+  media
 ) => {
+  const timeStamp = Date.now();
+  const messageId = `${senderId}_${timeStamp}`;
+
   const messageObj = {
-    messageId: `${senderId}_${Date.now()}`,
+    messageId,
     senderId,
     receiverId,
-    message,
-    timestamp: Date.now(),
-    media: null,
+    message: message || null,
+    timestamp: timeStamp,
+    media: media || null,
     ...(replyTo && { replyTo: { ...replyTo } }),
   };
 
-  if (isAuthMessage) addNewMessage({ ...messageObj, status: "sending" });
+  try {
+    const senderMessageRef = doc(db, "chats", senderId, "messages", messageId);
+    const receiverMessageRef = doc(
+      db,
+      "chats",
+      receiverId,
+      "messages",
+      messageId
+    );
 
-  const batch = writeBatch(db);
-  batch.set(
-    doc(db, "messages", senderId),
-    { messageList: arrayUnion(messageObj) },
-    { merge: true }
-  );
-  batch.set(
-    doc(db, "messages", receiverId),
-    { messageList: arrayUnion(messageObj) },
-    { merge: true }
-  );
+    let tempMedia = null;
+    if (media) {
+      tempMedia = await createMediaObject(media);
+    }
 
-  await batch.commit();
-  if (isAuthMessage)
-    updateMessage({ messageId: messageObj.messageId, status: "sent" });
+    if (isAuthUser) {
+      addNewMessage({
+        ...messageObj,
+        media: tempMedia,
+        status: "sending",
+      });
+    }
+
+    let cloudinaryObject = null;
+    if (media) {
+      cloudinaryObject = await uploadToCloudinary(media, (progress) => {
+        updateMessage({
+          messageId,
+          progress,
+        });
+      });
+    }
+
+    await setDoc(senderMessageRef, { ...messageObj, media: cloudinaryObject });
+    await setDoc(receiverMessageRef, {
+      ...messageObj,
+      media: cloudinaryObject,
+    });
+
+    if (isAuthUser) updateMessage({ messageId, status: "sent" });
+  } catch (error) {
+    console.error("Error sending message:", error);
+    if (isAuthUser) updateMessage({ messageId, status: "failed" });
+  }
 };
 
 export const sendDirectMessage = async (uniqueId, message) => {
-  const senderId = uniqueId === "0928" ? pId : mId;
-  const receiverId = uniqueId === "0928" ? mId : pId;
+  const senderId = uniqueId === p_uid ? pId : mId;
+  const receiverId = uniqueId === p_uid ? mId : pId;
+
   await sendMessageUtility(
     false,
     senderId,
@@ -98,11 +157,13 @@ export const sendDirectMessage = async (uniqueId, message) => {
 export const sendAuthUserMessage = async (
   senderId,
   message,
+  media,
   addNewMessage,
   updateMessage,
   replyTo
 ) => {
   const receiverId = senderId === pId ? mId : pId;
+
   await sendMessageUtility(
     true,
     senderId,
@@ -110,11 +171,12 @@ export const sendAuthUserMessage = async (
     message,
     addNewMessage,
     updateMessage,
-    replyTo
+    replyTo,
+    media
   );
 };
 
-export const getUserChats = async (
+export const getUserMessages = (
   userId,
   setMessages,
   startLoading,
@@ -124,33 +186,39 @@ export const getUserChats = async (
 
   startLoading();
   try {
-    const userChatDocSnap = await getDoc(doc(db, "messages", userId));
-    setMessages(
-      userChatDocSnap.exists() ? userChatDocSnap.data().messageList || [] : []
-    );
+    const messagesRef = collection(db, "chats", userId, "messages");
+    const q = query(messagesRef, orderBy("timestamp", "asc"));
 
-    // setMessages([]);
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const messages = querySnapshot.docs.map((doc) => doc.data());
+      setMessages(messages);
+      stopLoading();
+    });
+
+    return unsubscribe;
   } catch (error) {
-    console.error("Error fetching user chats:", error);
-  } finally {
+    console.error("Error fetching messages:", error);
     stopLoading();
   }
 };
 
+//currently not in use
 export const getOlderMessages = async (userId, lastTimestamp) => {
-  if (!userId) return [];
+  if (!userId || !lastTimestamp) return [];
 
   try {
-    const messagesRef = collection(db, "messages", userId, "chats");
+    const messagesRef = collection(db, "chats", userId, "messages");
     const q = query(
       messagesRef,
       where("timestamp", "<", lastTimestamp),
       orderBy("timestamp", "desc"),
-      limit(20)
+      limit(10)
     );
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => doc.data());
+
+    // ✅ Ensures all messages are fetched before returning
+    return querySnapshot.docs.map((doc) => doc.data()).reverse();
   } catch (error) {
     console.error("Error fetching older messages:", error);
     return [];
@@ -158,5 +226,26 @@ export const getOlderMessages = async (userId, lastTimestamp) => {
 };
 
 export const clearChat = async (userId) => {
-  await updateDoc(doc(db, "messages", userId), { messageList: [] });
+  if (!userId) return;
+
+  try {
+    const messagesRef = collection(db, "chats", userId, "messages");
+    const messagesSnapshot = await getDocs(messagesRef);
+
+    if (messagesSnapshot.empty) {
+      throw new Error("No messages to delete");
+    }
+
+    const userChatRef = doc(db, "chats", userId);
+
+    await runTransaction(db, async (transaction) => {
+      messagesSnapshot.docs.forEach((msgDoc) => transaction.delete(msgDoc.ref));
+
+      transaction.update(userChatRef, {
+        chatDeleteHistory: arrayUnion(Date.now()),
+      });
+    });
+  } catch (error) {
+    throw error;
+  }
 };

@@ -3,8 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { DefaultPage, Login, Home } from "./pages";
 
 import { Toaster } from "react-hot-toast";
-import ProtectedRoute from "./components/ProtectedRoute";
-import AuthRedirect from "./components/AuthRedirect";
+import { NotFound, AuthRedirect, ProtectedRoute } from "./components";
 
 function App() {
   return (
@@ -35,6 +34,8 @@ function App() {
             </AuthRedirect>
           }
         />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster
         position="top-center"
@@ -42,7 +43,8 @@ function App() {
           style: {
             borderRadius: "10px",
             padding: "6px 10px",
-            fontSize: "13px",
+            fontSize: "12px",
+            textAlign: "center",
           },
         }}
       />

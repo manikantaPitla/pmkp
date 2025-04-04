@@ -17,11 +17,18 @@
 
   --bg-shaded: rgba(255, 255, 255, 0.15);
   --border-shaded: rgba(255, 255, 255, 0.2);
+  --bg-shaded-dark: rgba(0, 0, 0, 0.08);
 
   --text-light-shaded: rgba(255, 255, 255, 0.2);
   --text-dark-shaded: rgba(0, 0, 0, 0.4);
 
   --fs-secondary: 13px;
+  --fs-s: 10px;
+  --fs-m: 11px;
+  --fs-l: 12px;
+  --fs-xl: 14px;
+
+  --radius: 10px;
 }
 
 *,
@@ -45,4 +52,13 @@
 ::-webkit-scrollbar-thumb {
   background-color: var(--bg-shaded);
   border-radius: 4px;
+}
+
+button {
+  cursor: pointer;
+}
+
+
+a {
+    text-decoration: none;
 }

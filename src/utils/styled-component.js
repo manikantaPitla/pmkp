@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Popup from "reactjs-popup";
+import { StyledButton } from "../components/ui/Button/styled-component";
 
 export const ModalSmallCustomStyles = styled(Popup)`
   &-overlay {
@@ -7,7 +8,7 @@ export const ModalSmallCustomStyles = styled(Popup)`
   }
 
   &-content {
-    width: 280px;
+    width: 260px;
     height: 120px;
     border-radius: 15px;
     background-color: #ffffff;
@@ -60,4 +61,11 @@ export const ModalButtonWrapper = styled.div`
       color: #000000;
     }
   }
+`;
+
+export const ModalButton = styled(StyledButton)`
+  height: 40px;
+  border-radius: 50px;
+  font-size: var(--fs-l) !important;
+  font-family: inherit;
 `;

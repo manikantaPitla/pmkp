@@ -5,7 +5,7 @@ export const DividerStyles = styled.div`
   align-items: center;
   gap: 5px;
   color: var(--text-light-shaded);
-  font-size: 12px;
+  font-size: var(--fs-xl);
 
   hr {
     background-color: var(--bg-shaded);
