@@ -37,19 +37,23 @@ function MessageItem({ messageData, userId, setReplyTo }) {
         )}
         <MessageInnerCard
           $sender={userId === senderId}
-          onClick={() =>
+          onClick={(e) => {
+            if (e.target.tagName === "A") {
+              e.stopPropagation();
+              return;
+            }
+
             setReplyTo({
               message,
               messageId,
               timestamp,
               media,
               senderId,
-            })
-          }
+            });
+          }}
         >
           {media && <MediaView media={media} />}
           <p
-            onClick={(e) => e.stopPropagation()}
             id={messageId}
             dangerouslySetInnerHTML={{ __html: makeLinksClickable(message) }}
           />
