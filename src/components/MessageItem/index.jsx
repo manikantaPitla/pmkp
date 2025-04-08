@@ -7,7 +7,7 @@ import {
   ReplyViewContainer,
 } from "./styled-component";
 import { Send as SendIcon, CircleX as ErrorIcon } from "lucide-react";
-import { getTimeFormat, minimizeText } from "../../utils";
+import { getTimeFormat, makeLinksClickable, minimizeText } from "../../utils";
 import MediaView from "../MediaView";
 
 function MessageItem({ messageData, userId, setReplyTo }) {
@@ -48,7 +48,12 @@ function MessageItem({ messageData, userId, setReplyTo }) {
           }
         >
           {media && <MediaView media={media} />}
-          <p id={messageId}>{message}</p>
+          <p
+            onClick={(e) => e.stopPropagation()}
+            id={messageId}
+            dangerouslySetInnerHTML={{ __html: makeLinksClickable(message) }}
+          />
+
           <MessageTime>{getTimeFormat(timestamp)}</MessageTime>
         </MessageInnerCard>
       </MessageCard>

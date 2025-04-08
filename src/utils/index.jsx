@@ -6,4 +6,5 @@ export * from "./textUtil";
 export * from "./timeFormat";
 export * from "./userIdentity";
 export * from "./ComponentUtils";
-export * from './firebaseErrors'
+export * from "./firebaseErrors";
+export * from "./hyperLinks";

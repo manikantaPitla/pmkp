@@ -3,3 +3,5 @@ export const minimizeText = (message, length = 45) => {
     ? message?.substring(0, length) + "..."
     : message;
 };
+
+
