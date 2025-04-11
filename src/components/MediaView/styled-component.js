@@ -37,6 +37,6 @@ export const MediaOpenItem = styled.div`
   padding: 5px 10px;
   border-radius:15px;
   p {
-    font-size: 10px;
+    font-size: 10px !important;
   }
 `;

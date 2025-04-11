@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import { getUserMessages } from "../../services";
 import { LoaderWrapper, MessageContainer } from "./styled-component";
 import { useLoading, useMessage } from "../../hooks";
-import { SquareLoader } from "../../utils";
+import { getFormattedDateLabel, SquareLoader } from "../../utils";
 import { ChatInput } from "../";
 import { useSelector } from "react-redux";
 import MessageItem from "../MessageItem";
+import DateDivider from "../DateDivider";
 
 function ChatBody() {
   const messageList = useSelector((state) => state.messages.messageList);
@@ -47,14 +48,30 @@ function ChatBody() {
   }, [messageList]);
 
   const renderMessages = useMemo(() => {
-    return messageList.map((messageItem) => (
-      <MessageItem
-        key={messageItem.messageId}
-        messageData={{ ...messageItem }}
-        userId={userId}
-        setReplyTo={setReplyTo}
-      />
-    ));
+    const grouped = {};
+  
+    messageList.forEach((msg) => {
+      const dateLabel = getFormattedDateLabel(msg.timestamp);
+      if (!grouped[dateLabel]) grouped[dateLabel] = [];
+      grouped[dateLabel].push(msg);
+    });
+  
+    const elements = [];
+    Object.entries(grouped).forEach(([date, messages]) => {
+      elements.push(<DateDivider key={date} date={date} />);
+      messages.forEach((msg) => {
+        elements.push(
+          <MessageItem
+            key={msg.messageId}
+            messageData={msg}
+            userId={userId}
+            setReplyTo={setReplyTo}
+          />
+        );
+      });
+    });
+  
+    return elements;
   }, [messageList, userId]);
 
   return (

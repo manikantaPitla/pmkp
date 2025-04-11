@@ -7,7 +7,6 @@ import {
   ModalSmallCustomStyles,
   ModalTitle,
 } from "./styled-component";
-import { StyledButton } from "../components/ui/Button/styled-component";
 
 export function ModalSmall(props) {
   const { children, content, action } = props;

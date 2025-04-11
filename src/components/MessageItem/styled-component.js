@@ -20,19 +20,22 @@ export const MessageTime = styled.span`
 
 export const MessageCard = styled.div`
   max-width: 80%;
-  background-color: ${(props) => (props.$sender ? "var(--bg-shaded)" : "")};
-  border: 1px solid var(--border-shaded);
+  background-color: ${(props) =>
+    props.$sender ? "var(--bg-shaded)" : "#171717"};
+  /* border: 1px solid var(--border-shaded); */
   border-radius: 10px;
-  padding: 6px;
-  backdrop-filter: blur(3px);
+  padding: 6px 10px;
+  /* backdrop-filter: blur(3px); */
   cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.08);
 `;
 
 export const MessageInnerCard = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  align-items: ${(props) => (props.$sender ? "flex-end" : "flex-start")};
+  gap: 2px;
+  /* align-items: ${(props) => (props.$sender ? "flex-end" : "flex-start")}; */
+  align-items: flex-end;
 
   p {
     color: #fff;
@@ -45,7 +48,7 @@ export const MessageInnerCard = styled.div`
 `;
 
 export const ReplyViewContainer = styled.div`
-  background-color: var(--bg-shaded);
+  background-color: #171717;
   padding: 8px 10px;
   border-radius: 6px;
   margin-bottom: 5px;

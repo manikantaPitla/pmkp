@@ -146,8 +146,8 @@ function Header() {
             </CustomButton>
           }
           content={{
-            title: "Clear chat?",
-            buttonText: "Yes",
+            title: "Delete chat?",
+            buttonText: "Delete",
           }}
           action={clearUserChat}
         />

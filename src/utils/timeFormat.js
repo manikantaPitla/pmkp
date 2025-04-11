@@ -2,9 +2,9 @@ export const getTimeFormat = (timestamp) => {
   const date = new Date(timestamp);
 
   const options = {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
+    // year: "numeric",
+    // month: "short",
+    // day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,

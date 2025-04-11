@@ -15,7 +15,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --bg-shaded: rgba(255, 255, 255, 0.15);
+  --bg-shaded: #212121;
   --border-shaded: rgba(255, 255, 255, 0.2);
   --bg-shaded-dark: rgba(0, 0, 0, 0.08);
 
