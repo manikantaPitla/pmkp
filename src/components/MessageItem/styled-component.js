@@ -13,7 +13,7 @@ export const MessageContainer = styled.li`
 `;
 
 export const MessageTime = styled.span`
-  font-size: 10px;
+  font-size: 8px;
   color: var(--bg-shaded);
   color: rgba(255, 255, 255, 0.2);
 `;
@@ -27,7 +27,7 @@ export const MessageCard = styled.div`
   padding: 6px 10px;
   /* backdrop-filter: blur(3px); */
   cursor: pointer;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 `;
 
 export const MessageInnerCard = styled.div`
