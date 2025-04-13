@@ -16,6 +16,7 @@ export const MessageTime = styled.span`
   font-size: 8px;
   color: var(--bg-shaded);
   color: rgba(255, 255, 255, 0.2);
+  line-height: normal;
 `;
 
 export const MessageCard = styled.div`
@@ -33,7 +34,7 @@ export const MessageCard = styled.div`
 export const MessageInnerCard = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   /* align-items: ${(props) => (props.$sender ? "flex-end" : "flex-start")}; */
   align-items: flex-end;
 
