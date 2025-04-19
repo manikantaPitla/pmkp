@@ -10,8 +10,7 @@ const firebaseErrorMessages = {
   "auth/user-disabled": "This user account has been disabled.",
   "auth/requires-recent-login": "Please log in again to perform this action.",
   "auth/operation-not-allowed": "This sign-in method is not allowed.",
-  "auth/invalid-credential":
-    "Invalid credentials, please check your email and password.",
+  "auth/invalid-credential": "Invalid email and password.",
   "auth/missing-email": "Please provide an email address.",
   "auth/missing-password": "Please enter a password.",
   "auth/account-exists-with-different-credential":

@@ -45,6 +45,7 @@ export const FormInput = styled.input`
   outline: none;
   border: none;
   height: inherit;
+  color: #fff !important;
 `;
 
 const SharedPreviewContainer = styled.div`

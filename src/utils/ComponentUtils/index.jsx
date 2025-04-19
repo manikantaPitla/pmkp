@@ -19,10 +19,10 @@ export const CustomMainLayout = ({ children }) => (
   </CustomMainWrapperStyles>
 );
 
-export const Divider = ({ text }) => (
+export const Divider = ({ children }) => (
   <DividerStyles>
     <hr />
-    {text}
+    {children}
     <hr />
   </DividerStyles>
 );

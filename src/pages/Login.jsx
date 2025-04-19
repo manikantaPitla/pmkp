@@ -87,7 +87,7 @@ function Login() {
           Login
         </Button>
       </FormContainer>
-      <Divider text="❤️" />
+      <Divider>❤️</Divider>
       <Link to="/">
         <Button type="button">Go Back</Button>
       </Link>

@@ -118,12 +118,16 @@ const sendMessageUtility = async (
 
     let cloudinaryObject = null;
     if (media) {
-      cloudinaryObject = await uploadToCloudinary(media, (progress) => {
-        updateMessage({
-          messageId,
-          progress,
-        });
-      });
+      cloudinaryObject = await uploadToCloudinary(
+        media,
+        (progress) => {
+          updateMessage({
+            messageId,
+            progress,
+          });
+        },
+        `${senderId}_${receiverId}`
+      );
     }
 
     await setDoc(senderMessageRef, { ...messageObj, media: cloudinaryObject });

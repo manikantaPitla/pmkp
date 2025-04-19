@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { DefaultPage, Login, Home } from "./pages";
-
+import { DefaultPage, Login, Home, Registration } from "./pages";
 import { Toaster } from "react-hot-toast";
 import { NotFound, AuthRedirect, ProtectedRoute } from "./components";
 
@@ -35,16 +34,25 @@ function App() {
           }
         />
 
+        <Route
+          path="/one-time-registration"
+          element={
+            <AuthRedirect>
+              <Registration />
+            </AuthRedirect>
+          }
+        />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster
         position="top-center"
         toastOptions={{
           style: {
-            borderRadius: "10px",
             padding: "6px 10px",
             fontSize: "12px",
             textAlign: "center",
+            borderRadius: "20px",
           },
         }}
       />

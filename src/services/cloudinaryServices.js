@@ -1,4 +1,4 @@
-export const uploadToCloudinary = (file, setProgress, folder = "PMKP") => {
+export const uploadToCloudinary = (file, setProgress, folderName = "PMKP") => {
   return new Promise((resolve, reject) => {
     if (!file) return reject({ error: "No file selected" });
 
@@ -8,7 +8,7 @@ export const uploadToCloudinary = (file, setProgress, folder = "PMKP") => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", UPLOAD_PRESET);
-    formData.append("folder", folder);
+    formData.append("folder", folderName);
 
     const isVideo = file.type.startsWith("video/");
     const resourceType = isVideo ? "video" : "image";

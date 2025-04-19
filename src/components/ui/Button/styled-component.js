@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const StyledButton = styled.button`
-  height: 45px;
+  height: var(--primary-el-height);
   border-radius: var(--radius);
   border: 1px solid var(--border-shaded);
   background-color: #fff;

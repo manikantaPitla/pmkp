@@ -74,7 +74,7 @@ function DefaultPage() {
         />
         <Input
           type="text"
-          placeholder="Message..."
+          placeholder="Message"
           name="message"
           onChange={handleInputChange}
           value={formData.message}
@@ -82,7 +82,7 @@ function DefaultPage() {
         />
         <Button type="submit">Send</Button>
       </FormContainer>
-      <Divider text="OR" />
+      <Divider>OR</Divider>
       <Link to="/login">
         <Button type="button" disabled={loading}>
           Login

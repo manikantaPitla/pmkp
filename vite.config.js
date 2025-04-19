@@ -12,8 +12,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
       manifest: {
-        name: "PM KP",
-        short_name: "PM KP",
+        name: "PMKP",
+        short_name: "PMKP",
         theme_color: "#000000",
         background_color: "#000000",
         icons: [

@@ -2,13 +2,13 @@
 import React from "react";
 import styled from "styled-components";
 
-const Divider = styled.div`
+const Divider = styled.li`
   display: flex;
   justify-content: center;
   margin: 10px 0 10px;
   font-size: 8px;
   font-weight: 500;
-  color: #888;
+  color: var(--text-light-shaded);
   p {
     width: fit-content;
     background-color: var(--bg-shaded);
