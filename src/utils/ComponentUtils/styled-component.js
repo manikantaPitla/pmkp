@@ -40,4 +40,5 @@ export const SharedContainer = styled.div`
 export const CustomSharedContainer = styled(SharedContainer)`
   padding: 0px;
   gap: 5px;
+  position: relative;
 `;

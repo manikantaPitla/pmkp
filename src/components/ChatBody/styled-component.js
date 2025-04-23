@@ -5,7 +5,7 @@ export const MessageContainer = styled.ul`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  padding: 0px 10px;
+  padding: 57.5px 10px 80px;
   gap: 10px;
 
   .no-messages {
@@ -20,4 +20,13 @@ export const LoaderWrapper = styled.div`
   padding: 40px 0;
   display: flex;
   justify-content: center;
+`;
+
+export const ChatInputContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+
 `;

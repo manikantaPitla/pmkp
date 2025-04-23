@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { getUserMessages } from "../../services";
-import { LoaderWrapper, MessageContainer } from "./styled-component";
+import {
+  ChatInputContainer,
+  LoaderWrapper,
+  MessageContainer,
+} from "./styled-component";
 import { useLoading, useMessage } from "../../hooks";
 import { getFormattedDateLabel, SquareLoader } from "../../utils";
 import { ChatInput } from "../";
@@ -49,13 +53,13 @@ function ChatBody() {
 
   const renderMessages = useMemo(() => {
     const grouped = {};
-  
+
     messageList.forEach((msg) => {
       const dateLabel = getFormattedDateLabel(msg.timestamp);
       if (!grouped[dateLabel]) grouped[dateLabel] = [];
       grouped[dateLabel].push(msg);
     });
-  
+
     const elements = [];
     Object.entries(grouped).forEach(([date, messages]) => {
       elements.push(<DateDivider key={date} date={date} />);
@@ -70,7 +74,7 @@ function ChatBody() {
         );
       });
     });
-  
+
     return elements;
   }, [messageList, userId]);
 
@@ -87,7 +91,9 @@ function ChatBody() {
           <p className="no-messages">No Messages</p>
         )}
       </MessageContainer>
-      <ChatInput replyTo={replyTo} setReplyTo={setReplyTo} />
+      <ChatInputContainer>
+        <ChatInput replyTo={replyTo} setReplyTo={setReplyTo} />
+      </ChatInputContainer>
     </>
   );
 }

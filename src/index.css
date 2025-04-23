@@ -19,6 +19,7 @@
 
   --bg-shaded: #212121;
   --border-shaded: rgba(255, 255, 255, 0.2);
+  /* --border-shaded: #e1e1e1 */
   --bg-shaded-dark: rgba(0, 0, 0, 0.08);
 
   --text-light-shaded: #ced4da;

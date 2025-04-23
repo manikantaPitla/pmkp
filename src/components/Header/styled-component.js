@@ -5,7 +5,12 @@ export const HeaderWrapper = styled.header`
   justify-content: space-between;
   align-items: center;
   gap: 5px;
-  padding: 15px 15px;
+  padding: 10px 15px;
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  position: absolute;
+  width: 100%;
+  top: 0px;
 `;
 
 export const UserNameWrapper = styled.div`
