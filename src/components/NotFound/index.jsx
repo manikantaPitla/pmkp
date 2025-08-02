@@ -10,7 +10,7 @@ function NotFound() {
   useEffect(() => {
     if (count > 0) {
       const timer = setTimeout(() => {
-        setCount((prev) => prev - 1);
+        setCount(prev => prev - 1);
       }, 1000);
       return () => clearTimeout(timer);
     } else {

@@ -27,7 +27,7 @@ export const MediaCard = styled.div`
     justify-content: center;
     align-items: center;
     p {
-        font-size:10px;
+      font-size: 10px;
     }
   }
 `;
@@ -35,7 +35,7 @@ export const MediaCard = styled.div`
 export const MediaOpenItem = styled.div`
   background-color: var(--border-shaded);
   padding: 5px 10px;
-  border-radius:15px;
+  border-radius: 15px;
   p {
     font-size: 10px !important;
   }

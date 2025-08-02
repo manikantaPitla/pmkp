@@ -1,41 +1,19 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  HeaderWrapper,
-  MenuWrapper,
-  ProfileDataWrapper,
-  UserNameWrapper,
-} from "./styled-component";
+import { HeaderWrapper, MenuWrapper, ProfileDataWrapper, UserNameWrapper } from "./styled-component";
 import { useNavigate } from "react-router-dom";
 import { CustomButton } from "../ui/Button/styled-component";
 import { useLoading, useMessage, useAuthActions } from "../../hooks";
 import { LogOut, Trash2, Bell } from "lucide-react";
-import {
-  clearChat,
-  getUserProfileData,
-  getUserProfileSnapShotData,
-  logOut,
-  sendMail,
-} from "../../services";
-import {
-  ProfileSkeleton,
-  ModalSmall,
-  getLastLoginTimeFormat,
-  toast,
-  mId,
-  pId,
-} from "../../utils";
+import { clearChat, getUserProfileData, getUserProfileSnapShotData, logOut, sendMail } from "../../services";
+import { ProfileSkeleton, ModalSmall, getLastLoginTimeFormat, toast, mId, pId } from "../../utils";
 import { useSelector } from "react-redux";
 
 function Header() {
-  const currentUser = useSelector((state) => state.auth.user);
+  const currentUser = useSelector(state => state.auth.user);
 
   const [chatUserData, setChatUserData] = useState(null);
   const { loading, startLoading, stopLoading } = useLoading(true);
-  const {
-    loading: mailLoading,
-    startLoading: startMailLoading,
-    stopLoading: stopMailLoading,
-  } = useLoading();
+  const { loading: mailLoading, startLoading: startMailLoading, stopLoading: stopMailLoading } = useLoading();
 
   const navigate = useNavigate();
   const { removeUser } = useAuthActions();
@@ -47,7 +25,7 @@ function Header() {
       await toast.promise(sendMail(chatUserData.username, chatUserData.email), {
         loading: "Sending mail notification...",
         success: "Mail notification sent successfully",
-        error: (err) => err.message,
+        error: err => err.message,
       });
     } catch (error) {
       toast.error(error.text || "Unable to send mail notification");
@@ -68,7 +46,7 @@ function Header() {
         {
           loading: "Logging out...",
           success: "Logged out successfully",
-          error: (err) => err.message || "Logout failed",
+          error: err => err.message || "Logout failed",
         }
       );
 
@@ -85,7 +63,7 @@ function Header() {
       await toast.promise(clearChat(currentUser.id), {
         loading: "Deleting messages...",
         success: "Chat deleted successfully",
-        error: (err) => err.message,
+        error: err => err.message,
       });
     } catch (error) {
       console.log(error.message);
@@ -99,7 +77,7 @@ function Header() {
 
     const chatUserId = currentUser.id === pId ? mId : pId;
 
-    const unsubscribe = getUserProfileSnapShotData(chatUserId, (chatUser) => {
+    const unsubscribe = getUserProfileSnapShotData(chatUserId, chatUser => {
       setChatUserData(chatUser);
       stopLoading();
     });
@@ -130,12 +108,7 @@ function Header() {
         )}
       </UserNameWrapper>
       <MenuWrapper>
-        <CustomButton
-          type="button"
-          onClick={notifyUser}
-          disabled={mailLoading}
-          title="Mail notification"
-        >
+        <CustomButton type="button" onClick={notifyUser} disabled={mailLoading} title="Mail notification">
           <Bell size={20} />
         </CustomButton>
 

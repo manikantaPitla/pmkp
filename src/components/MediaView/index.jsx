@@ -24,7 +24,7 @@ function MediaView({ media, isReplyMsg = false }) {
         </div>
       ) : (
         !isReplyMsg && (
-          <a href={url} target="blank" onClick={(e) => e.stopPropagation()}>
+          <a href={url} target="blank" onClick={e => e.stopPropagation()}>
             <MediaOpenItem>
               <p>Open</p>
             </MediaOpenItem>

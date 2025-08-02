@@ -28,5 +28,4 @@ export const ChatInputContainer = styled.div`
   width: 100%;
   background-color: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
-
 `;

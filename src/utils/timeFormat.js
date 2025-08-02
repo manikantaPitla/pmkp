@@ -1,4 +1,4 @@
-export const getTimeFormat = (timestamp) => {
+export const getTimeFormat = timestamp => {
   const date = new Date(timestamp);
 
   const options = {
@@ -13,7 +13,7 @@ export const getTimeFormat = (timestamp) => {
   return date.toLocaleString("en-US", options);
 };
 
-export const getLastLoginTimeFormat = (timestamp) => {
+export const getLastLoginTimeFormat = timestamp => {
   if (!timestamp) return null;
   const date = new Date(timestamp.seconds * 1000);
 

@@ -30,7 +30,7 @@ export const logOut = async () => {
   await signOut(auth);
 };
 
-export const getUserProfileData = async (userId) => {
+export const getUserProfileData = async userId => {
   if (!userId) return;
 
   const docSnap = await getDoc(doc(db, "users", userId));
@@ -45,7 +45,7 @@ export const getUserProfileSnapShotData = (userId, callback) => {
 
   const unsubscribe = onSnapshot(
     userRef,
-    (docSnap) => {
+    docSnap => {
       if (docSnap.exists()) {
         callback(docSnap.data());
       } else {
@@ -53,7 +53,7 @@ export const getUserProfileSnapShotData = (userId, callback) => {
         callback(null);
       }
     },
-    (error) => {
+    error => {
       console.error("Error listening to user data:", error);
     }
   );
@@ -61,7 +61,7 @@ export const getUserProfileSnapShotData = (userId, callback) => {
   return unsubscribe;
 };
 
-export const updateLastLogin = async (userId) => {
+export const updateLastLogin = async userId => {
   if (!userId) return;
   try {
     await updateDoc(doc(db, "users", userId), { lastLogin: serverTimestamp() });
@@ -70,16 +70,7 @@ export const updateLastLogin = async (userId) => {
   }
 };
 
-const sendMessageUtility = async (
-  isAuthUser,
-  senderId,
-  receiverId,
-  message,
-  addNewMessage,
-  updateMessage,
-  replyTo,
-  media
-) => {
+const sendMessageUtility = async (isAuthUser, senderId, receiverId, message, addNewMessage, updateMessage, replyTo, media) => {
   const timeStamp = Date.now();
   const messageId = `${senderId}_${timeStamp}`;
 
@@ -95,13 +86,7 @@ const sendMessageUtility = async (
 
   try {
     const senderMessageRef = doc(db, "chats", senderId, "messages", messageId);
-    const receiverMessageRef = doc(
-      db,
-      "chats",
-      receiverId,
-      "messages",
-      messageId
-    );
+    const receiverMessageRef = doc(db, "chats", receiverId, "messages", messageId);
 
     let tempMedia = null;
     if (media) {
@@ -120,7 +105,7 @@ const sendMessageUtility = async (
     if (media) {
       cloudinaryObject = await uploadToCloudinary(
         media,
-        (progress) => {
+        progress => {
           updateMessage({
             messageId,
             progress,
@@ -158,34 +143,13 @@ export const sendDirectMessage = async (uniqueId, message) => {
   );
 };
 
-export const sendAuthUserMessage = async (
-  senderId,
-  message,
-  media,
-  addNewMessage,
-  updateMessage,
-  replyTo
-) => {
+export const sendAuthUserMessage = async (senderId, message, media, addNewMessage, updateMessage, replyTo) => {
   const receiverId = senderId === pId ? mId : pId;
 
-  await sendMessageUtility(
-    true,
-    senderId,
-    receiverId,
-    message,
-    addNewMessage,
-    updateMessage,
-    replyTo,
-    media
-  );
+  await sendMessageUtility(true, senderId, receiverId, message, addNewMessage, updateMessage, replyTo, media);
 };
 
-export const getUserMessages = (
-  userId,
-  setMessages,
-  startLoading,
-  stopLoading
-) => {
+export const getUserMessages = (userId, setMessages, startLoading, stopLoading) => {
   if (!userId) return;
 
   startLoading();
@@ -193,8 +157,8 @@ export const getUserMessages = (
     const messagesRef = collection(db, "chats", userId, "messages");
     const q = query(messagesRef, orderBy("timestamp", "asc"));
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const messages = querySnapshot.docs.map((doc) => doc.data());
+    const unsubscribe = onSnapshot(q, querySnapshot => {
+      const messages = querySnapshot.docs.map(doc => doc.data());
       setMessages(messages);
       stopLoading();
     });
@@ -212,24 +176,19 @@ export const getOlderMessages = async (userId, lastTimestamp) => {
 
   try {
     const messagesRef = collection(db, "chats", userId, "messages");
-    const q = query(
-      messagesRef,
-      where("timestamp", "<", lastTimestamp),
-      orderBy("timestamp", "desc"),
-      limit(10)
-    );
+    const q = query(messagesRef, where("timestamp", "<", lastTimestamp), orderBy("timestamp", "desc"), limit(10));
 
     const querySnapshot = await getDocs(q);
 
     // ✅ Ensures all messages are fetched before returning
-    return querySnapshot.docs.map((doc) => doc.data()).reverse();
+    return querySnapshot.docs.map(doc => doc.data()).reverse();
   } catch (error) {
     console.error("Error fetching older messages:", error);
     return [];
   }
 };
 
-export const clearChat = async (userId) => {
+export const clearChat = async userId => {
   if (!userId) return;
 
   try {
@@ -242,8 +201,8 @@ export const clearChat = async (userId) => {
 
     const userChatRef = doc(db, "chats", userId);
 
-    await runTransaction(db, async (transaction) => {
-      messagesSnapshot.docs.forEach((msgDoc) => transaction.delete(msgDoc.ref));
+    await runTransaction(db, async transaction => {
+      messagesSnapshot.docs.forEach(msgDoc => transaction.delete(msgDoc.ref));
 
       transaction.update(userChatRef, {
         chatDeleteHistory: arrayUnion(Date.now()),

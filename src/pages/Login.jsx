@@ -6,14 +6,16 @@ import { useLoading } from "../hooks";
 import { FormContainer } from "../styles";
 import { MainLayout, toast, getFirebaseErrorMessage, Divider } from "../utils";
 
+import { mailIcon, lockIcon } from "../assets/icons/svg/index.js";
+
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const { loading, startLoading, stopLoading } = useLoading();
   const navigate = useNavigate();
 
-  const handleInputChange = useCallback((e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleInputChange = useCallback(e => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   }, []);
 
   const validateForm = () => {
@@ -38,7 +40,7 @@ function Login() {
   };
 
   const handleSubmit = useCallback(
-    async (e) => {
+    async e => {
       e.preventDefault();
 
       if (!validateForm()) return;
@@ -50,7 +52,7 @@ function Login() {
         const userDoc = await toast.promise(loginUser(email, password), {
           loading: "Verifying user...",
           success: "Login Successful",
-          error: (err) => getFirebaseErrorMessage(err),
+          error: err => getFirebaseErrorMessage(err),
         });
         if (userDoc?.user?.uid) {
           setFormData({ email: "", password: "" });
@@ -68,21 +70,8 @@ function Login() {
   return (
     <MainLayout>
       <FormContainer onSubmit={handleSubmit}>
-        <Input
-          type="email"
-          placeholder="Email"
-          name="email"
-          onChange={handleInputChange}
-          value={formData.email}
-          autoComplete="true"
-        />
-        <Input
-          type="password"
-          placeholder="Password"
-          name="password"
-          onChange={handleInputChange}
-          value={formData.password}
-        />
+        <Input iconSrc={mailIcon} type="email" placeholder="Email" name="email" onChange={handleInputChange} value={formData.email} autoComplete="true" />
+        <Input iconSrc={lockIcon} type="password" placeholder="Password" name="password" onChange={handleInputChange} value={formData.password} />
         <Button type="submit" disabled={loading}>
           Login
         </Button>

@@ -1,18 +1,11 @@
 import React from "react";
-import {
-  MessageCard,
-  MessageContainer,
-  MessageInnerCard,
-  MessageTime,
-  ReplyViewContainer,
-} from "./styled-component";
+import { MessageCard, MessageContainer, MessageInnerCard, MessageTime, ReplyViewContainer } from "./styled-component";
 import { Send as SendIcon, CircleX as ErrorIcon } from "lucide-react";
 import { getTimeFormat, makeLinksClickable, minimizeText } from "../../utils";
 import MediaView from "../MediaView";
 
 function MessageItem({ messageData, userId, setReplyTo }) {
-  const { senderId, message, messageId, timestamp, replyTo, status, media } =
-    messageData;
+  const { senderId, message, messageId, timestamp, replyTo, status, media } = messageData;
 
   return (
     <MessageContainer key={messageId} $sender={userId === senderId}>
@@ -21,23 +14,18 @@ function MessageItem({ messageData, userId, setReplyTo }) {
           <ReplyViewContainer
             onClick={() => {
               const replyElement = document.getElementById(replyTo.messageId);
-              if (replyElement)
-                replyElement.scrollIntoView({ behavior: "smooth" });
+              if (replyElement) replyElement.scrollIntoView({ behavior: "smooth" });
             }}
           >
-            <p className="reply-to-user-message">
-              {replyTo.senderId === userId ? "You" : "Anonymous"}
-            </p>
+            <p className="reply-to-user-message">{replyTo.senderId === userId ? "You" : "Anonymous"}</p>
 
-            {replyTo && replyTo?.media && (
-              <MediaView media={replyTo?.media} isReplyMsg={true} />
-            )}
+            {replyTo && replyTo?.media && <MediaView media={replyTo?.media} isReplyMsg={true} />}
             <p>{minimizeText(replyTo.message, 120)}</p>
           </ReplyViewContainer>
         )}
         <MessageInnerCard
           $sender={userId === senderId}
-          onClick={(e) => {
+          onClick={e => {
             if (e.target.tagName === "A") {
               e.stopPropagation();
               return;
@@ -53,10 +41,7 @@ function MessageItem({ messageData, userId, setReplyTo }) {
           }}
         >
           {media && <MediaView media={media} />}
-          <p
-            id={messageId}
-            dangerouslySetInnerHTML={{ __html: makeLinksClickable(message) }}
-          />
+          <p id={messageId} dangerouslySetInnerHTML={{ __html: makeLinksClickable(message) }} />
 
           <MessageTime>{getTimeFormat(timestamp)}</MessageTime>
         </MessageInnerCard>
@@ -64,9 +49,7 @@ function MessageItem({ messageData, userId, setReplyTo }) {
       {status && userId === senderId && status === "sending" ? (
         <SendIcon className="status-icon" size={12} />
       ) : (
-        status === "failed" && (
-          <ErrorIcon color="red" className="status-icon" size={12} />
-        )
+        status === "failed" && <ErrorIcon color="red" className="status-icon" size={12} />
       )}
     </MessageContainer>
   );

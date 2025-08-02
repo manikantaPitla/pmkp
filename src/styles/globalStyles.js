@@ -1,10 +1,14 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-}
+import { createGlobalStyle } from "styled-components";
 
+const GlobalStyles = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif !important;
+  }
+
+  
 :root {
   line-height: 1.5;
   font-weight: 400;
@@ -18,6 +22,11 @@
   -moz-osx-font-smoothing: grayscale;
 
   --bg-shaded: #212121;
+
+  --bg-shaded: #303030;
+
+  
+
   --border-shaded: rgba(255, 255, 255, 0.2);
   /* --border-shaded: #e1e1e1 */
   --bg-shaded-dark: rgba(0, 0, 0, 0.08);
@@ -31,9 +40,9 @@
   --fs-l: 12px;
   --fs-xl: 14px;
 
-  --radius: 10px;
+  --radius: 15px;
 
-  --primary-el-height: 40px;
+  --primary-el-height: 45px;
 }
 
 *,
@@ -60,3 +69,7 @@ button {
 a {
   text-decoration: none;
 }
+
+`;
+
+export default GlobalStyles;
