@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
     setError("");
     startLoading();
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async user => {
       try {
         if (user) {
           await updateLastLogin(user?.uid);

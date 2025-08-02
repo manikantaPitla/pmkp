@@ -10,7 +10,7 @@ export * from "./ComponentUtils";
 export * from "./firebaseErrors";
 export * from "./hyperLinks";
 
-export const getFormattedDateLabel = (timestamp) => {
+export const getFormattedDateLabel = timestamp => {
   const date = new Date(timestamp);
   if (isToday(date)) return "Today";
   if (isYesterday(date)) return "Yesterday";

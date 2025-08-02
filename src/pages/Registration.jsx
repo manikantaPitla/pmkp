@@ -7,10 +7,10 @@ import { Button } from "../components/ui";
 function Registration() {
   const [formData, setFormData] = useState({
     userInfo: {},
-    chatPatnerInfo : {}
+    chatPatnerInfo: {},
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
   };
 
@@ -21,19 +21,11 @@ function Registration() {
         <Divider>Your details</Divider>
         <Input type="text" placeholder="Username" />
         <Input type="email" placeholder="Email" />
-        <Input
-          type="text"
-          placeholder="Unique ID (4 Digit Number)"
-          maxLength={4}
-        />
+        <Input type="text" placeholder="Unique ID (4 Digit Number)" maxLength={4} />
         <Divider>Chat patner details</Divider>
         <Input type="text" placeholder="Username" />
         <Input type="email" placeholder="Email" />
-        <Input
-          type="text"
-          placeholder="Unique ID (4 Digit Number)"
-          maxLength={4}
-        />
+        <Input type="text" placeholder="Unique ID (4 Digit Number)" maxLength={4} />
         <Button type="submit">Register</Button>
       </FormContainer>
     </MainLayout>

@@ -13,10 +13,8 @@ const firebaseErrorMessages = {
   "auth/invalid-credential": "Invalid email and password.",
   "auth/missing-email": "Please provide an email address.",
   "auth/missing-password": "Please enter a password.",
-  "auth/account-exists-with-different-credential":
-    "An account already exists with the same email but different sign-in credentials.",
-  "auth/provider-already-linked":
-    "This provider is already linked to another account.",
+  "auth/account-exists-with-different-credential": "An account already exists with the same email but different sign-in credentials.",
+  "auth/provider-already-linked": "This provider is already linked to another account.",
 
   // ✅ Firestore & Realtime Database Errors
   "permission-denied": "You do not have permission to perform this action.",
@@ -58,8 +56,5 @@ const firebaseErrorMessages = {
 export function getFirebaseErrorMessage(error) {
   if (!error) return "An unknown error occurred.";
   const errorCode = typeof error === "string" ? error : error.code;
-  return (
-    firebaseErrorMessages[errorCode] ||
-    "Something went wrong, please try again."
-  );
+  return firebaseErrorMessages[errorCode] || "Something went wrong, please try again.";
 }

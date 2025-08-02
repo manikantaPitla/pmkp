@@ -13,14 +13,14 @@ function AuthRedirect({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(
       auth,
-      (user) => {
+      user => {
         if (user) {
           navigate(`/profile/${user.uid}`);
         } else {
           stopLoading();
         }
       },
-      (err) => {
+      err => {
         console.error("Auth state error:", err);
         setError("Authentication error. Please refresh and try again.");
         stopLoading();

@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const MessageContainer = styled.li`
   display: flex;
-  justify-content: ${(props) => (props.$sender ? "flex-end" : "flex-start")};
+  justify-content: ${props => (props.$sender ? "flex-end" : "flex-start")};
   line-height: 16px;
   align-items: flex-end;
   gap: 5px;
@@ -21,8 +21,7 @@ export const MessageTime = styled.span`
 
 export const MessageCard = styled.div`
   max-width: 80%;
-  background-color: ${(props) =>
-    props.$sender ? "var(--bg-shaded)" : "#171717"};
+  background-color: ${props => (props.$sender ? "var(--bg-shaded)" : "#171717")};
   /* border: 1px solid var(--border-shaded); */
   border-radius: 10px;
   padding: 6px 10px;
@@ -35,7 +34,7 @@ export const MessageInnerCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1px;
-  /* align-items: ${(props) => (props.$sender ? "flex-end" : "flex-start")}; */
+  /* align-items: ${props => (props.$sender ? "flex-end" : "flex-start")}; */
   align-items: flex-end;
 
   p {

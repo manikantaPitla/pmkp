@@ -7,7 +7,7 @@ const store = configureStore({
     auth: authReducer,
     messages: messageReducer,
   },
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ["auth/addUser", "messages/setChatMessages"],

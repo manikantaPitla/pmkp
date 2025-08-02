@@ -15,14 +15,10 @@ export const uploadToCloudinary = (file, setProgress, folderName = "PMKP") => {
 
     const xhr = new XMLHttpRequest();
 
-    xhr.open(
-      "POST",
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`,
-      true
-    );
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, true);
 
     // Track upload progress
-    xhr.upload.onprogress = (event) => {
+    xhr.upload.onprogress = event => {
       if (event.lengthComputable) {
         const percentCompleted = Math.round((event.loaded * 100) / event.total);
         setProgress(percentCompleted);
@@ -31,8 +27,7 @@ export const uploadToCloudinary = (file, setProgress, folderName = "PMKP") => {
 
     xhr.onload = () => {
       if (xhr.status === 200) {
-        const { secure_url, resource_type, format, bytes, original_filename } =
-          JSON.parse(xhr.responseText);
+        const { secure_url, resource_type, format, bytes, original_filename } = JSON.parse(xhr.responseText);
 
         const resObject = {
           name: original_filename,
@@ -47,8 +42,7 @@ export const uploadToCloudinary = (file, setProgress, folderName = "PMKP") => {
       }
     };
 
-    xhr.onerror = () =>
-      reject({ error: "Upload error", details: xhr.responseText });
+    xhr.onerror = () => reject({ error: "Upload error", details: xhr.responseText });
 
     xhr.send(formData);
   });
