@@ -78,10 +78,17 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ["react", "react-dom"],
-          firebase: ["firebase"],
+          firebase: ["firebase/app", "firebase/auth", "firebase/firestore"],
           ui: ["styled-components", "react-hot-toast"],
         },
       },
     },
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
+    },
+  },
+  optimizeDeps: {
+    include: ["firebase/app", "firebase/auth", "firebase/firestore"],
   },
 });
