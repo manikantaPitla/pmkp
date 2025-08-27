@@ -8,9 +8,10 @@ export const HeaderWrapper = styled.header`
   padding: 10px 15px;
   background-color: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
-  position: absolute;
+  position: fixed;
   width: 100%;
   top: 0px;
+  z-index: 1000;
 `;
 
 export const UserNameWrapper = styled.div`

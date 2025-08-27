@@ -1,0 +1,142 @@
+import React from "react";
+import styled from "styled-components";
+
+const ErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+  background-color: #000000;
+`;
+
+const ErrorTitle = styled.h1`
+  color: #ff6b6b;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+`;
+
+const ErrorMessage = styled.p`
+  color: var(--text-light-shaded);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  line-height: 1.6;
+`;
+
+const RetryButton = styled.button`
+  height: var(--primary-el-height);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-shaded);
+  background-color: #fff;
+  color: #000;
+  padding: 0px 20px;
+  cursor: pointer;
+  font-size: var(--fs-xl);
+  transition: all 0.2s ease;
+  outline: none;
+  position: relative;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    background-color: #666;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    border-width: 2px;
+    &:focus-visible {
+      outline-width: 3px;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    this.setState({
+      error: error,
+      errorInfo: errorInfo,
+    });
+
+    // Log error to console in development
+    if (process.env.NODE_ENV === "development") {
+      console.error("Error caught by boundary:", error, errorInfo);
+    }
+
+    // In production, you would send this to an error reporting service
+    // Example: Sentry.captureException(error, { extra: errorInfo });
+  }
+
+  handleRetry = () => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    });
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <ErrorContainer>
+          <ErrorTitle>Something went wrong</ErrorTitle>
+          <ErrorMessage>We're sorry, but something unexpected happened. Please try refreshing the page or contact support if the problem persists.</ErrorMessage>
+          <RetryButton onClick={this.handleRetry}>Try Again</RetryButton>
+          {process.env.NODE_ENV === "development" && this.state.error && (
+            <details style={{ marginTop: "2rem", textAlign: "left" }}>
+              <summary>Error Details (Development)</summary>
+              <pre
+                style={{
+                  background: "var(--bg-shaded)",
+                  padding: "1rem",
+                  borderRadius: "var(--radius)",
+                  overflow: "auto",
+                  maxWidth: "100%",
+                  color: "var(--text-light-shaded)",
+                }}
+              >
+                {this.state.error && this.state.error.toString()}
+                <br />
+                {this.state.errorInfo.componentStack}
+              </pre>
+            </details>
+          )}
+        </ErrorContainer>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;

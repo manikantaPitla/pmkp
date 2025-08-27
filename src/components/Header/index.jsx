@@ -29,7 +29,6 @@ function Header() {
       });
     } catch (error) {
       toast.error(error.text || "Unable to send mail notification");
-      console.log(error.text);
     } finally {
       stopMailLoading();
     }
@@ -66,7 +65,7 @@ function Header() {
         error: err => err.message,
       });
     } catch (error) {
-      console.log(error.message);
+      // Error handled by toast.promise
     }
   }, [currentUser]);
 

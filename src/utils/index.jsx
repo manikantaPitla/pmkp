@@ -9,6 +9,10 @@ export * from "./userIdentity";
 export * from "./ComponentUtils";
 export * from "./firebaseErrors";
 export * from "./hyperLinks";
+export * from "./security";
+export * from "./constants";
+export * from "./messages";
+export * from "./performance";
 
 export const getFormattedDateLabel = timestamp => {
   const date = new Date(timestamp);

@@ -5,6 +5,7 @@ import { StyledButton } from "../components/ui/Button/styled-component";
 export const ModalSmallCustomStyles = styled(Popup)`
   &-overlay {
     backdrop-filter: blur(3px);
+    z-index: 9999;
   }
 
   &-content {
@@ -14,6 +15,7 @@ export const ModalSmallCustomStyles = styled(Popup)`
     background-color: #ffffff;
     border: none;
     color: #000000;
+    z-index: 10000;
   }
 `;
 
@@ -22,6 +24,7 @@ export const ModalNotifyCustomStyles = styled(ModalSmallCustomStyles)`
     width: 350px;
     height: 180px;
     border-radius: 16px;
+    z-index: 10000;
   }
 `;
 

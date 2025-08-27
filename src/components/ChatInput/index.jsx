@@ -3,31 +3,20 @@ import { FormButton, FormInput, InputWrapper, MediaPreview, ReplyMessageInnerCon
 import { Image, SendHorizontal, X } from "lucide-react";
 import { sendAuthUserMessage } from "../../services";
 import { useSelector } from "react-redux";
-import { useMessage, useLoading } from "../../hooks";
-import { getTimeFormat, minimizeText, toast } from "../../utils";
+import { useMessage, useLoading, useMediaPicker } from "../../hooks";
+import { getTimeFormat, minimizeText, toast, sanitizeInput } from "../../utils";
 import Button from "../ui/Button";
 import MediaView from "../MediaView";
 
 function ChatInput({ replyTo, setReplyTo }) {
   const [message, setMessage] = useState("");
-  const [media, setMedia] = useState(null);
   const user = useSelector(state => state.auth.user);
 
   const { addNewMessage, updateMessage } = useMessage();
   const { loading, startLoading, stopLoading } = useLoading(false);
   const inputRef = useRef(null);
 
-  const handleMediaChange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
-      toast.error("Only images and videos are allowed");
-      return;
-    }
-
-    setMedia(file);
-  };
+  const { media, mediaPreview, handleMediaChange, removeMedia, getMediaType } = useMediaPicker();
 
   const handleSendMessage = async e => {
     e.preventDefault();
@@ -37,19 +26,18 @@ function ChatInput({ replyTo, setReplyTo }) {
 
     startLoading();
     try {
-      const tempMessage = trimmedMessage;
+      const sanitizedMessage = sanitizeInput(trimmedMessage);
+      const tempMessage = sanitizedMessage;
       const tempReplyTo = replyTo;
 
       setMessage("");
-      setMedia(null);
+      removeMedia();
       setReplyTo(null);
-      setMedia(null);
       inputRef.current?.focus();
 
       await sendAuthUserMessage(user?.id, tempMessage, media, addNewMessage, updateMessage, tempReplyTo);
     } catch (error) {
       toast.error(error.message);
-      console.log(error.message);
     } finally {
       stopLoading();
     }
@@ -80,17 +68,17 @@ function ChatInput({ replyTo, setReplyTo }) {
       {media && (
         <MediaPreview>
           <div>
-            {media.type.startsWith("image/") ? (
-              <img src={URL.createObjectURL(media)} alt="media" />
+            {getMediaType() === "image" ? (
+              <img src={mediaPreview} alt="media" />
             ) : (
               <video width="100%" height="auto" controls>
-                <source src={URL.createObjectURL(media)} type={media.type} />
+                <source src={mediaPreview} type={media.type} />
                 Your browser does not support the video tag.
               </video>
             )}
           </div>
           <div className="button-wrapper">
-            <Button type="button" onClick={() => setMedia(null)}>
+            <Button type="button" onClick={removeMedia}>
               Remove
             </Button>
             <Button as="label" htmlFor="fileInput">

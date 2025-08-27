@@ -1,50 +1,16 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
-import { DefaultPage, Login, Home, Registration } from "./pages";
 import { Toaster } from "react-hot-toast";
-import { NotFound, AuthRedirect, ProtectedRoute } from "./components";
+import { ErrorBoundary } from "./components";
+import RouteRenderer from "./routes/RouteRenderer";
+import SkipLinkComponent from "./components/SkipLink";
 
 function App() {
   return (
-    <>
-      <Routes>
-        <Route
-          path="/profile/:userId"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/"
-          element={
-            <AuthRedirect>
-              <DefaultPage />
-            </AuthRedirect>
-          }
-        />
-
-        <Route
-          path="/login"
-          element={
-            <AuthRedirect>
-              <Login />
-            </AuthRedirect>
-          }
-        />
-
-        <Route
-          path="/one-time-registration"
-          element={
-            <AuthRedirect>
-              <Registration />
-            </AuthRedirect>
-          }
-        />
-
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+    <ErrorBoundary>
+      <SkipLinkComponent targetId="main-content" />
+      <main id="main-content" tabIndex="-1">
+        <RouteRenderer />
+      </main>
       <Toaster
         position="top-center"
         toastOptions={{
@@ -56,7 +22,7 @@ function App() {
           },
         }}
       />
-    </>
+    </ErrorBoundary>
   );
 }
 
