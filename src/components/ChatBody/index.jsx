@@ -36,8 +36,7 @@ function ChatBody() {
       await editMessage(messageId, userId, newMessage);
       updateMessage({ messageId, message: newMessage, isEdited: true, editedAt: Date.now() });
     } catch (error) {
-      console.error("Error editing message:", error);
-      // You might want to show a toast notification here
+      // Error handling for editing message
     }
   };
 
@@ -46,8 +45,7 @@ function ChatBody() {
       await deleteMessage(messageId, userId);
       deleteMessageFromStore(messageId);
     } catch (error) {
-      console.error("Error deleting message:", error);
-      // You might want to show a toast notification here
+      // Error handling for deleting message
     }
   };
 
@@ -56,8 +54,7 @@ function ChatBody() {
       await markMessageAsSeen(messageId, userId);
       updateMessage({ messageId, isSeen: true, seenAt: Date.now() });
     } catch (error) {
-      console.error("Error marking message as seen:", error);
-      // You might want to show a toast notification here
+      // Error handling for marking message as seen
     }
   };
 
@@ -71,7 +68,7 @@ function ChatBody() {
           initialLoad: true,
         });
       } catch (error) {
-        console.error(error.message);
+        // Error handling for getting chats
       }
     };
     getChats();

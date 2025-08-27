@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { MessageCard, MessageContainer, MessageInnerCard, MessageTime, ReplyViewContainer, MessageMenu, MenuItem } from "./styled-component";
+import { MessageCard, MessageContainer, MessageInnerCard, ReplyViewContainer, MessageMenu, MenuItem } from "./styled-component";
 import { Send as SendIcon, CircleX as ErrorIcon, Edit3, Trash2, Eye, Clock, Reply } from "lucide-react";
-import { getTimeFormat, makeLinksClickable, minimizeText, sanitizeInput, validateUrl } from "../../utils";
+import { getTimeFormat, makeLinksClickable, minimizeText, sanitizeInput } from "../../utils";
 import MediaView from "../MediaView";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";

@@ -49,7 +49,6 @@ const usePagination = userId => {
         setHasMoreMessages(false);
       }
     } catch (error) {
-      console.error("Error loading older messages:", error);
       toast.error("Failed to load older messages");
     } finally {
       setLoadingMoreMessages(false);
@@ -78,7 +77,6 @@ const usePagination = userId => {
         });
       }
     } catch (error) {
-      console.error("Error loading newer messages:", error);
       toast.error("Failed to load newer messages");
     } finally {
       setLoadingMoreMessages(false);

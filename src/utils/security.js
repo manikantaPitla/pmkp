@@ -107,16 +107,6 @@ export const validateEmail = email => {
   return emailRegex.test(email);
 };
 
-// URL validation for links
-export const validateUrl = url => {
-  try {
-    const urlObj = new URL(url);
-    return ["http:", "https:"].includes(urlObj.protocol);
-  } catch {
-    return false;
-  }
-};
-
 // Session management
 export const createSession = (userId, expiresIn = 24 * 60 * 60 * 1000) => {
   const session = {
