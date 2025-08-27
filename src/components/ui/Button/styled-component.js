@@ -10,10 +10,37 @@ export const StyledButton = styled.button`
   cursor: pointer;
   width: 100%;
   font-size: var(--fs-xl);
+  transition: all 0.2s ease;
+  outline: none;
+  position: relative;
 
-  &:hover {
-    transition: background-color 0.2s;
+  &:hover:not(:disabled) {
     background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    background-color: #666;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    border-width: 2px;
+    &:focus-visible {
+      outline-width: 3px;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 `;
 

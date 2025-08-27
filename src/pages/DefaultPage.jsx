@@ -47,7 +47,7 @@ function DefaultPage() {
       setFormData(prev => ({ ...prev, message: "" }));
       messageInputRef.current?.focus();
     } catch (error) {
-      console.log(getFirebaseErrorMessage(error));
+      // Error handled by toast.promise
     } finally {
       stopLoading();
     }
