@@ -10,5 +10,4 @@ export { default as LazyLoader } from "./LazyLoader";
 export { default as SkipLink } from "./SkipLink";
 export { default as VirtualizedMessageList } from "./VirtualizedMessageList";
 
-// Common components
 export * from "./common";

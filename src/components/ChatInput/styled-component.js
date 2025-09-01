@@ -6,12 +6,12 @@ export const InputWrapper = styled.form`
   gap: 5px;
   position: relative;
   margin: 10px 10px 10px;
-  height: 48px;
-  border-radius: 25px;
+  height: 52px;
+  border-radius: 20px;
   border: 1px solid var(--border-shaded);
-  background-color: transparent;
-
-  padding: 0px 3px 0px 20px;
+  background-color: #000000;
+  z-index: 2000;
+  padding: 0px 0px 0px 20px;
   font-size: var(--fs-l) !important;
 
   input:-webkit-autofill,
@@ -28,10 +28,11 @@ export const InputWrapper = styled.form`
 export const FormButton = styled.button`
   cursor: pointer;
   padding: 0px !important;
+  margin: 0px 5px;
   height: inherit;
   width: 40px;
   height: 40px;
-  border-radius: 25px;
+  border-radius: 15px;
   border: none;
   display: flex;
   justify-content: center;
@@ -43,7 +44,7 @@ export const FormButton = styled.button`
 export const FormInput = styled.input`
   flex: 1;
   background-color: transparent;
-  outline: none;
+  outline: none !important;
   border: none;
   height: inherit;
   color: #fff !important;

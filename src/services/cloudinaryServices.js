@@ -17,7 +17,6 @@ export const uploadToCloudinary = (file, setProgress, folderName = "PMKP") => {
 
     xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, true);
 
-    // Track upload progress
     xhr.upload.onprogress = event => {
       if (event.lengthComputable) {
         const percentCompleted = Math.round((event.loaded * 100) / event.total);

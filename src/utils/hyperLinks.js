@@ -3,7 +3,6 @@ export const makeLinksClickable = text => {
 
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   return text.replace(urlRegex, url => {
-    // Validate URL before making it clickable
     try {
       const urlObj = new URL(url);
       if (!["http:", "https:"].includes(urlObj.protocol)) {

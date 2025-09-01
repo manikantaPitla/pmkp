@@ -55,16 +55,4 @@ export const StyledInput = styled.input`
     transition: background-color 9999s ease-in-out 0s;
   }
 
-  /* High contrast mode support */
-  @media (prefers-contrast: high) {
-    border: 1px solid #fff;
-    &:focus-visible {
-      outline-width: 3px;
-    }
-  }
-
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
 `;

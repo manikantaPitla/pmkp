@@ -72,17 +72,14 @@ const useAutoScroll = (dependencies = [], options = {}, onScrollToTop = null) =>
     return container.scrollTop <= threshold;
   }, []);
 
-  // Handle scroll events for pagination
   const handleScroll = useCallback(() => {
     if (!containerRef.current || !onScrollToTop) return;
 
     const container = containerRef.current;
     const { scrollTop, scrollHeight, clientHeight } = container;
 
-    // Track if user was at bottom before scrolling
     wasAtBottom.current = scrollTop + clientHeight >= scrollHeight - 10;
 
-    // Check if scrolling to top (for loading older messages)
     if (scrollTop < 100 && scrollTop < lastScrollTop.current) {
       onScrollToTop(scrollTop, scrollHeight, clientHeight);
     }
@@ -90,7 +87,6 @@ const useAutoScroll = (dependencies = [], options = {}, onScrollToTop = null) =>
     lastScrollTop.current = scrollTop;
   }, [onScrollToTop]);
 
-  // Add scroll listener
   useEffect(() => {
     const container = containerRef.current;
     if (container && onScrollToTop) {
@@ -99,17 +95,11 @@ const useAutoScroll = (dependencies = [], options = {}, onScrollToTop = null) =>
     }
   }, [handleScroll, onScrollToTop]);
 
-  // Auto-scroll when dependencies change (but only for new messages, not older ones)
   useEffect(() => {
     if (!enabled || !autoScrollOnNewMessages || isLoadingOlderMessages) return;
 
-    // Get the current message count from the first dependency (assuming it's messageList)
     const currentMessageCount = dependencies[0]?.length || 0;
 
-    // Only auto-scroll if:
-    // 1. We have more messages than before (new messages added)
-    // 2. User was at the bottom before the change
-    // 3. We're not currently loading older messages
     if (currentMessageCount > previousMessageCount.current && wasAtBottom.current) {
       scrollToBottom();
     }

@@ -1,8 +1,6 @@
-// Security utilities for input validation, sanitization, and rate limiting
 import DOMPurify from "dompurify";
 import Cookies from "js-cookie";
 
-// Input sanitization using DOMPurify (falls back to basic sanitization)
 export const sanitizeInput = input => {
   if (typeof input !== "string") return input;
 
@@ -20,7 +18,6 @@ export const sanitizeInput = input => {
   }
 };
 
-// File validation
 export const validateFile = file => {
   const maxSize = 10 * 1024 * 1024; // 10MB
   const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp", "video/mp4", "video/webm", "video/ogg"];
@@ -40,7 +37,6 @@ export const validateFile = file => {
   return true;
 };
 
-// Rate limiting utility
 class RateLimiter {
   constructor(limit = 10, windowMs = 60000) {
     this.limit = limit;
@@ -69,7 +65,6 @@ class RateLimiter {
 
 export const loginRateLimiter = new RateLimiter(10, 300000); // 10 login attempts per 5 minutes
 
-// Password validation
 export const validatePassword = password => {
   const minLength = 8;
   const hasUpperCase = /[A-Z]/.test(password);
@@ -101,13 +96,11 @@ export const validatePassword = password => {
   };
 };
 
-// Email validation
 export const validateEmail = email => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-// Session management
 export const createSession = (userId, expiresIn = 24 * 60 * 60 * 1000) => {
   const session = {
     userId,

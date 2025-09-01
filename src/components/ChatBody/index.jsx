@@ -17,10 +17,8 @@ function ChatBody() {
   const { loading, startLoading, stopLoading } = useLoading(true);
   const { setMessages, updateMessage, deleteMessage: deleteMessageFromStore } = useMessage();
 
-  // Pagination hook
   const { checkAndLoadMore, hasMore, isLoadingMore } = usePagination(userId);
 
-  // Auto scroll with pagination support
   const { containerRef: messageContainerRef } = useAutoScroll(
     [messageList],
     {
@@ -30,46 +28,36 @@ function ChatBody() {
     checkAndLoadMore
   );
 
-  // Message action handlers
   const handleEditMessage = async (messageId, newMessage) => {
     try {
       await editMessage(messageId, userId, newMessage);
       updateMessage({ messageId, message: newMessage, isEdited: true, editedAt: Date.now() });
-    } catch (error) {
-      // Error handling for editing message
-    }
+    } catch (error) {}
   };
 
   const handleDeleteMessage = async messageId => {
     try {
       await deleteMessage(messageId, userId);
       deleteMessageFromStore(messageId);
-    } catch (error) {
-      // Error handling for deleting message
-    }
+    } catch (error) {}
   };
 
   const handleMarkAsSeen = async messageId => {
     try {
       await markMessageAsSeen(messageId, userId);
       updateMessage({ messageId, isSeen: true, seenAt: Date.now() });
-    } catch (error) {
-      // Error handling for marking message as seen
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
     let unsubscribe;
     const getChats = () => {
       try {
-        // Use optimized message loading with pagination
         unsubscribe = getUserMessages(userId, setMessages, startLoading, stopLoading, {
           enableRealtime: true,
           initialLoad: true,
         });
-      } catch (error) {
-        // Error handling for getting chats
-      }
+      } catch (error) {}
     };
     getChats();
 
@@ -88,12 +76,15 @@ function ChatBody() {
         ) : messageList.length > 0 ? (
           <>
             {/* Loading indicator for older messages */}
-            {isLoadingMore && hasMore && (
-              <div style={{ textAlign: "center", padding: "10px", color: "var(--text-light-shaded)" }}>
-                <SquareLoader />
-                <p style={{ marginTop: "5px", fontSize: "var(--fs-s)" }}>Loading older messages...</p>
+            {isLoadingMore && hasMore && <div style={{ textAlign: "center", padding: "10px", color: "var(--text-light-shaded)" }}></div>}
+
+            {/* End of messages indicator */}
+            {!hasMore && messageList.length > 0 && (
+              <div style={{ textAlign: "center", padding: "10px", color: "var(--text-light-shaded)", fontSize: "var(--fs-s)" }}>
+                You've reached the beginning of the conversation
               </div>
             )}
+
             <VirtualizedMessageList
               messages={messageList}
               userId={userId}
@@ -103,12 +94,6 @@ function ChatBody() {
               onDeleteMessage={handleDeleteMessage}
               onMarkAsSeen={handleMarkAsSeen}
             />
-            {/* End of messages indicator */}
-            {!hasMore && messageList.length > 0 && (
-              <div style={{ textAlign: "center", padding: "10px", color: "var(--text-light-shaded)", fontSize: "var(--fs-s)" }}>
-                You've reached the beginning of the conversation
-              </div>
-            )}
           </>
         ) : (
           <p className="no-messages">No Messages</p>

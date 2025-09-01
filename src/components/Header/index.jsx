@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { HeaderWrapper, MenuWrapper, ProfileDataWrapper, UserNameWrapper } from "./styled-component";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { HeaderWrapper, MenuWrapper, MenuDropdown, MenuItem, ProfileDataWrapper, UserNameWrapper } from "./styled-component";
 import { useNavigate } from "react-router-dom";
 import { CustomButton } from "../ui/Button/styled-component";
 import { useLoading, useMessage, useAuthActions } from "../../hooks";
-import { LogOut, Trash2, Bell } from "lucide-react";
+import { LogOut, Trash2, Bell, Menu, X } from "lucide-react";
 import { clearChat, getUserProfileData, getUserProfileSnapShotData, logOut, sendMail } from "../../services";
 import { ProfileSkeleton, ModalSmall, getLastLoginTimeFormat, toast, mId, pId } from "../../utils";
 import { useSelector } from "react-redux";
@@ -12,12 +12,23 @@ function Header() {
   const currentUser = useSelector(state => state.auth.user);
 
   const [chatUserData, setChatUserData] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { loading, startLoading, stopLoading } = useLoading(true);
   const { loading: mailLoading, startLoading: startMailLoading, stopLoading: stopMailLoading } = useLoading();
 
   const navigate = useNavigate();
   const { removeUser } = useAuthActions();
   const { clearMessages } = useMessage();
+
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
+
+  const menuRef = useRef(null);
 
   const notifyUser = useCallback(async () => {
     try {
@@ -27,12 +38,13 @@ function Header() {
         success: "Mail notification sent successfully",
         error: err => err.message,
       });
+      closeMenu();
     } catch (error) {
       toast.error(error.text || "Unable to send mail notification");
     } finally {
       stopMailLoading();
     }
-  }, [chatUserData]);
+  }, [chatUserData, closeMenu]);
 
   const logoutUser = useCallback(async () => {
     try {
@@ -49,11 +61,12 @@ function Header() {
         }
       );
 
+      closeMenu();
       navigate("/");
     } catch (error) {
       console.error(error.message);
     }
-  }, [clearMessages, removeUser, navigate]);
+  }, [clearMessages, removeUser, navigate, closeMenu]);
 
   const clearUserChat = useCallback(async () => {
     if (!currentUser) return;
@@ -64,10 +77,9 @@ function Header() {
         success: "Chat deleted successfully",
         error: err => err.message,
       });
-    } catch (error) {
-      // Error handled by toast.promise
-    }
-  }, [currentUser]);
+      closeMenu();
+    } catch (error) {}
+  }, [currentUser, closeMenu]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -85,6 +97,24 @@ function Header() {
       if (unsubscribe) unsubscribe();
     };
   }, [currentUser]);
+
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        closeMenu();
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [isMenuOpen, closeMenu]);
 
   return (
     <HeaderWrapper>
@@ -106,27 +136,29 @@ function Header() {
           </>
         )}
       </UserNameWrapper>
-      <MenuWrapper>
-        <CustomButton type="button" onClick={notifyUser} disabled={mailLoading} title="Mail notification">
-          <Bell size={20} />
+      <MenuWrapper ref={menuRef}>
+        <CustomButton type="button" onClick={toggleMenu} title="Menu" className={isMenuOpen ? "menu-open" : ""}>
+          {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </CustomButton>
 
-        <ModalSmall
-          trigger={
-            <CustomButton type="button" title="clear chat">
-              <Trash2 size={20} />
-            </CustomButton>
-          }
-          content={{
-            title: "Delete chat?",
-            buttonText: "Delete",
-          }}
-          action={clearUserChat}
-        />
+        {isMenuOpen && (
+          <MenuDropdown>
+            <MenuItem onClick={notifyUser} disabled={mailLoading}>
+              <Bell />
+              <span>Send Notification</span>
+            </MenuItem>
 
-        <CustomButton type="button" onClick={logoutUser} title="Logout">
-          <LogOut size={20} />
-        </CustomButton>
+            <MenuItem onClick={clearUserChat}>
+              <Trash2 />
+              <span>Clear Chat</span>
+            </MenuItem>
+
+            <MenuItem onClick={logoutUser}>
+              <LogOut />
+              <span>Logout</span>
+            </MenuItem>
+          </MenuDropdown>
+        )}
       </MenuWrapper>
     </HeaderWrapper>
   );

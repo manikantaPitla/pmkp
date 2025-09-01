@@ -2,7 +2,6 @@ import messageService from "./messageService";
 export { default as messageService } from "./messageService";
 export * from "./authService";
 
-// Export message service functions for backward compatibility
 export const sendDirectMessage = (...args) => messageService.sendDirectMessage(...args);
 export const sendAuthUserMessage = (...args) => messageService.sendAuthUserMessage(...args);
 export const getUserMessages = (...args) => messageService.getUserMessages(...args);

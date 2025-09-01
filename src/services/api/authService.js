@@ -6,15 +6,12 @@ export const loginUser = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-    // Verify user exists in Firestore
     const userDoc = await getUserProfileData(userCredential.user.uid);
     if (!userDoc) {
-      // If user doesn't exist in Firestore, sign them out
       await signOut(auth);
       throw new Error("User profile not found. Please contact administrator.");
     }
 
-    // Update last login timestamp
     await updateLastLogin(userCredential.user.uid);
 
     return userCredential;

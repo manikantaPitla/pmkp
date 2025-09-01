@@ -19,7 +19,7 @@ function Login() {
     e => {
       const { name, value } = e.target;
       setFormData(prev => ({ ...prev, [name]: value }));
-      // Clear error when user starts typing
+
       if (errors[name]) {
         setErrors(prev => ({ ...prev, [name]: "" }));
       }
@@ -58,7 +58,6 @@ function Login() {
 
       if (!validateForm()) return;
 
-      // Rate limiting check
       if (!loginRateLimiter.checkLimit(formData.email)) {
         toast.error("Too many login attempts. Please wait 5 minutes before trying again.");
         return;
@@ -79,7 +78,6 @@ function Login() {
           navigate(`/profile/${userDoc.user.uid}`);
         }
       } catch (error) {
-        // Error handled by toast.promise
       } finally {
         stopLoading();
       }
