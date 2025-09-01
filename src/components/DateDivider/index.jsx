@@ -1,4 +1,3 @@
-// components/DateDivider/index.jsx
 import React from "react";
 import styled from "styled-components";
 

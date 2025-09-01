@@ -1,12 +1,9 @@
-// Performance monitoring utilities
-
 class PerformanceMonitor {
   constructor() {
     this.metrics = {};
     this.observers = new Map();
   }
 
-  // Start timing an operation
   startTimer(name) {
     this.metrics[name] = {
       startTime: performance.now(),
@@ -15,21 +12,17 @@ class PerformanceMonitor {
     };
   }
 
-  // End timing an operation
   endTimer(name) {
     if (this.metrics[name]) {
       this.metrics[name].endTime = performance.now();
       this.metrics[name].duration = this.metrics[name].endTime - this.metrics[name].startTime;
 
-      // Log performance data
       console.log(`Performance: ${name} took ${this.metrics[name].duration.toFixed(2)}ms`);
 
-      // Notify observers
       this.notifyObservers(name, this.metrics[name]);
     }
   }
 
-  // Measure render performance
   measureRender(componentName, callback) {
     const startTime = performance.now();
     const result = callback();
@@ -40,7 +33,6 @@ class PerformanceMonitor {
     return result;
   }
 
-  // Monitor memory usage
   getMemoryUsage() {
     if ("memory" in performance) {
       return {
@@ -52,7 +44,6 @@ class PerformanceMonitor {
     return null;
   }
 
-  // Monitor network performance
   measureNetworkRequest(url, options = {}) {
     const startTime = performance.now();
 
@@ -73,7 +64,6 @@ class PerformanceMonitor {
       });
   }
 
-  // Add observer for performance events
   addObserver(name, callback) {
     if (!this.observers.has(name)) {
       this.observers.set(name, []);

@@ -19,12 +19,10 @@ const messageReducer = createSlice({
       state.messageList = action.payload;
       state.isInitialized = true;
 
-      // Update pagination info
       if (action.payload.length > 0) {
-        // Messages are sorted in ascending order (oldest first, newest last)
         state.pagination.oldestTimestamp = action.payload[0].timestamp;
         state.pagination.newestTimestamp = action.payload[action.payload.length - 1].timestamp;
-        // If we have fewer messages than the page limit, we've reached the end
+
         state.pagination.hasMore = action.payload.length >= 30; // MESSAGES_PER_PAGE
       } else {
         state.pagination.hasMore = false;

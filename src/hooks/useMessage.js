@@ -22,7 +22,6 @@ const useMessage = () => {
   const updateMessage = useCallback(message => dispatch(updateChatMessage(message)), [dispatch]);
   const deleteMessage = useCallback(messageId => dispatch(deleteChatMessage(messageId)), [dispatch]);
 
-  // Pagination functions
   const addOlderMessages = useCallback(messages => dispatch(prependOlderMessages(messages)), [dispatch]);
   const addNewerMessages = useCallback(messages => dispatch(appendNewerMessages(messages)), [dispatch]);
   const setPagination = useCallback(pagination => dispatch(setPaginationState(pagination)), [dispatch]);

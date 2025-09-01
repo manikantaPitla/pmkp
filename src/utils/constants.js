@@ -1,5 +1,3 @@
-// Application constants and configuration
-
 export const APP_CONFIG = {
   NAME: "PMKP",
   VERSION: "1.0.0",

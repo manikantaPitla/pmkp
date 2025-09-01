@@ -1,5 +1,4 @@
 const firebaseErrorMessages = {
-  // ✅ Authentication Errors
   "auth/email-already-in-use": "This email is already in use.",
   "auth/invalid-email": "Invalid email format.",
   "auth/user-not-found": "No user found with this email.",
@@ -16,7 +15,6 @@ const firebaseErrorMessages = {
   "auth/account-exists-with-different-credential": "An account already exists with the same email but different sign-in credentials.",
   "auth/provider-already-linked": "This provider is already linked to another account.",
 
-  // ✅ Firestore & Realtime Database Errors
   "permission-denied": "You do not have permission to perform this action.",
   "not-found": "Requested document does not exist.",
   "already-exists": "This document already exists.",
@@ -34,13 +32,11 @@ const firebaseErrorMessages = {
   "out-of-range": "The value provided is out of allowed range.",
   "deadline-exceeded": "Request timed out, try again.",
 
-  // ✅ Storage Errors
   "storage/object-not-found": "File does not exist.",
   "storage/unauthorized": "You do not have permission to access this file.",
   "storage/canceled": "Upload or download canceled.",
   "storage/unknown": "Unknown storage error occurred.",
 
-  // ✅ Cloud Functions Errors
   "functions/invalid-argument": "Invalid input provided.",
   "functions/deadline-exceeded": "Function execution took too long.",
   "functions/not-found": "Requested resource not found.",

@@ -16,8 +16,6 @@ const VirtualizedMessageList = ({
 }) => {
   const groupedElements = useMemo(() => groupMessagesByDate(messages), [messages]);
 
-  // For now, let's render all messages normally to avoid complexity
-  // We can implement virtualization later if needed for performance
   return (
     <>
       {groupedElements.map((element, index) => {

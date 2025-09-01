@@ -7,8 +7,8 @@ import { pId, mId, p_uid } from "../../utils/userIdentity";
 class MessageService {
   constructor() {
     this.db = db;
-    this.MESSAGES_PER_PAGE = 30; // Number of messages to load per page
-    this.REALTIME_LIMIT = 50; // Number of recent messages to listen to in real-time
+    this.MESSAGES_PER_PAGE = 30;
+    this.REALTIME_LIMIT = 50;
   }
 
   async sendDirectMessage(uniqueId, message) {
@@ -55,7 +55,6 @@ class MessageService {
         tempMedia = await createMediaObject(media);
       }
 
-      // Add message to local state immediately for optimistic UI
       addNewMessage({
         ...messageObj,
         media: tempMedia,
@@ -76,14 +75,12 @@ class MessageService {
         );
       }
 
-      // Save to database
       await setDoc(senderMessageRef, { ...messageObj, media: cloudinaryObject });
       await setDoc(receiverMessageRef, {
         ...messageObj,
         media: cloudinaryObject,
       });
 
-      // Update status to sent
       updateMessage({ messageId, status: "sent" });
 
       return { success: true, message: SUCCESS_MESSAGES.MESSAGE_SENT };
@@ -94,7 +91,6 @@ class MessageService {
     }
   }
 
-  // Optimized message loading with pagination
   getUserMessages(userId, setMessages, startLoading, stopLoading, options = {}) {
     if (!userId) {
       console.warn("No userId provided for getUserMessages");
@@ -107,20 +103,18 @@ class MessageService {
     try {
       const messagesRef = collection(this.db, "chats", userId, "messages");
 
-      // Initial load: Get the most recent messages
       const initialQuery = query(messagesRef, orderBy("timestamp", "desc"), limit(this.MESSAGES_PER_PAGE));
 
       let unsubscribe = null;
 
       if (enableRealtime) {
-        // Real-time listener for recent messages only
         const realtimeQuery = query(messagesRef, orderBy("timestamp", "desc"), limit(this.REALTIME_LIMIT));
 
         unsubscribe = onSnapshot(
           realtimeQuery,
           querySnapshot => {
             const messages = querySnapshot.docs.map(doc => doc.data());
-            // Sort in ascending order for display
+
             const sortedMessages = messages.sort((a, b) => a.timestamp - b.timestamp);
             setMessages(sortedMessages);
             stopLoading();
@@ -131,7 +125,6 @@ class MessageService {
           }
         );
       } else {
-        // One-time load for initial messages
         getDocs(initialQuery)
           .then(querySnapshot => {
             const messages = querySnapshot.docs.map(doc => doc.data());
@@ -153,7 +146,6 @@ class MessageService {
     }
   }
 
-  // Load older messages when scrolling to top
   async getOlderMessages(userId, oldestTimestamp, limitCount = 20) {
     if (!userId || !oldestTimestamp) {
       return [];
@@ -172,7 +164,6 @@ class MessageService {
     }
   }
 
-  // Load newer messages when scrolling to bottom (for catching up)
   async getNewerMessages(userId, newestTimestamp, limitCount = 20) {
     if (!userId || !newestTimestamp) {
       return [];
@@ -190,7 +181,6 @@ class MessageService {
     }
   }
 
-  // Get message count for pagination info
   async getMessageCount(userId) {
     if (!userId) return 0;
 
@@ -257,7 +247,6 @@ class MessageService {
     }
 
     try {
-      // Get the original message to check timestamp and get receiver ID
       const messageRef = doc(this.db, "chats", userId, "messages", messageId);
       const messageDoc = await getDocs(query(collection(this.db, "chats", userId, "messages"), where("messageId", "==", messageId)));
 
@@ -274,7 +263,6 @@ class MessageService {
         throw new Error("Message can only be edited within 15 minutes of sending");
       }
 
-      // Update message in both sender and receiver collections
       const senderMessageRef = doc(this.db, "chats", userId, "messages", messageId);
       const receiverMessageRef = doc(this.db, "chats", receiverId, "messages", messageId);
 
@@ -300,7 +288,6 @@ class MessageService {
     }
 
     try {
-      // Get the original message to get receiver ID
       const messageDoc = await getDocs(query(collection(this.db, "chats", userId, "messages"), where("messageId", "==", messageId)));
 
       if (messageDoc.empty) {
@@ -310,7 +297,6 @@ class MessageService {
       const messageData = messageDoc.docs[0].data();
       const receiverId = messageData.receiverId;
 
-      // Delete message from both sender and receiver collections
       const senderMessageRef = doc(this.db, "chats", userId, "messages", messageId);
       const receiverMessageRef = doc(this.db, "chats", receiverId, "messages", messageId);
 

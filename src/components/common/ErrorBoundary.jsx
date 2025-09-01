@@ -15,7 +15,7 @@ const ErrorContainer = styled.div`
 const ErrorTitle = styled.h1`
   color: #ff6b6b;
   margin-bottom: 1rem;
-  font-size: 1.5rem;
+  font-size: 20px;
 `;
 
 const ErrorMessage = styled.p`
@@ -23,6 +23,7 @@ const ErrorMessage = styled.p`
   margin-bottom: 2rem;
   max-width: 600px;
   line-height: 1.6;
+  font-size: 12px;
 `;
 
 const RetryButton = styled.button`
@@ -33,7 +34,7 @@ const RetryButton = styled.button`
   color: #000;
   padding: 0px 20px;
   cursor: pointer;
-  font-size: var(--fs-xl);
+  font-size: var(--fs-l);
   transition: all 0.2s ease;
   outline: none;
   position: relative;
@@ -88,13 +89,9 @@ class ErrorBoundary extends React.Component {
       errorInfo: errorInfo,
     });
 
-    // Log error to console in development
     if (process.env.NODE_ENV === "development") {
       console.error("Error caught by boundary:", error, errorInfo);
     }
-
-    // In production, you would send this to an error reporting service
-    // Example: Sentry.captureException(error, { extra: errorInfo });
   }
 
   handleRetry = () => {

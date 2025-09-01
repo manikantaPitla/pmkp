@@ -47,4 +47,5 @@ export const StyledButton = styled.button`
 export const CustomButton = styled(StyledButton)`
   height: inherit;
   padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 `;

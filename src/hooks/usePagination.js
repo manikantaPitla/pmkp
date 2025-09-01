@@ -10,7 +10,6 @@ const usePagination = userId => {
   const { pagination, messageList } = useSelector(state => state.messages);
   const loadingRef = useRef(false);
 
-  // Load older messages when scrolling to top
   const loadOlderMessages = useCallback(async () => {
     if (!userId || !pagination.hasMore || pagination.isLoadingMore || loadingRef.current || !pagination.oldestTimestamp) {
       return;
@@ -20,22 +19,25 @@ const usePagination = userId => {
       loadingRef.current = true;
       setLoadingMoreMessages(true);
 
+      const startTime = Date.now();
       const olderMessages = await getOlderMessages(userId, pagination.oldestTimestamp, 20);
+      const loadTime = Date.now() - startTime;
+
+      const minLoadingTime = 800;
+      const remainingTime = Math.max(0, minLoadingTime - loadTime);
+
+      await new Promise(resolve => setTimeout(resolve, remainingTime));
 
       if (olderMessages.length > 0) {
-        // Store the current scroll height before adding messages
         const container = document.querySelector("[data-message-container]");
         const oldHeight = container ? container.scrollHeight : 0;
 
         addOlderMessages(olderMessages);
-
-        // Update pagination state
         setPagination({
           oldestTimestamp: olderMessages[0].timestamp,
-          hasMore: olderMessages.length === 20, // If we got less than 20, we've reached the end
+          hasMore: olderMessages.length === 20,
         });
 
-        // Maintain scroll position after adding older messages
         if (oldHeight > 0) {
           setTimeout(() => {
             const newHeight = container ? container.scrollHeight : 0;
@@ -43,7 +45,7 @@ const usePagination = userId => {
             if (container && heightDifference > 0) {
               container.scrollTop += heightDifference;
             }
-          }, 50); // Increased delay to ensure DOM has updated
+          }, 50);
         }
       } else {
         setHasMoreMessages(false);
@@ -56,7 +58,6 @@ const usePagination = userId => {
     }
   }, [userId, pagination.hasMore, pagination.isLoadingMore, pagination.oldestTimestamp, addOlderMessages, setLoadingMoreMessages, setHasMoreMessages, setPagination]);
 
-  // Load newer messages (for catching up when user returns)
   const loadNewerMessages = useCallback(async () => {
     if (!userId || !pagination.newestTimestamp || loadingRef.current) {
       return;
@@ -66,12 +67,18 @@ const usePagination = userId => {
       loadingRef.current = true;
       setLoadingMoreMessages(true);
 
+      const startTime = Date.now();
       const newerMessages = await getNewerMessages(userId, pagination.newestTimestamp, 20);
+      const loadTime = Date.now() - startTime;
+
+      const minLoadingTime = 600;
+      const remainingTime = Math.max(0, minLoadingTime - loadTime);
+
+      await new Promise(resolve => setTimeout(resolve, remainingTime));
 
       if (newerMessages.length > 0) {
         addNewerMessages(newerMessages);
 
-        // Update pagination state
         setPagination({
           newestTimestamp: newerMessages[newerMessages.length - 1].timestamp,
         });
@@ -84,10 +91,8 @@ const usePagination = userId => {
     }
   }, [userId, pagination.newestTimestamp, addNewerMessages, setLoadingMoreMessages, setPagination]);
 
-  // Check if we need to load more messages
   const checkAndLoadMore = useCallback(
     (scrollTop, scrollHeight, clientHeight) => {
-      // Load older messages when near top (within 100px)
       if (scrollTop < 100 && pagination.hasMore && !pagination.isLoadingMore && pagination.oldestTimestamp) {
         loadOlderMessages();
       }
