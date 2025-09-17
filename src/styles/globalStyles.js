@@ -34,7 +34,7 @@ const GlobalStyles = createGlobalStyle`
     --fs-xl: 14px;
 
     --radius: 15px;
-    --primary-el-height: 45px;
+    --primary-el-height: 42px;
   }
 
   /* Accessibility improvements */
