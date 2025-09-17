@@ -7,12 +7,16 @@ import { LogOut, Trash2, Bell, Menu, X } from "lucide-react";
 import { clearChat, getUserProfileData, getUserProfileSnapShotData, logOut, sendMail } from "../../services";
 import { ProfileSkeleton, ModalSmall, getLastLoginTimeFormat, toast, mId, pId } from "../../utils";
 import { useSelector } from "react-redux";
+import ConfirmationModal from "../ui/ConfirmationModal";
 
 function Header() {
   const currentUser = useSelector(state => state.auth.user);
 
   const [chatUserData, setChatUserData] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showNotificationConfirm, setShowNotificationConfirm] = useState(false);
+  const [showClearChatConfirm, setShowClearChatConfirm] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { loading, startLoading, stopLoading } = useLoading(true);
   const { loading: mailLoading, startLoading: startMailLoading, stopLoading: stopMailLoading } = useLoading();
 
@@ -30,7 +34,12 @@ function Header() {
 
   const menuRef = useRef(null);
 
-  const notifyUser = useCallback(async () => {
+  const handleNotificationClick = useCallback(() => {
+    setShowNotificationConfirm(true);
+    closeMenu();
+  }, [closeMenu]);
+
+  const confirmNotification = useCallback(async () => {
     try {
       startMailLoading();
       await toast.promise(sendMail(chatUserData.username, chatUserData.email), {
@@ -38,15 +47,19 @@ function Header() {
         success: "Mail notification sent successfully",
         error: err => err.message,
       });
-      closeMenu();
     } catch (error) {
       toast.error(error.text || "Unable to send mail notification");
     } finally {
       stopMailLoading();
     }
-  }, [chatUserData, closeMenu]);
+  }, [chatUserData, startMailLoading, stopMailLoading]);
 
-  const logoutUser = useCallback(async () => {
+  const handleLogoutClick = useCallback(() => {
+    setShowLogoutConfirm(true);
+    closeMenu();
+  }, [closeMenu]);
+
+  const confirmLogout = useCallback(async () => {
     try {
       await toast.promise(
         (async () => {
@@ -61,14 +74,18 @@ function Header() {
         }
       );
 
-      closeMenu();
       navigate("/");
     } catch (error) {
       console.error(error.message);
     }
-  }, [clearMessages, removeUser, navigate, closeMenu]);
+  }, [clearMessages, removeUser, navigate]);
 
-  const clearUserChat = useCallback(async () => {
+  const handleClearChatClick = useCallback(() => {
+    setShowClearChatConfirm(true);
+    closeMenu();
+  }, [closeMenu]);
+
+  const confirmClearChat = useCallback(async () => {
     if (!currentUser) return;
 
     try {
@@ -77,9 +94,8 @@ function Header() {
         success: "Chat deleted successfully",
         error: err => err.message,
       });
-      closeMenu();
     } catch (error) {}
-  }, [currentUser, closeMenu]);
+  }, [currentUser]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -143,23 +159,54 @@ function Header() {
 
         {isMenuOpen && (
           <MenuDropdown>
-            <MenuItem onClick={notifyUser} disabled={mailLoading}>
+            <MenuItem onClick={handleNotificationClick} disabled={mailLoading}>
               <Bell />
               <span>Send Notification</span>
             </MenuItem>
 
-            <MenuItem onClick={clearUserChat}>
+            <MenuItem onClick={handleClearChatClick}>
               <Trash2 />
               <span>Clear Chat</span>
             </MenuItem>
 
-            <MenuItem onClick={logoutUser}>
+            <MenuItem onClick={handleLogoutClick}>
               <LogOut />
               <span>Logout</span>
             </MenuItem>
           </MenuDropdown>
         )}
       </MenuWrapper>
+
+      {/* Confirmation Modals */}
+      <ConfirmationModal
+        isOpen={showNotificationConfirm}
+        onClose={() => setShowNotificationConfirm(false)}
+        onConfirm={confirmNotification}
+        title="Send Notification"
+        message="Are you sure you want to send a notification email to the user? This will notify them about new messages."
+        confirmText="Send"
+        cancelText="Cancel"
+      />
+
+      <ConfirmationModal
+        isOpen={showClearChatConfirm}
+        onClose={() => setShowClearChatConfirm(false)}
+        onConfirm={confirmClearChat}
+        title="Clear Chat"
+        message="Are you sure you want to clear all chat messages? This action cannot be undone."
+        confirmText="Clear"
+        cancelText="Cancel"
+      />
+
+      <ConfirmationModal
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        onConfirm={confirmLogout}
+        title="Logout"
+        message="Are you sure you want to logout? You will need to login again to access the chat."
+        confirmText="Logout"
+        cancelText="Cancel"
+      />
     </HeaderWrapper>
   );
 }

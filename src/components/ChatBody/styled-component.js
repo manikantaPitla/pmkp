@@ -5,7 +5,7 @@ export const MessageContainer = styled.ul`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  padding: 57.5px 10px 80px;
+  padding: 10px 10px 80px;
   gap: 10px;
 
   .no-messages {

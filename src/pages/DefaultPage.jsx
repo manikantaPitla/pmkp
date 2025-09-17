@@ -9,27 +9,43 @@ import { smsIcon, userIcon } from "../assets/icons/svg";
 
 function DefaultPage() {
   const [formData, setFormData] = useState({ uniqueId: "", message: "" });
+  const [errors, setErrors] = useState({ uniqueId: "", message: "" });
 
   const messageInputRef = useRef(null);
   const { loading, startLoading, stopLoading } = useLoading();
 
-  const handleInputChange = useCallback(e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  }, []);
+  const handleInputChange = useCallback(
+    e => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+
+      if (errors[name]) {
+        setErrors(prev => ({ ...prev, [name]: "" }));
+      }
+    },
+    [errors]
+  );
 
   const validateForm = useCallback(() => {
     const { uniqueId, message } = formData;
-    if (!uniqueId || ![p_uid, m_uid].includes(uniqueId)) {
-      toast.error("Please enter valid unique ID");
-      return false;
+    const newErrors = { uniqueId: "", message: "" };
+    let isValid = true;
+
+    if (!uniqueId) {
+      newErrors.uniqueId = "Please enter unique ID";
+      isValid = false;
+    } else if (![p_uid, m_uid].includes(uniqueId)) {
+      newErrors.uniqueId = "Please enter valid unique ID";
+      isValid = false;
     }
 
     if (!message.trim()) {
-      toast.error("Please enter message");
-      return false;
+      newErrors.message = "Please enter message";
+      isValid = false;
     }
-    return true;
+
+    setErrors(newErrors);
+    return isValid;
   }, [formData]);
 
   const handleSubmit = async e => {
@@ -56,9 +72,53 @@ function DefaultPage() {
   return (
     <MainLayout>
       <FormContainer onSubmit={handleSubmit}>
-        <Input iconSrc={userIcon} type="text" placeholder="Sender Unique ID" name="uniqueId" onChange={handleInputChange} value={formData.uniqueId} />
-        <Input iconSrc={smsIcon} type="text" placeholder="Message" name="message" onChange={handleInputChange} value={formData.message} ref={messageInputRef} />
-        <Button type="submit">Send</Button>
+        <div>
+          <Input
+            iconSrc={userIcon}
+            type="text"
+            placeholder="Sender Unique ID"
+            name="uniqueId"
+            onChange={handleInputChange}
+            value={formData.uniqueId}
+            error={!!errors.uniqueId}
+            label="Unique ID"
+            id="default-uniqueId"
+          />
+          {errors.uniqueId && <div style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px", marginLeft: "4px" }}>{errors.uniqueId}</div>}
+        </div>
+        <div>
+          <Input
+            iconSrc={smsIcon}
+            type="text"
+            placeholder="Message"
+            name="message"
+            onChange={handleInputChange}
+            value={formData.message}
+            ref={messageInputRef}
+            error={!!errors.message}
+            label="Message"
+            id="default-message"
+          />
+          {errors.message && <div style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px", marginLeft: "4px" }}>{errors.message}</div>}
+        </div>
+        <Button type="submit" disabled={loading}>
+          {loading ? (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+              <div
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  border: "2px solid transparent",
+                  borderTop: "2px solid #000",
+                  borderRadius: "50%",
+                  animation: "spin 1s linear infinite",
+                }}
+              ></div>
+            </div>
+          ) : (
+            "Send"
+          )}
+        </Button>
       </FormContainer>
       <Divider>OR</Divider>
       <Link to="/login">
