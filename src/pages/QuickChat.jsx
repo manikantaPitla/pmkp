@@ -1,13 +1,14 @@
 import React, { useState, useRef, useCallback } from "react";
+import styled from "styled-components";
 import { Button, Input } from "../components/ui";
 import { useLoading } from "../hooks";
-import { Divider, getFirebaseErrorMessage, m_uid, MainLayout, p_uid, toast } from "../utils";
+import { Divider, getFirebaseErrorMessage, m_uid, MainLayout, p_uid, toast, TEXT } from "../utils";
 import { sendDirectMessage } from "../services";
 import { Link } from "react-router-dom";
 import { FormContainer } from "../styles";
 import { smsIcon, userIcon } from "../assets/icons/svg";
 
-function DefaultPage() {
+function QuickChat() {
   const [formData, setFormData] = useState({ uniqueId: "", message: "" });
   const [errors, setErrors] = useState({ uniqueId: "", message: "" });
 
@@ -71,6 +72,10 @@ function DefaultPage() {
 
   return (
     <MainLayout>
+      <HeaderBlock>
+        <Title>{TEXT.QUICK_CHAT.TITLE}</Title>
+        <Description>{TEXT.QUICK_CHAT.DESCRIPTION}</Description>
+      </HeaderBlock>
       <FormContainer onSubmit={handleSubmit}>
         <div>
           <Input
@@ -130,4 +135,16 @@ function DefaultPage() {
   );
 }
 
-export default DefaultPage;
+export default QuickChat;
+
+const HeaderBlock = styled.div`
+  text-align: center;
+`;
+
+const Title = styled.h3`
+  font-size: 18px;
+`;
+
+const Description = styled.p`
+  font-size: var(--fs-xl);
+`;

@@ -10,7 +10,7 @@ export const InputWrapper = styled.form`
   border-radius: 20px;
   border: 1px solid var(--border-shaded);
   background-color: #000000;
-  z-index: 2000;
+  z-index: 999;
   padding: 0px 0px 0px 20px;
   font-size: var(--fs-l) !important;
 

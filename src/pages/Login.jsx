@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from "react";
+import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Input } from "../components/ui";
 import { loginUser } from "../services";
 import { useLoading } from "../hooks";
 import { FormContainer } from "../styles";
-import { MainLayout, toast, getFirebaseErrorMessage, Divider, validateEmail, loginRateLimiter } from "../utils";
+import { MainLayout, toast, getFirebaseErrorMessage, Divider, validateEmail, loginRateLimiter, TEXT } from "../utils";
 
 import { mailIcon, lockIcon } from "../assets/icons/svg/index.js";
 
@@ -75,6 +76,9 @@ function Login() {
         if (userDoc?.user?.uid) {
           setFormData({ email: "", password: "" });
           loginRateLimiter.reset(formData.email); // Reset rate limit on successful login
+          try {
+            localStorage.setItem("pmkp_last_active", String(Date.now()));
+          } catch {}
           navigate(`/profile/${userDoc.user.uid}`);
         }
       } catch (error) {
@@ -87,6 +91,10 @@ function Login() {
 
   return (
     <MainLayout>
+      <HeaderBlock>
+        <Title>{TEXT.LOGIN.TITLE}</Title>
+        <Description>{TEXT.LOGIN.DESCRIPTION}</Description>
+      </HeaderBlock>
       <FormContainer onSubmit={handleSubmit}>
         <div>
           <Input
@@ -146,3 +154,15 @@ function Login() {
 }
 
 export default React.memo(Login);
+
+const HeaderBlock = styled.div`
+  text-align: center;
+`;
+
+const Title = styled.h3`
+  font-size: 18px;
+`;
+
+const Description = styled.p`
+  font-size: var(--fs-xl);
+`;
