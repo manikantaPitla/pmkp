@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Popup from "reactjs-popup";
 
 export const MessageContainer = styled.li`
   display: flex;
@@ -30,6 +31,7 @@ export const MessageCard = styled.div`
   cursor: pointer;
   /* border: 1px solid rgba(255, 255, 255, 0.08); */
   position: relative;
+  border-right: ${props => (props.$sender ? `1px solid ${props.$seen ? "var(--status-seen)" : "var(--status-unseen)"}` : "none")};
 
   &:hover {
     .message-menu {
@@ -43,16 +45,17 @@ export const MessageMenu = styled.div`
   position: absolute;
   background-color: #2a2a2a;
   border-radius: 8px;
-  padding: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  padding: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity 0.2s ease,
-    visibility 0.2s ease;
-  z-index: 2000;
+    opacity 160ms ease,
+    visibility 160ms ease;
+  z-index: 998;
   min-width: 120px;
-  max-width: 200px;
+  max-width: 220px;
   white-space: nowrap;
 
   &.visible {
@@ -60,7 +63,6 @@ export const MessageMenu = styled.div`
     visibility: visible;
   }
 
-  /* Dynamic arrow positioning */
   &::after {
     content: "";
     position: absolute;
@@ -70,56 +72,18 @@ export const MessageMenu = styled.div`
     border-bottom: 6px solid transparent;
   }
 
-  /* Arrow for left positioning */
-  &[style*="right: calc(100% + 8px)"]::after {
+  &[data-anchor="right"]::after {
     right: -6px;
     top: 50%;
     transform: translateY(-50%);
     border-left: 6px solid #2a2a2a;
   }
 
-  /* Arrow for right positioning */
-  &[style*="left: calc(100% + 8px)"]::after {
+  &[data-anchor="left"]::after {
     left: -6px;
     top: 50%;
     transform: translateY(-50%);
     border-right: 6px solid #2a2a2a;
-  }
-
-  /* Arrow for above positioning */
-  &[style*="bottom: calc(100% + 8px)"]::after {
-    bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-top: 6px solid #2a2a2a;
-  }
-
-  /* Arrow for below positioning */
-  &[style*="top: calc(100% + 8px)"]::after {
-    top: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-bottom: 6px solid #2a2a2a;
-  }
-
-  /* No arrow for center positioning */
-  &[style*="transform: translate(-50%, -50%)"]::after,
-  &[style*="transform: translateX(-50%)"]::after {
-    display: none;
-  }
-
-  /* Responsive positioning for small screens */
-  @media (max-width: 768px) {
-    min-width: 100px;
-    max-width: 150px;
-    font-size: 11px;
-  }
-
-  /* Ensure menu stays within container bounds */
-  @media (max-width: 480px) {
-    max-width: 120px;
-    min-width: 80px;
-    font-size: 10px;
   }
 `;
 
@@ -159,26 +123,38 @@ export const MenuItem = styled.button`
 export const MessageInnerCard = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  /* align-items: ${props => (props.$sender ? "flex-end" : "flex-start")}; */
-  align-items: flex-end;
+  gap: 6px;
+  align-items: ${props => (props.$sender ? "flex-end" : "flex-start")};
+  width: 100%;
 
   p {
     color: #fff;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     white-space: pre-wrap;
     font-size: 12px;
     max-width: 100%;
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+      word-break: break-all;
+      overflow-wrap: anywhere;
+      display: inline-block;
+      max-width: 100%;
+    }
   }
 `;
 
 export const ReplyViewContainer = styled.div`
-  background-color: #171717;
+  background-color: #0f0f0f; /* stronger contrast to differentiate from main message */
   padding: 8px 10px;
   border-radius: 6px;
   margin-bottom: 5px;
   color: #fff;
+  border-left: 2px solid rgba(255, 255, 255, 0.08);
 
   .reply-to-user-message {
     font-size: 12px;
@@ -188,10 +164,97 @@ export const ReplyViewContainer = styled.div`
 
   p {
     font-size: 12px;
+    margin: 0;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   .media-card {
     background-color: transparent !important;
-    padding: 5px 0px;
+    padding: 0;
+    /* Edge-to-edge: extend width past horizontal padding and shift left */
+    width: calc(100% + 20px);
+    transform: translateX(-10px);
+    margin: 0;
+    display: block;
+
+    img,
+    video {
+      width: 100% !important;
+      height: auto !important;
+      display: block;
+      border-radius: 6px;
+    }
+  }
+`;
+
+export const DeletedText = styled.p`
+  font-style: italic;
+  opacity: 0.7;
+`;
+
+export const EditContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+
+  .edit-textarea {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 8px;
+    color: #fff;
+    font-size: 12px;
+    resize: none;
+    min-height: 60px;
+    font-family: inherit;
+  }
+`;
+
+export const EditActions = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+
+  .btn {
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    color: #fff;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  .btn.save {
+    background: #4caf50;
+  }
+
+  .btn.cancel {
+    background: #666;
+  }
+`;
+
+export const EditedTag = styled.span`
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+`;
+
+export const DeleteModalStyles = styled(Popup)`
+  &-overlay {
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+  }
+
+  &-content {
+    width: 300px;
+    min-height: 140px;
+    border-radius: 15px;
+    background-color: #ffffff;
+    border: none;
+    color: #000000;
+    padding: 0;
+    z-index: 10000;
   }
 `;

@@ -5,7 +5,7 @@ import { CustomButton } from "../ui/Button/styled-component";
 import { useLoading, useMessage, useAuthActions } from "../../hooks";
 import { LogOut, Trash2, Bell, Menu, X } from "lucide-react";
 import { clearChat, getUserProfileData, getUserProfileSnapShotData, logOut, sendMail } from "../../services";
-import { ProfileSkeleton, ModalSmall, getLastLoginTimeFormat, toast, mId, pId } from "../../utils";
+import { ProfileSkeleton, ModalSmall, getLastLoginTimeFormat, toast, mId, pId, PRESENCE } from "../../utils";
 import { useSelector } from "react-redux";
 import ConfirmationModal from "../ui/ConfirmationModal";
 
@@ -143,7 +143,17 @@ function Header() {
               ) : chatUserData ? (
                 <>
                   <h1>Anonymous</h1>
-                  <p>{getLastLoginTimeFormat(chatUserData?.lastLogin)}</p>
+                  {(() => {
+                    const online = chatUserData?.online;
+                    const hb = chatUserData?.heartbeatAt?.toMillis ? chatUserData.heartbeatAt.toMillis() : chatUserData?.heartbeatAt;
+                    const stale = hb ? Date.now() - hb > PRESENCE.STALE_MS : true;
+                    const isOnlineActive = online && !stale;
+                    return (
+                      <p style={{ color: isOnlineActive ? "var(--status-online)" : undefined }}>
+                        {isOnlineActive ? "Online" : getLastLoginTimeFormat(chatUserData?.lastSeen || chatUserData?.lastLogin)}
+                      </p>
+                    );
+                  })()}
                 </>
               ) : (
                 <p>Profile details not available</p>

@@ -1,33 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { MessageCard, MessageContainer, MessageInnerCard, ReplyViewContainer, MessageMenu, MenuItem } from "./styled-component";
-import { Send as SendIcon, CircleX as ErrorIcon, Edit3, Trash2, Eye, Clock, Reply } from "lucide-react";
+import { Send as SendIcon, CircleX as ErrorIcon, Edit3, Trash2, Clock, Reply } from "lucide-react";
 import { getTimeFormat, makeLinksClickable, minimizeText, sanitizeInput } from "../../utils";
 import MediaView from "../MediaView";
-import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import { ModalBody, ModalButton, ModalButtonWrapper, ModalTitle } from "../../utils/styled-component";
-import styled from "styled-components";
+import { DeletedText, EditContainer, EditActions, EditedTag, DeleteModalStyles } from "./styled-component";
 
-const DeleteModalStyles = styled(Popup)`
-  &-overlay {
-    backdrop-filter: blur(3px);
-    z-index: 9999;
-  }
-
-  &-content {
-    width: 300px;
-    min-height: 140px;
-    border-radius: 15px;
-    background-color: #ffffff;
-    border: none;
-    color: #000000;
-    padding: 0;
-    z-index: 10000;
-  }
-`;
-
-function MessageItem({ messageData, userId, setReplyTo, onEditMessage, onDeleteMessage, onMarkAsSeen }) {
-  const { senderId, message, messageId, timestamp, replyTo, status, media, isSeen } = messageData;
+function MessageItem({ messageData, userId, setReplyTo, onEditMessage, onDeleteMessage }) {
+  const { senderId, message, messageId, timestamp, replyTo, status, media, isSeen, isDeleted } = messageData;
   const [showMenu, setShowMenu] = useState(false);
   const [isLongPressed, setIsLongPressed] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -99,104 +80,127 @@ function MessageItem({ messageData, userId, setReplyTo, onEditMessage, onDeleteM
   }, [showMenu]);
 
   useEffect(() => {
-    if (showMenu && menuRef.current) {
-      const menu = menuRef.current;
-      const messageCard = menu.closest(".message-card");
-      if (!messageCard) return;
+    if (!showMenu || !menuRef.current) return;
+    const menu = menuRef.current;
+    const messageCard = menu.closest(".message-card");
+    if (!messageCard) return;
 
-      setTimeout(() => {
-        const menuRect = menu.getBoundingClientRect();
-        const messageRect = messageCard.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const menuWidth = 120; // Approximate menu width
-        const menuHeight = 200; // Approximate menu height
-        const padding = 10; // Safe distance from edges
+    const containerEl = messageCard.closest("[data-message-container]") || document.body;
 
-        menu.style.left = "";
-        menu.style.right = "";
-        menu.style.top = "";
-        menu.style.bottom = "";
-        menu.style.transform = "";
-
-        const spaceLeft = messageRect.left - padding;
-        const spaceRight = viewportWidth - messageRect.right - padding;
-        const spaceTop = messageRect.top - padding;
-        const spaceBottom = viewportHeight - messageRect.bottom - padding;
-
-        let horizontalPosition = "";
-        let arrowPosition = "";
-
-        if (isOwnMessage) {
-          if (spaceLeft >= menuWidth) {
-            horizontalPosition = "left";
-            arrowPosition = "right";
-            menu.style.right = "calc(100% + 8px)";
-            menu.style.left = "auto";
-          } else if (spaceRight >= menuWidth) {
-            horizontalPosition = "right";
-            arrowPosition = "left";
-            menu.style.left = "calc(100% + 8px)";
-            menu.style.right = "auto";
-          } else {
-            horizontalPosition = "center";
-            arrowPosition = "none";
-            menu.style.left = "50%";
-            menu.style.right = "auto";
-            menu.style.transform = "translateX(-50%)";
-          }
-        } else {
-          if (spaceRight >= menuWidth) {
-            horizontalPosition = "right";
-            arrowPosition = "left";
-            menu.style.left = "calc(100% + 8px)";
-            menu.style.right = "auto";
-          } else if (spaceLeft >= menuWidth) {
-            horizontalPosition = "left";
-            arrowPosition = "right";
-            menu.style.right = "calc(100% + 8px)";
-            menu.style.left = "auto";
-          } else {
-            horizontalPosition = "center";
-            arrowPosition = "none";
-            menu.style.left = "50%";
-            menu.style.right = "auto";
-            menu.style.transform = "translateX(-50%)";
-          }
-        }
-
-        let verticalPosition = "";
-        if (spaceBottom >= menuHeight) {
-          verticalPosition = "below";
-          menu.style.top = "calc(100% + 8px)";
-          menu.style.bottom = "auto";
-          if (horizontalPosition === "center") {
-            menu.style.transform = "translateX(-50%)";
-          } else {
-            menu.style.transform = "translateY(0)";
-          }
-        } else if (spaceTop >= menuHeight) {
-          verticalPosition = "above";
-          menu.style.bottom = "calc(100% + 8px)";
-          menu.style.top = "auto";
-          if (horizontalPosition === "center") {
-            menu.style.transform = "translateX(-50%)";
-          } else {
-            menu.style.transform = "translateY(0)";
-          }
-        } else {
-          verticalPosition = "center";
-          if (horizontalPosition === "center") {
-            menu.style.transform = "translate(-50%, -50%)";
-          } else {
-            menu.style.transform = "translateY(-50%)";
-          }
-        }
-
-        menu.style.setProperty("--arrow-position", arrowPosition);
-        menu.style.setProperty("--menu-position", `${horizontalPosition}-${verticalPosition}`);
-      }, 10); // Small delay to ensure menu is rendered
+    // Move menu into the container so absolute coords are relative to container
+    const originalParent = menu.parentElement;
+    let moved = false;
+    if (menu.parentElement !== containerEl) {
+      containerEl.appendChild(menu);
+      moved = true;
     }
+
+    // Save previous inline styles to restore later
+    const prev = {
+      visibility: menu.style.visibility,
+      display: menu.style.display,
+      position: menu.style.position,
+      left: menu.style.left,
+      top: menu.style.top,
+      right: menu.style.right,
+      bottom: menu.style.bottom,
+      transform: menu.style.transform,
+    };
+
+    // Make measurable without flashing
+    menu.style.visibility = "hidden";
+    menu.style.display = "block";
+    menu.style.position = "absolute";
+    menu.style.left = "0px";
+    menu.style.top = "0px";
+    menu.style.transform = "none";
+
+    const menuRect = menu.getBoundingClientRect();
+    const menuW = Math.round(menuRect.width || 160);
+    const menuH = Math.round(menuRect.height || 200);
+
+    const containerRect = containerEl.getBoundingClientRect();
+    const msgRect = messageCard.getBoundingClientRect();
+
+    // Compute left (coords relative to container)
+    const padding = 8;
+    let left;
+    let anchor = "center";
+
+    if (isOwnMessage) {
+      // align menu's right edge with bubble's right edge; 10px from top of bubble
+      left = Math.round(msgRect.right - containerRect.left - menuW);
+      anchor = "right";
+    } else {
+      // place to the right of the bubble
+      left = Math.round(msgRect.right - containerRect.left + 8);
+      anchor = "left";
+      if (left + menuW > containerRect.width - padding) {
+        left = Math.round(Math.max(padding, msgRect.left - containerRect.left + (msgRect.width - menuW) / 2));
+        anchor = "center";
+      }
+    }
+
+    // Compute top (relative to container)
+    const spaceBelow = containerRect.bottom - msgRect.bottom - padding;
+    const spaceAbove = msgRect.top - containerRect.top - padding;
+    let top;
+    if (isOwnMessage) {
+      top = Math.round(msgRect.top - containerRect.top + 18);
+    } else if (spaceBelow >= menuH) {
+      top = Math.round(msgRect.bottom - containerRect.top + 16);
+    } else if (spaceAbove >= menuH) {
+      top = Math.round(msgRect.top - containerRect.top - menuH - 16);
+    } else {
+      top = Math.round(msgRect.top - containerRect.top + (msgRect.height - menuH) / 2);
+      top = Math.min(Math.max(padding, top), containerRect.height - menuH - padding);
+    }
+
+    // Final horizontal clamp (only for receiver or centered)
+    left = Math.min(Math.max(padding, left), containerRect.width - menuW - padding);
+
+    // Apply computed placement
+    menu.style.left = `${left}px`;
+    menu.style.top = `${top}px`;
+    menu.style.right = "auto";
+    menu.style.bottom = "auto";
+    menu.setAttribute("data-anchor", anchor);
+    menu.classList.add("visible");
+
+    // restore visibility display (we kept position / left/top as we want them)
+    menu.style.visibility = prev.visibility || "";
+    menu.style.display = prev.display || "";
+
+    // Close on scroll/resize to avoid stale positions — alternative: re-position on these events
+    const handleCloseOnScroll = () => setShowMenu(false);
+    containerEl.addEventListener("scroll", handleCloseOnScroll, { passive: true });
+    window.addEventListener("resize", handleCloseOnScroll);
+
+    return () => {
+      // cleanup listeners
+      containerEl.removeEventListener("scroll", handleCloseOnScroll);
+      window.removeEventListener("resize", handleCloseOnScroll);
+
+      // hide/remove visible state
+      try {
+        menu.classList.remove("visible");
+      } catch (e) {}
+
+      // restore previous inline styles
+      menu.style.visibility = prev.visibility;
+      menu.style.display = prev.display;
+      menu.style.position = prev.position;
+      menu.style.left = prev.left;
+      menu.style.top = prev.top;
+      menu.style.right = prev.right;
+      menu.style.bottom = prev.bottom;
+      menu.style.transform = prev.transform;
+
+      // move back to original parent if we moved it
+      if (moved && originalParent) {
+        originalParent.appendChild(menu);
+      }
+    };
   }, [showMenu, isOwnMessage]);
 
   useEffect(() => {
@@ -266,12 +270,7 @@ function MessageItem({ messageData, userId, setReplyTo, onEditMessage, onDeleteM
     setShowMenu(false);
   };
 
-  const handleMarkAsSeen = () => {
-    if (onMarkAsSeen) {
-      onMarkAsSeen(messageId);
-    }
-    setShowMenu(false);
-  };
+  // auto mark handled at list/container level in future
 
   return (
     <MessageContainer
@@ -283,9 +282,10 @@ function MessageItem({ messageData, userId, setReplyTo, onEditMessage, onDeleteM
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <MessageCard $sender={isOwnMessage} className="message-card">
+      <MessageCard $sender={isOwnMessage} $seen={isSeen} className="message-card">
         {replyTo && (
           <ReplyViewContainer
+            $sender={isOwnMessage}
             onClick={() => {
               const replyElement = document.getElementById(replyTo.messageId);
               if (replyElement) replyElement.scrollIntoView({ behavior: "smooth" });
@@ -298,91 +298,58 @@ function MessageItem({ messageData, userId, setReplyTo, onEditMessage, onDeleteM
           </ReplyViewContainer>
         )}
         <MessageInnerCard $sender={isOwnMessage}>
-          {media && <MediaView media={media} />}
-          {isEditing ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
+          {media && !isDeleted && <MediaView media={media} />}
+          {isDeleted ? (
+            <DeletedText>Message deleted</DeletedText>
+          ) : isEditing ? (
+            <EditContainer>
               <textarea
                 ref={editInputRef}
                 value={editText}
                 onChange={e => setEditText(e.target.value)}
                 onKeyDown={handleEditKeyDown}
                 onBlur={handleSaveEdit}
-                style={{
-                  background: "transparent",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  borderRadius: "8px",
-                  padding: "8px",
-                  color: "#fff",
-                  fontSize: "12px",
-                  resize: "none",
-                  minHeight: "60px",
-                  fontFamily: "inherit",
-                }}
+                className="edit-textarea"
                 placeholder="Edit your message..."
               />
-              <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-                <button
-                  onClick={handleSaveEdit}
-                  style={{
-                    background: "#4CAF50",
-                    border: "none",
-                    borderRadius: "4px",
-                    padding: "4px 8px",
-                    color: "#fff",
-                    fontSize: "10px",
-                    cursor: "pointer",
-                  }}
-                >
+              <EditActions>
+                <button onClick={handleSaveEdit} className="btn save">
                   Save
                 </button>
-                <button
-                  onClick={handleCancelEdit}
-                  style={{
-                    background: "#666",
-                    border: "none",
-                    borderRadius: "4px",
-                    padding: "4px 8px",
-                    color: "#fff",
-                    fontSize: "10px",
-                    cursor: "pointer",
-                  }}
-                >
+                <button onClick={handleCancelEdit} className="btn cancel">
                   Cancel
                 </button>
-              </div>
-            </div>
+              </EditActions>
+            </EditContainer>
           ) : (
             <>
               <p id={messageId} dangerouslySetInnerHTML={{ __html: makeLinksClickable(sanitizeInput(message)) }} />
-              {messageData.isEdited && <span style={{ fontSize: "10px", color: "rgba(255, 255, 255, 0.5)", fontStyle: "italic" }}>(edited)</span>}
+              {messageData.isEdited && <EditedTag>(edited)</EditedTag>}
             </>
           )}
         </MessageInnerCard>
 
         {/* Message Menu */}
         <MessageMenu ref={menuRef} className={`message-menu ${showMenu ? "visible" : ""}`} $sender={isOwnMessage}>
-          <MenuItem onClick={handleReply}>
-            <Reply />
-            Reply
-          </MenuItem>
-          {canEdit && (
+          {!isDeleted && (
+            <MenuItem onClick={handleReply}>
+              <Reply />
+              Reply
+            </MenuItem>
+          )}
+          {!isDeleted && canEdit && (
             <MenuItem onClick={handleEdit}>
               <Edit3 />
               Edit {minutesLeft > 0 && `(${minutesLeft}m left)`}
             </MenuItem>
           )}
-          {isOwnMessage && (
+          {isOwnMessage && !isDeleted && (
             <MenuItem onClick={handleDelete}>
               <Trash2 />
               Delete
             </MenuItem>
           )}
-          {!isOwnMessage && !isSeen && (
-            <MenuItem onClick={handleMarkAsSeen}>
-              <Eye />
-              Mark as seen
-            </MenuItem>
-          )}
+          {/* Removed manual mark-as-seen */}
           <MenuItem disabled>
             <Clock />
             {getTimeFormat(timestamp)}

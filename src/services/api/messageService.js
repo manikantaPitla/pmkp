@@ -1,14 +1,14 @@
 import { doc, setDoc, collection, query, orderBy, onSnapshot, getDocs, runTransaction, arrayUnion, serverTimestamp, where, limit, updateDoc, db } from "../firebase";
 import { uploadToCloudinary } from "../cloudinaryServices";
 import { createMediaObject } from "../utils.js";
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../utils/constants";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES, MESSAGES } from "../../utils/constants";
 import { pId, mId, p_uid } from "../../utils/userIdentity";
 
 class MessageService {
   constructor() {
     this.db = db;
-    this.MESSAGES_PER_PAGE = 30;
-    this.REALTIME_LIMIT = 50;
+    this.MESSAGES_PER_PAGE = MESSAGES.PAGE_SIZE;
+    this.REALTIME_LIMIT = this.MESSAGES_PER_PAGE;
   }
 
   async sendDirectMessage(uniqueId, message) {
@@ -43,6 +43,8 @@ class MessageService {
       message: message || null,
       timestamp: timeStamp,
       media: media || null,
+      isEdited: false,
+      isDeleted: false,
       ...(replyTo && { replyTo: { ...replyTo } }),
     };
 
@@ -97,7 +99,7 @@ class MessageService {
       return;
     }
 
-    const { enableRealtime = true, initialLoad = true } = options;
+    const { enableRealtime = true, initialLoad = true, onRealtimeUpdate } = options;
     startLoading();
 
     try {
@@ -114,9 +116,20 @@ class MessageService {
           realtimeQuery,
           querySnapshot => {
             const messages = querySnapshot.docs.map(doc => doc.data());
-
             const sortedMessages = messages.sort((a, b) => a.timestamp - b.timestamp);
+            // Always set the latest page as canonical
             setMessages(sortedMessages);
+            // Also stream in doc changes so pagination doesn't get dropped
+            try {
+              const changes = querySnapshot.docChanges();
+              changes.forEach(change => {
+                if (change.type === "added" && typeof onRealtimeUpdate === "function") {
+                  onRealtimeUpdate({ type: "added", data: change.doc.data() });
+                } else if (change.type === "modified" && typeof onRealtimeUpdate === "function") {
+                  onRealtimeUpdate({ type: "modified", data: change.doc.data() });
+                }
+              });
+            } catch {}
             stopLoading();
           },
           error => {
@@ -153,7 +166,7 @@ class MessageService {
 
     try {
       const messagesRef = collection(this.db, "chats", userId, "messages");
-      const q = query(messagesRef, where("timestamp", "<", oldestTimestamp), orderBy("timestamp", "desc"), limit(limitCount));
+      const q = query(messagesRef, orderBy("timestamp", "desc"), where("timestamp", "<", oldestTimestamp), limit(limitCount));
 
       const querySnapshot = await getDocs(q);
       const messages = querySnapshot.docs.map(doc => doc.data());
@@ -171,7 +184,7 @@ class MessageService {
 
     try {
       const messagesRef = collection(this.db, "chats", userId, "messages");
-      const q = query(messagesRef, where("timestamp", ">", newestTimestamp), orderBy("timestamp", "asc"), limit(limitCount));
+      const q = query(messagesRef, orderBy("timestamp", "asc"), where("timestamp", ">", newestTimestamp), limit(limitCount));
 
       const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map(doc => doc.data());
@@ -211,7 +224,7 @@ class MessageService {
 
       await runTransaction(this.db, async transaction => {
         messagesSnapshot.docs.forEach(msgDoc => {
-          transaction.delete(msgDoc.ref);
+          transaction.update(msgDoc.ref, { isDeleted: true, deletedAt: Date.now() });
         });
 
         transaction.update(userChatRef, {
@@ -301,8 +314,8 @@ class MessageService {
       const receiverMessageRef = doc(this.db, "chats", receiverId, "messages", messageId);
 
       await runTransaction(this.db, async transaction => {
-        transaction.delete(senderMessageRef);
-        transaction.delete(receiverMessageRef);
+        transaction.update(senderMessageRef, { isDeleted: true, deletedAt: Date.now() });
+        transaction.update(receiverMessageRef, { isDeleted: true, deletedAt: Date.now() });
       });
 
       return { success: true, message: SUCCESS_MESSAGES.MESSAGE_DELETED };
@@ -318,10 +331,28 @@ class MessageService {
     }
 
     try {
-      const messageRef = doc(this.db, "chats", userId, "messages", messageId);
-      await updateDoc(messageRef, {
-        isSeen: true,
-        seenAt: Date.now(),
+      // Update seen state on BOTH users' copies so the sender sees updates in realtime
+      const snapshot = await getDocs(query(collection(this.db, "chats", userId, "messages"), where("messageId", "==", messageId)));
+      if (snapshot.empty) return { success: false };
+      const data = snapshot.docs[0].data();
+      const senderId = data.senderId;
+      const receiverId = data.receiverId;
+
+      const receiverMessageRef = doc(this.db, "chats", userId, "messages", messageId);
+      const senderMessageRef = doc(this.db, "chats", senderId, "messages", messageId);
+
+      await runTransaction(this.db, async transaction => {
+        transaction.update(receiverMessageRef, {
+          isSeen: true,
+          seenAt: Date.now(),
+        });
+        // Only update sender side if current user is the receiver
+        if (userId === receiverId) {
+          transaction.update(senderMessageRef, {
+            isSeen: true,
+            seenAt: Date.now(),
+          });
+        }
       });
       return { success: true };
     } catch (error) {

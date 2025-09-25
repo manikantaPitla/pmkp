@@ -35,6 +35,11 @@ const GlobalStyles = createGlobalStyle`
 
     --radius: 15px;
     --primary-el-height: 42px;
+
+    /* Status colors */
+    --status-seen: #22c55e; /* green */
+    --status-unseen: #ef4444; /* red */
+    --status-online: #22c55e;
   }
 
   /* Accessibility improvements */

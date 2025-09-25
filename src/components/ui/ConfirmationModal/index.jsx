@@ -8,7 +8,7 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, confirm
       {close => (
         <ModalBody>
           <ModalTitle>{title}</ModalTitle>
-          <p style={{ fontSize: "12px", textAlign: "center", margin: "0", color: "#666", lineHeight: "1.4" }}>{message}</p>
+          <p className="modal-message">{message}</p>
           <ModalButtonWrapper>
             {cancelText ? (
               <ModalButton type="button" onClick={close}>

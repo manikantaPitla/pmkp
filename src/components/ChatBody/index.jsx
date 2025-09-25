@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getUserMessages, editMessage, deleteMessage, markMessageAsSeen } from "../../services";
-import { ChatInputContainer, LoaderWrapper, MessageContainer } from "./styled-component";
+import { ChatInputContainer, LoaderWrapper, MessageContainer, InlineInfo, EndInfo } from "./styled-component";
 import { useLoading, useMessage, useAutoScroll, usePagination } from "../../hooks";
 import { SquareLoader } from "../../utils";
 import { ChatInput, VirtualizedMessageList } from "../";
@@ -15,7 +15,7 @@ function ChatBody() {
   const [replyTo, setReplyTo] = useState(null);
 
   const { loading, startLoading, stopLoading } = useLoading(true);
-  const { setMessages, updateMessage, deleteMessage: deleteMessageFromStore } = useMessage();
+  const { setMessages, updateMessage, addNewMessage, deleteMessage: deleteMessageFromStore } = useMessage();
 
   const { checkAndLoadMore, hasMore, isLoadingMore } = usePagination(userId);
 
@@ -38,33 +38,75 @@ function ChatBody() {
   const handleDeleteMessage = async messageId => {
     try {
       await deleteMessage(messageId, userId);
-      deleteMessageFromStore(messageId);
-    } catch (error) {}
-  };
-
-  const handleMarkAsSeen = async messageId => {
-    try {
-      await markMessageAsSeen(messageId, userId);
-      updateMessage({ messageId, isSeen: true, seenAt: Date.now() });
+      updateMessage({ messageId, isDeleted: true, deletedAt: Date.now() });
     } catch (error) {}
   };
 
   useEffect(() => {
-    let unsubscribe;
-    const getChats = () => {
-      try {
-        unsubscribe = getUserMessages(userId, setMessages, startLoading, stopLoading, {
-          enableRealtime: true,
-          initialLoad: true,
+    if (!userId || !messageContainerRef?.current) return;
+
+    const candidates = messageList.filter(m => m.senderId !== userId && !m.isSeen && !m.isDeleted);
+
+    if (candidates.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(async entry => {
+          if (entry.isIntersecting && document.visibilityState === "visible" && document.hasFocus()) {
+            const id = entry.target.getAttribute("id");
+            if (!id) return;
+            observer.unobserve(entry.target);
+            try {
+              await markMessageAsSeen(id, userId);
+              updateMessage({ messageId: id, isSeen: true, seenAt: Date.now() });
+            } catch (e) {}
+          }
         });
-      } catch (error) {}
+      },
+      { root: messageContainerRef.current, threshold: 0.6 }
+    );
+
+    candidates.forEach(m => {
+      const el = document.getElementById(m.messageId);
+      if (el) observer.observe(el);
+    });
+
+    const onFocusOrVisibility = () => {
+      // Re-trigger observer when returning to the tab
+      candidates.forEach(m => {
+        const el = document.getElementById(m.messageId);
+        if (el) observer.observe(el);
+      });
     };
-    getChats();
+
+    window.addEventListener("focus", onFocusOrVisibility);
+    document.addEventListener("visibilitychange", onFocusOrVisibility);
+
+    return () => {
+      try {
+        observer.disconnect();
+      } catch {}
+      window.removeEventListener("focus", onFocusOrVisibility);
+      document.removeEventListener("visibilitychange", onFocusOrVisibility);
+    };
+  }, [messageList, userId, messageContainerRef, updateMessage]);
+
+  useEffect(() => {
+    if (!userId) return;
+    let unsubscribe;
+    try {
+      unsubscribe = getUserMessages(userId, setMessages, startLoading, stopLoading, {
+        enableRealtime: true,
+        initialLoad: true,
+      });
+    } catch (error) {}
 
     return () => {
       if (unsubscribe) unsubscribe();
     };
   }, [userId, setMessages, startLoading, stopLoading]);
+
+  const allDeleted = messageList.length > 0 && messageList.every(msg => msg.isDeleted === true);
 
   return (
     <>
@@ -73,17 +115,17 @@ function ChatBody() {
           <LoaderWrapper>
             <SquareLoader />
           </LoaderWrapper>
-        ) : messageList.length > 0 ? (
+        ) : messageList.length > 0 && !allDeleted ? (
           <>
             {/* Loading indicator for older messages */}
-            {isLoadingMore && hasMore && <div style={{ textAlign: "center", padding: "10px", color: "var(--text-light-shaded)" }}></div>}
+            {isLoadingMore && hasMore && (
+              <InlineInfo>
+                <SquareLoader />
+              </InlineInfo>
+            )}
 
             {/* End of messages indicator */}
-            {!hasMore && messageList.length > 0 && (
-              <div style={{ textAlign: "center", padding: "10px", color: "var(--text-light-shaded)", fontSize: "var(--fs-s)" }}>
-                You've reached the beginning of the conversation
-              </div>
-            )}
+            {!hasMore && messageList.length > 0 && <EndInfo>You've reached the beginning of the conversation</EndInfo>}
 
             <VirtualizedMessageList
               messages={messageList}
@@ -92,7 +134,6 @@ function ChatBody() {
               containerRef={messageContainerRef}
               onEditMessage={handleEditMessage}
               onDeleteMessage={handleDeleteMessage}
-              onMarkAsSeen={handleMarkAsSeen}
             />
           </>
         ) : (

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoading, useAuthActions } from "../../hooks";
 import { onAuthStateChanged, auth } from "../../services/firebase";
-import { getUserProfileData, updateLastLogin, sendMail } from "../../services";
+import { getUserProfileData, updateLastLogin, sendMail, setUserOnline, setUserOffline, setPresenceHeartbeat } from "../../services";
 import { FullPageLoader, pId } from "../../utils";
 import ErrorPage from "../ErrorPage";
 
@@ -30,9 +30,16 @@ const ProtectedRoute = ({ children }) => {
 
           setUser({
             ...userData,
+
+            lastLogin: userData?.lastLogin?.toMillis ? userData.lastLogin.toMillis() : (userData?.lastLogin ?? null),
+            lastSeen: userData?.lastSeen?.toMillis ? userData.lastSeen.toMillis() : (userData?.lastSeen ?? null),
+            heartbeatAt: userData?.heartbeatAt?.toMillis ? userData.heartbeatAt.toMillis() : (userData?.heartbeatAt ?? null),
             email: user.email,
             id: user.uid,
           });
+          try {
+            await setUserOnline(user.uid);
+          } catch {}
         } else {
           removeUser();
           navigate("/");
@@ -50,7 +57,36 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = authenticateUser();
-    return () => unsubscribe();
+    const beforeUnload = async () => {
+      try {
+        const user = auth.currentUser;
+        if (user) await setUserOffline(user.uid);
+      } catch {}
+    };
+    window.addEventListener("beforeunload", beforeUnload);
+    window.addEventListener("visibilitychange", async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        if (document.visibilityState === "visible") await setUserOnline(user.uid);
+        else await setUserOffline(user.uid);
+      } catch {}
+    });
+    // lightweight heartbeat every 25s while tab is visible
+    const interval = setInterval(async () => {
+      try {
+        if (document.visibilityState !== "visible") return;
+        const user = auth.currentUser;
+        if (user) await setPresenceHeartbeat(user.uid);
+      } catch {}
+    }, 25000);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnload);
+      // best-effort set offline
+      beforeUnload();
+      clearInterval(interval);
+      unsubscribe();
+    };
   }, []);
 
   if (error) return <ErrorPage errMsg={error} onRetry={authenticateUser} />;

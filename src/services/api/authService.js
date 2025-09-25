@@ -60,3 +60,32 @@ export const updateLastLogin = async userId => {
     throw new Error("Error updating last login");
   }
 };
+
+// Presence / Last Seen
+export const setUserOnline = async userId => {
+  if (!userId) return;
+  try {
+    await updateDoc(doc(db, "users", userId), { online: true });
+  } catch (error) {
+    console.error("Error setting user online", error);
+  }
+};
+
+export const setUserOffline = async userId => {
+  if (!userId) return;
+  try {
+    await updateDoc(doc(db, "users", userId), { online: false, lastSeen: serverTimestamp() });
+  } catch (error) {
+    console.error("Error setting user offline", error);
+  }
+};
+
+// Heartbeat to keep presence fresh
+export const setPresenceHeartbeat = async userId => {
+  if (!userId) return;
+  try {
+    await updateDoc(doc(db, "users", userId), { online: true, heartbeatAt: serverTimestamp() });
+  } catch (error) {
+    // best effort
+  }
+};

@@ -105,6 +105,16 @@ export const TEXT = {
   },
 };
 
+export const MESSAGES = {
+  PAGE_SIZE: 30,
+  OLDER_PAGE_SIZE: 40,
+  NEWER_PAGE_SIZE: 40,
+};
+
+export const PRESENCE = {
+  STALE_MS: 60 * 1000,
+};
+
 export const STORAGE_KEYS = {
   SESSION: "session",
   THEME: "theme",
