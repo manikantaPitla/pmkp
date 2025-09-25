@@ -86,9 +86,23 @@ export const SUCCESS_MESSAGES = {
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
-  REGISTRATION: "/one-time-registration",
   PROFILE: "/profile/:userId",
   NOT_FOUND: "*",
+};
+
+export const SESSION = {
+  TIMEOUT_MS: 15 * 60 * 1000, // 15 minutes
+};
+
+export const TEXT = {
+  QUICK_CHAT: {
+    TITLE: "Quick Chat",
+    DESCRIPTION: "Send a message without logging in",
+  },
+  LOGIN: {
+    TITLE: "Login",
+    DESCRIPTION: "Login to access chat",
+  },
 };
 
 export const STORAGE_KEYS = {

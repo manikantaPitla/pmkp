@@ -6,7 +6,7 @@ export const MessageContainer = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 10px 10px 80px;
-  gap: 10px;
+  gap:5px;
 
   .no-messages {
     text-align: center;

@@ -8,7 +8,6 @@ export const ROUTE_PATHS = {
 
   // Auth Routes
   LOGIN: ROUTES.LOGIN,
-  REGISTRATION: ROUTES.REGISTRATION,
 
   // Protected Routes
   PROFILE: ROUTES.PROFILE,
@@ -29,7 +28,7 @@ export const isProtectedRoute = pathname => {
 };
 
 export const isAuthRoute = pathname => {
-  return [ROUTE_PATHS.LOGIN, ROUTE_PATHS.REGISTRATION].includes(pathname);
+  return [ROUTE_PATHS.LOGIN].includes(pathname);
 };
 
 export const isPublicRoute = pathname => {

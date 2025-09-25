@@ -5,7 +5,8 @@ import { StyledButton } from "../Button/styled-component";
 export const ConfirmationModalStyles = styled(Popup)`
   &-overlay {
     backdrop-filter: blur(3px);
-    z-index: 9999;
+    z-index: 999999;
+    background-color: rgba(0, 0, 0, 0.4);
   }
 
   &-content {
@@ -16,7 +17,7 @@ export const ConfirmationModalStyles = styled(Popup)`
     border: none;
     color: #000000;
     padding: 0;
-    z-index: 10000;
+    z-index: 1000000;
   }
 `;
 
