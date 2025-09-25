@@ -89,7 +89,7 @@ function QuickChat() {
             label="Unique ID"
             id="default-uniqueId"
           />
-          {errors.uniqueId && <div style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px", marginLeft: "4px" }}>{errors.uniqueId}</div>}
+          {errors.uniqueId && <FieldError>{errors.uniqueId}</FieldError>}
         </div>
         <div>
           <Input
@@ -104,22 +104,13 @@ function QuickChat() {
             label="Message"
             id="default-message"
           />
-          {errors.message && <div style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px", marginLeft: "4px" }}>{errors.message}</div>}
+          {errors.message && <FieldError>{errors.message}</FieldError>}
         </div>
         <Button type="submit" disabled={loading}>
           {loading ? (
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-              <div
-                style={{
-                  width: "16px",
-                  height: "16px",
-                  border: "2px solid transparent",
-                  borderTop: "2px solid #000",
-                  borderRadius: "50%",
-                  animation: "spin 1s linear infinite",
-                }}
-              ></div>
-            </div>
+            <SpinnerWrap>
+              <Spinner />
+            </SpinnerWrap>
           ) : (
             "Send"
           )}
@@ -147,4 +138,35 @@ const Title = styled.h3`
 
 const Description = styled.p`
   font-size: var(--fs-xl);
+`;
+
+const FieldError = styled.div`
+  color: #ff4444;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-left: 4px;
+`;
+
+const SpinnerWrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`;
+
+const Spinner = styled.div`
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 `;

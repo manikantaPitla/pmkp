@@ -29,6 +29,13 @@ export const ModalBody = styled.div`
   align-items: center;
   gap: 20px;
   padding: 20px;
+  .modal-message {
+    font-size: 12px;
+    text-align: center;
+    margin: 0;
+    color: #666;
+    line-height: 1.4;
+  }
 `;
 
 export const ModalTitle = styled.p`

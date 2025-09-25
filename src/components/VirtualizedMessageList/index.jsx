@@ -30,7 +30,6 @@ const VirtualizedMessageList = ({
               setReplyTo={setReplyTo}
               onEditMessage={onEditMessage}
               onDeleteMessage={onDeleteMessage}
-              onMarkAsSeen={onMarkAsSeen}
             />
           );
         }

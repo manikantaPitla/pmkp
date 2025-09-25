@@ -7,20 +7,20 @@ const ErrorContainer = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 2rem;
+  padding: 32px;
   text-align: center;
   background-color: #000000;
 `;
 
 const ErrorTitle = styled.h1`
   color: #ff6b6b;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
   font-size: 20px;
 `;
 
 const ErrorMessage = styled.p`
   color: var(--text-light-shaded);
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
   max-width: 600px;
   line-height: 1.6;
   font-size: 12px;
@@ -110,23 +110,14 @@ class ErrorBoundary extends React.Component {
           <ErrorMessage>We're sorry, but something unexpected happened. Please try refreshing the page or contact support if the problem persists.</ErrorMessage>
           <RetryButton onClick={this.handleRetry}>Try Again</RetryButton>
           {process.env.NODE_ENV === "development" && this.state.error && (
-            <details style={{ marginTop: "2rem", textAlign: "left" }}>
-              <summary>Error Details (Development)</summary>
-              <pre
-                style={{
-                  background: "var(--bg-shaded)",
-                  padding: "1rem",
-                  borderRadius: "var(--radius)",
-                  overflow: "auto",
-                  maxWidth: "100%",
-                  color: "var(--text-light-shaded)",
-                }}
-              >
+            <DevDetails>
+              <DevSummary>Error Details (Development)</DevSummary>
+              <DevPre>
                 {this.state.error && this.state.error.toString()}
                 <br />
                 {this.state.errorInfo.componentStack}
-              </pre>
-            </details>
+              </DevPre>
+            </DevDetails>
           )}
         </ErrorContainer>
       );
@@ -137,3 +128,24 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
+
+const DevDetails = styled.details`
+  margin-top: 16px;
+  text-align: left;
+  font-size: 11px;
+`;
+
+const DevSummary = styled.summary`
+  font-size: 12px;
+`;
+
+const DevPre = styled.pre`
+  background: var(--bg-shaded);
+  padding: 12px;
+  border-radius: var(--radius);
+  overflow: auto;
+  max-width: 100%;
+  color: var(--text-light-shaded);
+  font-size: 11px;
+  line-height: 1.4;
+`;
