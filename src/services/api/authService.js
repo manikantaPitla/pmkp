@@ -1,5 +1,5 @@
 import { auth, db } from "../firebase";
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "../firebase";
+import { signInWithEmailAndPassword, signOut } from "../firebase";
 import { doc, getDoc, updateDoc, serverTimestamp, onSnapshot } from "../firebase";
 
 export const loginUser = async (email, password) => {
@@ -9,7 +9,7 @@ export const loginUser = async (email, password) => {
     const userDoc = await getUserProfileData(userCredential.user.uid);
     if (!userDoc) {
       await signOut(auth);
-      throw new Error("User profile not found. Please contact administrator.");
+      throw new Error("User profile not found.");
     }
 
     await updateLastLogin(userCredential.user.uid);
@@ -56,7 +56,7 @@ export const updateLastLogin = async userId => {
   if (!userId) return;
   try {
     await updateDoc(doc(db, "users", userId), { lastLogin: serverTimestamp() });
-  } catch (error) {
+  } catch {
     throw new Error("Error updating last login");
   }
 };
@@ -85,7 +85,5 @@ export const setPresenceHeartbeat = async userId => {
   if (!userId) return;
   try {
     await updateDoc(doc(db, "users", userId), { online: true, heartbeatAt: serverTimestamp() });
-  } catch (error) {
-    // best effort
-  }
+  } catch {}
 };

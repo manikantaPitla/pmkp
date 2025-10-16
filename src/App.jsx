@@ -1,9 +1,3 @@
-import React from "react";
-import { Toaster } from "react-hot-toast";
-import { ErrorBoundary } from "./components";
-import RouteRenderer from "./routes/RouteRenderer";
-import SkipLinkComponent from "./components/SkipLink";
-
 function App() {
   return (
     <ErrorBoundary>

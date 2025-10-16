@@ -1,6 +1,4 @@
-import React, { Suspense } from "react";
 import styled from "styled-components";
-import { SquareLoader } from "../../utils/loader";
 
 const LoadingContainer = styled.div`
   display: flex;

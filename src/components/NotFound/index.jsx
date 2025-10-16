@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { CustomMainLayout, Divider } from "../../utils";
-import { ErrorCard, ErrorContainer } from "../ErrorPage/styled-component";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function NotFound() {

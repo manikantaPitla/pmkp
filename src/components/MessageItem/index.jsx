@@ -1,11 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { MessageCard, MessageContainer, MessageInnerCard, ReplyViewContainer, MessageMenu, MenuItem } from "./styled-component";
-import { Send as SendIcon, CircleX as ErrorIcon, Edit3, Trash2, Clock, Reply } from "lucide-react";
 import { getTimeFormat, makeLinksClickable, minimizeText, sanitizeInput } from "../../utils";
-import MediaView from "../MediaView";
 import "reactjs-popup/dist/index.css";
-import { ModalBody, ModalButton, ModalButtonWrapper, ModalTitle } from "../../utils/styled-component";
-import { DeletedText, EditContainer, EditActions, EditedTag, DeleteModalStyles } from "./styled-component";
 
 function MessageItem({ messageData, userId, setReplyTo, onEditMessage, onDeleteMessage }) {
   const { senderId, message, messageId, timestamp, replyTo, status, media, isSeen, isDeleted } = messageData;
@@ -184,7 +179,7 @@ function MessageItem({ messageData, userId, setReplyTo, onEditMessage, onDeleteM
       // hide/remove visible state
       try {
         menu.classList.remove("visible");
-      } catch (e) {}
+      } catch {}
 
       // restore previous inline styles
       menu.style.visibility = prev.visibility;

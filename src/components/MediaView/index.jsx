@@ -1,6 +1,4 @@
 import React from "react";
-import { MediaCard, MediaOpenItem } from "./styled-component";
-import { Image as ImageIcon, Video as VideoIcon } from "lucide-react";
 import { formatBytes, reduceContent } from "../../services";
 
 function MediaView({ media, isReplyMsg = false }) {

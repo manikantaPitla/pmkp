@@ -30,7 +30,6 @@ const firebaseErrorMessages = {
   "invalid-argument": "Invalid request parameter(s).",
   unauthenticated: "You must be signed in to perform this action.",
   "out-of-range": "The value provided is out of allowed range.",
-  "deadline-exceeded": "Request timed out, try again.",
 
   "storage/object-not-found": "File does not exist.",
   "storage/unauthorized": "You do not have permission to access this file.",

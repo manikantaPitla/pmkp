@@ -1,8 +1,5 @@
-import React, { useCallback } from "react";
-import { Header, ChatBody } from "../components";
-import { CustomMainLayout } from "../utils";
+import { useCallback } from "react";
 import useSessionTimeout from "../hooks/useSessionTimeout";
-import ConfirmationModal from "../components/ui/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import { logOut } from "../services";
 

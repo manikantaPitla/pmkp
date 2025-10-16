@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { getUserMessages, editMessage, deleteMessage, markMessageAsSeen } from "../../services";
-import { ChatInputContainer, LoaderWrapper, MessageContainer, InlineInfo, EndInfo } from "./styled-component";
 import { useLoading, useMessage, useAutoScroll, usePagination } from "../../hooks";
-import { SquareLoader } from "../../utils";
-import { ChatInput, VirtualizedMessageList } from "../";
 import { useSelector } from "react-redux";
 
 function ChatBody() {
   const messageList = useSelector(state => state.messages.messageList);
-  const { pagination } = useSelector(state => state.messages);
+  // removed unused pagination
+  // const { pagination } = useSelector(state => state.messages);
   const currentUser = useSelector(state => state.auth.user);
   const userId = currentUser?.id;
 
   const [replyTo, setReplyTo] = useState(null);
 
   const { loading, startLoading, stopLoading } = useLoading(true);
-  const { setMessages, updateMessage, addNewMessage, deleteMessage: deleteMessageFromStore } = useMessage();
+  const { setMessages, updateMessage } = useMessage();
 
   const { checkAndLoadMore, hasMore, isLoadingMore } = usePagination(userId);
 
@@ -32,14 +30,14 @@ function ChatBody() {
     try {
       await editMessage(messageId, userId, newMessage);
       updateMessage({ messageId, message: newMessage, isEdited: true, editedAt: Date.now() });
-    } catch (error) {}
+    } catch {}
   };
 
   const handleDeleteMessage = async messageId => {
     try {
       await deleteMessage(messageId, userId);
       updateMessage({ messageId, isDeleted: true, deletedAt: Date.now() });
-    } catch (error) {}
+    } catch {}
   };
 
   useEffect(() => {
@@ -59,7 +57,7 @@ function ChatBody() {
             try {
               await markMessageAsSeen(id, userId);
               updateMessage({ messageId: id, isSeen: true, seenAt: Date.now() });
-            } catch (e) {}
+            } catch {}
           }
         });
       },
@@ -99,7 +97,7 @@ function ChatBody() {
         enableRealtime: true,
         initialLoad: true,
       });
-    } catch (error) {}
+    } catch {}
 
     return () => {
       if (unsubscribe) unsubscribe();

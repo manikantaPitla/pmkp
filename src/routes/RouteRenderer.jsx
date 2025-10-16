@@ -1,9 +1,4 @@
-import React, { Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
 import { publicRoutes, protectedRoutes, authRoutes } from "./index";
-import { SquareLoader } from "../utils/loader";
-import { ProtectedRoute as ProtectedRouteWrapper } from "../components";
-import { AuthRedirect } from "../components";
 
 const LoadingFallback = () => (
   <div
