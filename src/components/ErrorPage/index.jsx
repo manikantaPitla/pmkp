@@ -1,7 +1,3 @@
-import React from "react";
-import { CustomMainLayout, Divider } from "../../utils";
-import { ErrorCard, ErrorContainer } from "./styled-component";
-
 function ErrorPage({ errMsg, onRetry }) {
   const handleRetry = () => {
     if (onRetry && typeof onRetry === "function") {

@@ -1,5 +1,4 @@
-import React, { forwardRef } from "react";
-import { IconWrapper, InputWrapper, StyledInput } from "./styled-component";
+import { forwardRef } from "react";
 
 const Input = forwardRef(({ iconSrc, iconAlt = "Icon", error, label, id, ...props }, ref) => {
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;

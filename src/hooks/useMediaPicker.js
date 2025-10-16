@@ -8,12 +8,7 @@ import { toast } from "../utils";
  * @returns {Object} Media state and handlers
  */
 const useMediaPicker = (options = {}) => {
-  const {
-    maxSize = 10 * 1024 * 1024, // 10MB
-    allowedTypes = ["image/*", "video/*"],
-    onMediaChange = null,
-    onMediaRemove = null,
-  } = options;
+  const { onMediaChange = null, onMediaRemove = null } = options;
 
   const [media, setMedia] = useState(null);
   const [mediaPreview, setMediaPreview] = useState(null);

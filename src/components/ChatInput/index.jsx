@@ -1,12 +1,8 @@
 import React, { useRef, useState } from "react";
-import { FormButton, FormInput, InputWrapper, MediaPreview, ReplyMessageInnerContainer, ReplyMessageItem, ReplyPreview } from "./styled-component";
-import { Image, SendHorizontal, X } from "lucide-react";
 import { sendAuthUserMessage } from "../../services";
 import { useSelector } from "react-redux";
 import { useMessage, useLoading, useMediaPicker } from "../../hooks";
 import { getTimeFormat, minimizeText, toast, sanitizeInput } from "../../utils";
-import Button from "../ui/Button";
-import MediaView from "../MediaView";
 
 function ChatInput({ replyTo, setReplyTo }) {
   const [message, setMessage] = useState("");

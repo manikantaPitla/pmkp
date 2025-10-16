@@ -1,11 +1,8 @@
-import React, { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import styled from "styled-components";
-import { Button, Input } from "../components/ui";
 import { useLoading } from "../hooks";
-import { Divider, getFirebaseErrorMessage, m_uid, MainLayout, p_uid, toast, TEXT } from "../utils";
+import { getFirebaseErrorMessage, m_uid, p_uid, toast, TEXT } from "../utils";
 import { sendDirectMessage } from "../services";
-import { Link } from "react-router-dom";
-import { FormContainer } from "../styles";
 import { smsIcon, userIcon } from "../assets/icons/svg";
 
 function QuickChat() {
@@ -63,7 +60,7 @@ function QuickChat() {
       });
       setFormData(prev => ({ ...prev, message: "" }));
       messageInputRef.current?.focus();
-    } catch (error) {
+    } catch {
       // Error handled by toast.promise
     } finally {
       stopLoading();

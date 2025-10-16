@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useSelector } from "react-redux";
 import { getOlderMessages, getNewerMessages } from "../services/api";
 import { useMessage } from "./index";
@@ -50,7 +50,7 @@ const usePagination = userId => {
       } else {
         setHasMoreMessages(false);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to load older messages");
     } finally {
       setLoadingMoreMessages(false);
@@ -83,7 +83,7 @@ const usePagination = userId => {
           newestTimestamp: newerMessages[newerMessages.length - 1].timestamp,
         });
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to load newer messages");
     } finally {
       setLoadingMoreMessages(false);
@@ -92,7 +92,7 @@ const usePagination = userId => {
   }, [userId, pagination.newestTimestamp, addNewerMessages, setLoadingMoreMessages, setPagination]);
 
   const checkAndLoadMore = useCallback(
-    (scrollTop, scrollHeight, clientHeight) => {
+    scrollTop => {
       if (scrollTop < 100 && pagination.hasMore && !pagination.isLoadingMore && pagination.oldestTimestamp) {
         loadOlderMessages();
       }

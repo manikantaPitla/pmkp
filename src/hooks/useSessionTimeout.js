@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { SESSION } from "../utils/constants";
 
-const DEFAULT_TIMEOUT_MS = SESSION.TIMEOUT_MS; 
+const DEFAULT_TIMEOUT_MS = SESSION.TIMEOUT_MS;
 
 function useSessionTimeout(timeoutMs = DEFAULT_TIMEOUT_MS, options = {}) {
   const { resetOnMount = false } = options;

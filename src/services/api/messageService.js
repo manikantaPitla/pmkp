@@ -1,4 +1,4 @@
-import { doc, setDoc, collection, query, orderBy, onSnapshot, getDocs, runTransaction, arrayUnion, serverTimestamp, where, limit, updateDoc, db } from "../firebase";
+import { doc, setDoc, collection, query, orderBy, onSnapshot, getDocs, runTransaction, arrayUnion, where, limit, updateDoc, db } from "../firebase";
 import { uploadToCloudinary } from "../cloudinaryServices";
 import { createMediaObject } from "../utils.js";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES, MESSAGES } from "../../utils/constants";
@@ -99,7 +99,7 @@ class MessageService {
       return;
     }
 
-    const { enableRealtime = true, initialLoad = true, onRealtimeUpdate } = options;
+    const { enableRealtime = true, onRealtimeUpdate } = options;
     startLoading();
 
     try {
@@ -260,7 +260,6 @@ class MessageService {
     }
 
     try {
-      const messageRef = doc(this.db, "chats", userId, "messages", messageId);
       const messageDoc = await getDocs(query(collection(this.db, "chats", userId, "messages"), where("messageId", "==", messageId)));
 
       if (messageDoc.empty) {

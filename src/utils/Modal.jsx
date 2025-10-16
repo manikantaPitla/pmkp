@@ -1,6 +1,4 @@
-import React from "react";
 import "reactjs-popup/dist/index.css";
-import { ModalBody, ModalButton, ModalButtonWrapper, ModalSmallCustomStyles, ModalTitle } from "./styled-component";
 
 export function ModalSmall(props) {
   const { children, content, action } = props;

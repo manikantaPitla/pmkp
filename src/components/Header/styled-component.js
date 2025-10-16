@@ -138,8 +138,6 @@ export const MenuItem = styled.button`
   border-radius: 4px;
   transition: background-color 0.2s ease;
 
-
-
   &:hover:not(:disabled) {
     background-color: #3a3a3a;
   }

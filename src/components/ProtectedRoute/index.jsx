@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoading, useAuthActions } from "../../hooks";
 import { onAuthStateChanged, auth } from "../../services/firebase";
-import { getUserProfileData, updateLastLogin, sendMail, setUserOnline, setUserOffline, setPresenceHeartbeat } from "../../services";
-import { FullPageLoader, pId } from "../../utils";
-import ErrorPage from "../ErrorPage";
+import { getUserProfileData, sendMail, setUserOnline, setUserOffline, setPresenceHeartbeat } from "../../services";
+import { pId } from "../../utils";
 
 const ProtectedRoute = ({ children }) => {
   const { loading, startLoading, stopLoading } = useLoading(true);

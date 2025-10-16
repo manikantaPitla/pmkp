@@ -27,12 +27,13 @@ const useFormValidation = (initialState = {}) => {
 
   const validateField = useCallback((name, value) => {
     switch (name) {
-      case "email":
+      case "email": {
         if (!value) return "Email is required";
         if (!validateEmail(value)) return ERROR_MESSAGES.INVALID_EMAIL;
         return "";
+      }
 
-      case "password":
+      case "password": {
         if (!value) return "Password is required";
         if (value.length < VALIDATION.PASSWORD.MIN_LENGTH) {
           return `Password must be at least ${VALIDATION.PASSWORD.MIN_LENGTH} characters long`;
@@ -42,8 +43,9 @@ const useFormValidation = (initialState = {}) => {
           return passwordValidation.errors[0];
         }
         return "";
+      }
 
-      case "username":
+      case "username": {
         if (!value) return "Username is required";
         if (value.length < VALIDATION.USERNAME.MIN_LENGTH) {
           return `Username must be at least ${VALIDATION.USERNAME.MIN_LENGTH} characters long`;
@@ -55,18 +57,21 @@ const useFormValidation = (initialState = {}) => {
           return "Username can only contain letters, numbers, and underscores";
         }
         return "";
+      }
 
-      case "uniqueId":
+      case "uniqueId": {
         if (!value) return "Unique ID is required";
         if (!VALIDATION.UNIQUE_ID.PATTERN.test(value)) {
           return `Unique ID must be exactly ${VALIDATION.UNIQUE_ID.LENGTH} digits`;
         }
         return "";
+      }
 
-      case "message":
+      case "message": {
         if (!value || !value.trim()) return "Message cannot be empty";
         if (value.length > 1000) return "Message is too long (max 1000 characters)";
         return "";
+      }
 
       default:
         return "";

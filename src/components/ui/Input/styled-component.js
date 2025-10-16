@@ -54,5 +54,4 @@ export const StyledInput = styled.input`
     -webkit-text-fill-color: #fff !important;
     transition: background-color 9999s ease-in-out 0s;
   }
-
 `;

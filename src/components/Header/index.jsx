@@ -1,13 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { HeaderWrapper, MenuWrapper, MenuDropdown, MenuItem, ProfileDataWrapper, UserNameWrapper } from "./styled-component";
 import { useNavigate } from "react-router-dom";
-import { CustomButton } from "../ui/Button/styled-component";
 import { useLoading, useMessage, useAuthActions } from "../../hooks";
-import { LogOut, Trash2, Bell, Menu, X } from "lucide-react";
-import { clearChat, getUserProfileData, getUserProfileSnapShotData, logOut, sendMail } from "../../services";
-import { ProfileSkeleton, ModalSmall, getLastLoginTimeFormat, toast, mId, pId, PRESENCE } from "../../utils";
+import { clearChat, getUserProfileSnapShotData, logOut, sendMail } from "../../services";
+import { getLastLoginTimeFormat, toast, mId, pId, PRESENCE } from "../../utils";
 import { useSelector } from "react-redux";
-import ConfirmationModal from "../ui/ConfirmationModal";
 
 function Header() {
   const currentUser = useSelector(state => state.auth.user);
@@ -94,7 +90,7 @@ function Header() {
         success: "Chat deleted successfully",
         error: err => err.message,
       });
-    } catch (error) {}
+    } catch {}
   }, [currentUser]);
 
   useEffect(() => {

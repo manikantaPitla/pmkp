@@ -1,11 +1,9 @@
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import { Button, Input } from "../components/ui";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services";
 import { useLoading } from "../hooks";
-import { FormContainer } from "../styles";
-import { MainLayout, toast, getFirebaseErrorMessage, Divider, validateEmail, loginRateLimiter, TEXT } from "../utils";
+import { toast, getFirebaseErrorMessage, validateEmail, loginRateLimiter, TEXT } from "../utils";
 
 import { mailIcon, lockIcon } from "../assets/icons/svg/index.js";
 
@@ -81,7 +79,7 @@ function Login() {
           } catch {}
           navigate(`/profile/${userDoc.user.uid}`);
         }
-      } catch (error) {
+      } catch {
       } finally {
         stopLoading();
       }

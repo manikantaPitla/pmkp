@@ -1,19 +1,7 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { groupMessagesByDate } from "../../utils/messages";
-import MessageItem from "../MessageItem";
-import DateDivider from "../DateDivider";
 
-const VirtualizedMessageList = ({
-  messages,
-  userId,
-  setReplyTo,
-  containerRef, // Keep for future virtualization
-  itemHeight = 80, // Keep for future virtualization
-  overscan = 5, // Keep for future virtualization
-  onEditMessage,
-  onDeleteMessage,
-  onMarkAsSeen,
-}) => {
+const VirtualizedMessageList = ({ messages, userId, setReplyTo, onEditMessage, onDeleteMessage }) => {
   const groupedElements = useMemo(() => groupMessagesByDate(messages), [messages]);
 
   return (
