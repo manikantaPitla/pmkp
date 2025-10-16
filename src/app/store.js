@@ -11,7 +11,7 @@ const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ["auth/addUser", "messages/setChatMessages"],
-        ignoredPaths: ["auth.user.lastLogin", "messages.messageList"],
+        ignoredPaths: ["auth.user.lastLogin", "auth.user.lastTokenUpdate", "auth.user.heartbeatAt", "auth.user.disabledAt", "auth.user.enabledAt", "messages.messageList"],
       },
     }),
 });

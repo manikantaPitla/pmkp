@@ -47,8 +47,19 @@ const GlobalStyles = createGlobalStyle`
     scroll-behavior: smooth;
   }
 
-  /* Focus styles for better accessibility */
-  *:focus-visible {
+  /* Disable outline for all inputs */
+  input, textarea, select {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Focus styles for better accessibility (excluding inputs) */
+  button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
     outline: 2px solid #007bff;
     outline-offset: 2px;
   }
@@ -60,43 +71,7 @@ const GlobalStyles = createGlobalStyle`
       --text-light-shaded: #ffffff;
     }
     
-    *:focus-visible {
-      outline-width: 3px;
-    }
-  }
-
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-    
-    html {
-      scroll-behavior: auto;
-    }
-  }
-
-  /* Accessibility improvements */
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Focus styles for better accessibility */
-  *:focus-visible {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
-  }
-
-  /* High contrast mode support */
-  @media (prefers-contrast: high) {
-    :root {
-      --border-shaded: #ffffff;
-      --text-light-shaded: #ffffff;
-    }
-    
-    *:focus-visible {
+    button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
       outline-width: 3px;
     }
   }

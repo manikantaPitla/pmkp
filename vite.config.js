@@ -37,7 +37,14 @@ export default defineConfig({
             },
           },
         ],
+        // Configure service worker for FCM
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/__/],
       },
+      // Configure service worker for Firebase messaging
+      strategies: "injectManifest",
+      srcDir: "public",
+      filename: "sw.js",
       manifest: {
         name: "PMKP",
         short_name: "PMKP",

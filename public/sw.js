@@ -14,9 +14,7 @@ self.addEventListener("install", event => {
         console.log("Caching static files");
         return cache.addAll(STATIC_FILES);
       })
-      .catch(error => {
-        console.error("Error caching static files:", error);
-      })
+      .catch(() => {})
   );
   self.skipWaiting();
 });
@@ -74,7 +72,7 @@ async function handleSameOriginRequest(request) {
     }
 
     return networkResponse;
-  } catch (error) {
+  } catch {
     // Fallback to cache
     const cachedResponse = await caches.match(request);
     if (cachedResponse) {
@@ -94,7 +92,7 @@ async function handleSameOriginRequest(request) {
 async function handleFirebaseRequest(request) {
   try {
     return await fetch(request);
-  } catch (error) {
+  } catch {
     // For Firebase requests, we don't cache, just return error
     throw error;
   }
@@ -119,7 +117,7 @@ async function handleExternalRequest(request) {
     }
 
     return networkResponse;
-  } catch (error) {
+  } catch {
     // Return a fallback response
     return new Response("Offline content not available", {
       status: 503,
@@ -172,7 +170,7 @@ async function sendMessage(message) {
   });
 }
 
-async function removeOfflineMessage(messageId) {
+async function removeOfflineMessage() {
   // This would remove the message from IndexedDB
   return Promise.resolve();
 }
